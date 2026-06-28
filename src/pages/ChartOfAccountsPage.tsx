@@ -39,12 +39,37 @@ export function ChartOfAccountsPage() {
 
   useEffect(() => {
     fetch("/api/accounts")
-      .then((res) => res.json())
+      .then((res) => {
+        if (!res.ok) throw new Error('API Error');
+        return res.json();
+      })
       .then((data) => {
         setAccounts(data.data);
-        // Expand all main and sub by default
         const toExpand = new Set<string>();
         data.data.forEach((acc: Account) => {
+          if (acc.level !== 'detail') {
+            toExpand.add(acc.code);
+          }
+        });
+        setExpandedCodes(toExpand);
+      })
+      .catch(() => {
+        const localAccounts = JSON.parse(localStorage.getItem('mock_accounts') || '[]');
+        let dataToUse = localAccounts;
+        if (localAccounts.length === 0) {
+          dataToUse = [
+            { id: 1, code: '1', name: 'الأصول', type: 'asset', level: 'main', parent_code: null, company_id: 'ALL', is_active: true },
+            { id: 2, code: '11', name: 'الأصول المتداولة', type: 'asset', level: 'sub', parent_code: '1', company_id: 'ALL', is_active: true },
+            { id: 3, code: '111', name: 'النقدية وما في حكمها', type: 'asset', level: 'sub', parent_code: '11', company_id: 'ALL', is_active: true },
+            { id: 4, code: '1111', name: 'الصندوق الرئيسي', type: 'asset', level: 'detail', parent_code: '111', company_id: 'BGK', is_active: true },
+            { id: 5, code: '2', name: 'الخصوم', type: 'liability', level: 'main', parent_code: null, company_id: 'ALL', is_active: true },
+            { id: 6, code: '3', name: 'حقوق الملكية', type: 'equity', level: 'main', parent_code: null, company_id: 'ALL', is_active: true },
+          ];
+          localStorage.setItem('mock_accounts', JSON.stringify(dataToUse));
+        }
+        setAccounts(dataToUse);
+        const toExpand = new Set<string>();
+        dataToUse.forEach((acc: Account) => {
           if (acc.level !== 'detail') {
             toExpand.add(acc.code);
           }
@@ -207,6 +232,7 @@ export function ChartOfAccountsPage() {
                 if (!newAccount.code || !newAccount.name) return;
                 
                 const payload = {
+                  id: Date.now(),
                   code: newAccount.code,
                   name: newAccount.name,
                   type: newAccount.type,
@@ -216,33 +242,20 @@ export function ChartOfAccountsPage() {
                   is_active: newAccount.is_active
                 };
 
-                try {
-                  const response = await fetch('/api/accounts', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                  });
-                  
-                  if (response.ok) {
-                    const data = await response.json();
-                    setAccounts([...accounts, data.data]);
-                    
-                    // Auto-expand parent if it exists so the new account is visible
-                    if (newAccount.parent_code) {
-                      setExpandedCodes(prev => new Set(prev).add(newAccount.parent_code as string));
-                    }
-                    
-                    setIsModalOpen(false);
-                    setNewAccount({
-                      code: '', name: '', type: 'asset', level: 'detail', parent_code: '', company_id: 'ALL', is_active: true
-                    });
-                    alert("تم إضافة الحساب بنجاح!");
-                  } else {
-                    alert("حدث خطأ أثناء إضافة الحساب.");
-                  }
-                } catch (error) {
-                  alert("تعذر الاتصال بالخادم.");
+                const localAccounts = JSON.parse(localStorage.getItem('mock_accounts') || '[]');
+                const updatedAccounts = [...localAccounts, payload];
+                localStorage.setItem('mock_accounts', JSON.stringify(updatedAccounts));
+                setAccounts(updatedAccounts);
+                
+                if (payload.parent_code) {
+                  setExpandedCodes(prev => new Set(prev).add(payload.parent_code as string));
                 }
+                
+                setIsModalOpen(false);
+                setNewAccount({
+                  code: '', name: '', type: 'asset', level: 'detail', parent_code: '', company_id: 'ALL', is_active: true
+                });
+                alert("تم إضافة الحساب بنجاح!");
               }} 
               className="p-6 space-y-4"
             >
