@@ -47,23 +47,40 @@ export function InvoicesPage() {
     setTimeout(() => setToastMsg(''), 3000);
   };
 
-  const handlePayment = () => {
+  const handleSendEmail = () => {
     if (focusedInvoice) {
-      setInvoices(invoices.map(inv => 
+      const nextInvoices = invoices.map(inv => 
+        inv.id === focusedInvoice.id && (inv.status === 'draft' || inv.status === 'pending_approval')
+          ? { ...inv, status: 'issued' }
+          : inv
+      );
+      setInvoices(nextInvoices);
+      localStorage.setItem('mock_invoices', JSON.stringify(nextInvoices));
+      showToast('تم وضع الفاتورة في طابور الإرسال وتحديث حالتها إلى مُصدرة');
+      setActiveModal(null);
+    }
+  };
+
+  const handlePayment = () => {
+    let nextInvoices = [...invoices];
+    if (focusedInvoice) {
+      nextInvoices = nextInvoices.map(inv => 
         inv.id === focusedInvoice.id 
           ? { ...inv, status: 'paid', paid_amount: inv.total_amount } 
           : inv
-      ));
+      );
       showToast('تم إثبات الدفع بنجاح وتحديث أرصدة الفواتير');
     } else if (selectedInvoices.size > 0) {
-      setInvoices(invoices.map(inv => 
+      nextInvoices = nextInvoices.map(inv => 
         selectedInvoices.has(inv.id)
           ? { ...inv, status: 'paid', paid_amount: inv.total_amount } 
           : inv
-      ));
+      );
       showToast('تم إثبات الدفع المجمع بنجاح وتحديث أرصدة الفواتير');
     }
     
+    setInvoices(nextInvoices);
+    localStorage.setItem('mock_invoices', JSON.stringify(nextInvoices));
     setActiveModal(null);
     setSelectedInvoices(new Set());
   };
@@ -286,10 +303,7 @@ export function InvoicesPage() {
                 <span>سيتم إرفاق ملف PDF آلياً.</span>
               </div>
               <button 
-                onClick={() => {
-                  showToast('تم وضع الفاتورة في طابور الإرسال');
-                  setActiveModal(null);
-                }}
+                onClick={handleSendEmail}
                 className="w-full bg-blue-600 text-white font-bold py-3 text-sm rounded-xl hover:bg-blue-700 transition"
               >
                 إرسال (Send Email)

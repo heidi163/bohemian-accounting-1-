@@ -26,11 +26,30 @@ export function PurchaseCreatePage() {
   const total = subtotal + tax;
 
   const handleSave = (status: string) => {
-    if (status === 'draft') {
-        alert('تم حفظ الفاتورة كمسودة.');
-    } else {
-        alert('تم إرسال الفاتورة للاعتماد (Pending Approval).');
+    const payload = {
+      supplier_name: 'مورد جديد (Mock)',
+      bill_date: new Date().toISOString().split('T')[0],
+      due_date: new Date().toISOString().split('T')[0],
+      currency,
+      total_amount: total,
+      tax_amount: tax,
+      status,
+      paid_amount: 0
+    };
+
+    const localBills = JSON.parse(localStorage.getItem('mock_bills') || '[]');
+    if (localBills.length === 0) {
+       localBills.push(
+          { id: 1, bill_number: 'BILL-2026-00001', reference_number: 'AWS-INV-001', supplier_name: 'Amazon Web Services', total_amount: 1200, paid_amount: 1200, tax_amount: 0, status: 'paid', bill_date: '2026-05-01', due_date: '2026-05-31', currency: 'USD', project_id: 'PRJ-001' },
+          { id: 2, bill_number: 'BILL-2026-00002', reference_number: 'AD-2026', supplier_name: 'Google Ads', total_amount: 15000, paid_amount: 5000, tax_amount: 2100, status: 'partial', bill_date: '2026-06-01', due_date: '2026-06-15', currency: 'EGP', cost_center: 'HQ' },
+          { id: 3, bill_number: 'BILL-2026-00003', reference_number: 'RN-1234', supplier_name: 'Digital Ocean', total_amount: 450, paid_amount: 0, tax_amount: 0, status: 'pending_approval', bill_date: '2026-06-10', due_date: '2026-06-25', currency: 'USD' }
+       );
     }
+    
+    const newId = Math.max(0, ...localBills.map((i: any) => i.id || 0)) + 1;
+    const finalPayload = { ...payload, id: newId, bill_number: `BILL-2026-${String(newId).padStart(5, '0')}`, reference_number: 'REF-NEW' };
+    localBills.push(finalPayload);
+    localStorage.setItem('mock_bills', JSON.stringify(localBills));
     navigate('/purchases');
   };
 

@@ -35,8 +35,23 @@ export function PurchasesPage() {
 
   useEffect(() => {
     fetch("/api/bills")
-      .then((res) => res.json())
-      .then((data) => setBills(data.data));
+      .then((res) => {
+         if (!res.ok) throw new Error('API failed');
+         return res.json();
+      })
+      .then((data) => setBills(data.data))
+      .catch(() => {
+         const localBills = JSON.parse(localStorage.getItem('mock_bills') || '[]');
+         if (localBills.length > 0) {
+            setBills(localBills);
+         } else {
+            setBills([
+              { id: 1, bill_number: 'BILL-2026-00001', reference_number: 'AWS-INV-001', supplier_name: 'Amazon Web Services', total_amount: 1200, paid_amount: 1200, tax_amount: 0, status: 'paid', bill_date: '2026-05-01', due_date: '2026-05-31', currency: 'USD', project_id: 'PRJ-001' },
+              { id: 2, bill_number: 'BILL-2026-00002', reference_number: 'AD-2026', supplier_name: 'Google Ads', total_amount: 15000, paid_amount: 5000, tax_amount: 2100, status: 'partial', bill_date: '2026-06-01', due_date: '2026-06-15', currency: 'EGP', cost_center: 'HQ' },
+              { id: 3, bill_number: 'BILL-2026-00003', reference_number: 'RN-1234', supplier_name: 'Digital Ocean', total_amount: 450, paid_amount: 0, tax_amount: 0, status: 'pending_approval', bill_date: '2026-06-10', due_date: '2026-06-25', currency: 'USD' }
+            ]);
+         }
+      });
   }, []);
 
   const toggleSelect = (id: number) => {
@@ -49,6 +64,36 @@ export function PurchasesPage() {
   const openModal = (type: 'payment' | 'approval', bill?: Bill) => {
     setFocusedBill(bill || null);
     setActiveModal(type);
+  };
+
+  const handlePayment = () => {
+    let nextBills = [...bills];
+    if (focusedBill) {
+      nextBills = nextBills.map(b => 
+        b.id === focusedBill.id ? { ...b, status: 'paid', paid_amount: b.total_amount } : b
+      );
+    } else if (selectedBills.size > 0) {
+      nextBills = nextBills.map(b => 
+        selectedBills.has(b.id) ? { ...b, status: 'paid', paid_amount: b.total_amount } : b
+      );
+    }
+    setBills(nextBills);
+    localStorage.setItem('mock_bills', JSON.stringify(nextBills));
+    alert('تم إثبات السداد بنجاح وتحديث الأرصدة');
+    setActiveModal(null);
+    setSelectedBills(new Set());
+  };
+
+  const handleApproval = (status: 'approved' | 'cancelled') => {
+    if (focusedBill) {
+      const nextBills = bills.map(b => 
+        b.id === focusedBill.id ? { ...b, status } : b
+      );
+      setBills(nextBills);
+      localStorage.setItem('mock_bills', JSON.stringify(nextBills));
+      alert(status === 'approved' ? 'تم اعتماد الفاتورة بنجاح' : 'تم رفض الفاتورة');
+      setActiveModal(null);
+    }
   };
 
   return (
@@ -194,11 +239,7 @@ export function PurchasesPage() {
                 </select>
               </div>
               <button 
-                onClick={() => {
-                  alert('تم إثبات السداد بنجاح');
-                  setActiveModal(null);
-                  setSelectedBills(new Set());
-                }}
+                onClick={handlePayment}
                 className="w-full bg-emerald-600 text-white font-bold py-3 text-sm rounded-xl hover:bg-emerald-700 transition mt-4"
               >
                 تأكيد الدفع (Record Payment)
@@ -226,8 +267,8 @@ export function PurchasesPage() {
               </ul>
               
               <div className="flex gap-2">
-                <button onClick={() => { alert('تم اعتماد الفاتورة'); setActiveModal(null); }} className="flex-1 bg-primary-600 text-white font-bold py-3 text-sm rounded-xl hover:bg-primary-700 transition">اعتماد (Approve)</button>
-                <button onClick={() => { alert('تم رفض الفاتورة'); setActiveModal(null); }} className="flex-1 bg-rose-50 text-rose-600 font-bold py-3 text-sm rounded-xl hover:bg-rose-100 transition border border-rose-200">رفض (Reject)</button>
+                <button onClick={() => handleApproval('approved')} className="flex-1 bg-primary-600 text-white font-bold py-3 text-sm rounded-xl hover:bg-primary-700 transition">اعتماد (Approve)</button>
+                <button onClick={() => handleApproval('cancelled')} className="flex-1 bg-rose-50 text-rose-600 font-bold py-3 text-sm rounded-xl hover:bg-rose-100 transition border border-rose-200">رفض (Reject)</button>
               </div>
             </div>
           </div>
