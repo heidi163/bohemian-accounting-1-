@@ -12,8 +12,23 @@ export function ContactsPage() {
 
   useEffect(() => {
     fetch("/api/contacts")
-      .then((res) => res.json())
-      .then((data) => setContacts(data.data));
+      .then((res) => {
+        if (!res.ok) throw new Error('API Error');
+        return res.json();
+      })
+      .then((data) => setContacts(data.data))
+      .catch(() => {
+        const localContacts = JSON.parse(localStorage.getItem('mock_contacts') || '[]');
+        if (localContacts.length > 0) {
+          setContacts(localContacts);
+        } else {
+          setContacts([
+            { id: 1, code: 'CUST-2026-001', name: 'بوهيميان جيكس (Bohemian Geeks)', type: 'customer', email: 'hello@bohemiangeeks.com', phone: '+20 100 123 4567', balance: 15400, opening_balance: 0, outstanding_balance: 15400, credit_limit: 50000, aging: { '0_30': 15400, '31_60': 0, '61_90': 0, '91_plus': 0 }, sub_contacts: [{ name: 'Heidi Medhat', email: 'heidi@bohemiangeeks.com', phone: '+20101111111' }] },
+            { id: 2, code: 'CUST-2026-002', name: 'Sealy KSA', type: 'customer', email: 'finance@sealy.sa', phone: '+966 50 123 4567', balance: 120500, opening_balance: 20000, outstanding_balance: 100500, credit_limit: 200000, aging: { '0_30': 50000, '31_60': 50500, '61_90': 0, '91_plus': 0 }, sub_contacts: [] },
+            { id: 3, code: 'SUPP-2026-001', name: 'Amazon Web Services', type: 'supplier', email: 'billing@aws.com', phone: '+1 800 123 4567', balance: -1200, opening_balance: 0, outstanding_balance: 0, credit_limit: 0, aging: { '0_30': 0, '31_60': 0, '61_90': 0, '91_plus': 0 }, sub_contacts: [] }
+          ]);
+        }
+      });
   }, []);
 
   const handleAction = (type: 'view' | 'excel_import' | 'duplicate_check' | 'profitability', contact?: Contact) => {
@@ -117,7 +132,24 @@ export function ContactsPage() {
                      <input type="file" className="hidden" accept=".xlsx,.csv" />
                   </label>
                </div>
-               <button onClick={() => { alert('تم الاستيراد بنجاح'); setActiveModal(null); }} className="w-full bg-primary-600 text-white font-bold py-3 rounded-xl mt-4 hover:bg-primary-700 transition">بدء الاستيراد</button>
+               <button onClick={() => { 
+                  const localContacts = JSON.parse(localStorage.getItem('mock_contacts') || '[]');
+                  if (localContacts.length === 0) {
+                     localContacts.push(
+                        { id: 1, code: 'CUST-2026-001', name: 'بوهيميان جيكس (Bohemian Geeks)', type: 'customer', email: 'hello@bohemiangeeks.com', phone: '+20 100 123 4567', balance: 15400, opening_balance: 0, outstanding_balance: 15400, credit_limit: 50000, aging: { '0_30': 15400, '31_60': 0, '61_90': 0, '91_plus': 0 }, sub_contacts: [{ name: 'Heidi Medhat', email: 'heidi@bohemiangeeks.com', phone: '+20101111111' }] },
+                        { id: 2, code: 'CUST-2026-002', name: 'Sealy KSA', type: 'customer', email: 'finance@sealy.sa', phone: '+966 50 123 4567', balance: 120500, opening_balance: 20000, outstanding_balance: 100500, credit_limit: 200000, aging: { '0_30': 50000, '31_60': 50500, '61_90': 0, '91_plus': 0 }, sub_contacts: [] },
+                        { id: 3, code: 'SUPP-2026-001', name: 'Amazon Web Services', type: 'supplier', email: 'billing@aws.com', phone: '+1 800 123 4567', balance: -1200, opening_balance: 0, outstanding_balance: 0, credit_limit: 0, aging: { '0_30': 0, '31_60': 0, '61_90': 0, '91_plus': 0 }, sub_contacts: [] }
+                     );
+                  }
+                  const newImported = {
+                     id: Date.now(), code: `IMP-${String(Date.now()).slice(-3)}`, name: 'جهة مستوردة من إكسيل (Mock)', type: 'customer', email: 'imported@excel.com', phone: '+20 000', balance: 500, outstanding_balance: 500, sub_contacts: []
+                  };
+                  localContacts.push(newImported);
+                  localStorage.setItem('mock_contacts', JSON.stringify(localContacts));
+                  setContacts(localContacts);
+                  alert('تم الاستيراد بنجاح وتمت إضافة جهة اتصال تجريبية'); 
+                  setActiveModal(null); 
+               }} className="w-full bg-primary-600 text-white font-bold py-3 rounded-xl mt-4 hover:bg-primary-700 transition">بدء الاستيراد</button>
             </div>
           </div>
          </div>
@@ -137,7 +169,7 @@ export function ContactsPage() {
                <div className="border border-slate-200 rounded-lg overflow-hidden mb-4">
                   <div className="text-xs p-3 bg-slate-50 border-b border-slate-200 flex justify-between font-bold">
                      <span>Bohemian Geeks (CUST-2026-001)</span>
-                     <button className="text-primary-600">دمج (Merge)</button>
+                     <button onClick={() => { alert('تم الدمج بنجاح'); setActiveModal(null); }} className="text-primary-600">دمج (Merge)</button>
                   </div>
                   <div className="text-xs p-3 bg-white flex justify-between">
                      <span>Bohemian Geekz (CUST-2026-005)</span>

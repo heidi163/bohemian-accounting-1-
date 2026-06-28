@@ -32,7 +32,30 @@ export function ContactCreatePage() {
              إلغاء
           </button>
           <button className="bg-primary-600 text-white px-6 py-2 rounded-xl text-sm font-semibold hover:bg-primary-700 transition" onClick={() => {
-             alert('تم حفظ البيانات بنجاح!');
+             const newContact = {
+               id: Date.now(),
+               code: `CUST-2026-${String(Date.now()).slice(-3)}`,
+               name: 'جهة اتصال جديدة (Mock)',
+               type: 'customer',
+               email: 'new@example.com',
+               phone: '+20 100 000 0000',
+               balance: 0,
+               opening_balance: 0,
+               outstanding_balance: 0,
+               credit_limit: 50000,
+               aging: { '0_30': 0, '31_60': 0, '61_90': 0, '91_plus': 0 },
+               sub_contacts: subContacts
+             };
+             const localContacts = JSON.parse(localStorage.getItem('mock_contacts') || '[]');
+             if (localContacts.length === 0) {
+               localContacts.push(
+                  { id: 1, code: 'CUST-2026-001', name: 'بوهيميان جيكس (Bohemian Geeks)', type: 'customer', email: 'hello@bohemiangeeks.com', phone: '+20 100 123 4567', balance: 15400, opening_balance: 0, outstanding_balance: 15400, credit_limit: 50000, aging: { '0_30': 15400, '31_60': 0, '61_90': 0, '91_plus': 0 }, sub_contacts: [{ name: 'Heidi Medhat', email: 'heidi@bohemiangeeks.com', phone: '+20101111111' }] },
+                  { id: 2, code: 'CUST-2026-002', name: 'Sealy KSA', type: 'customer', email: 'finance@sealy.sa', phone: '+966 50 123 4567', balance: 120500, opening_balance: 20000, outstanding_balance: 100500, credit_limit: 200000, aging: { '0_30': 50000, '31_60': 50500, '61_90': 0, '91_plus': 0 }, sub_contacts: [] },
+                  { id: 3, code: 'SUPP-2026-001', name: 'Amazon Web Services', type: 'supplier', email: 'billing@aws.com', phone: '+1 800 123 4567', balance: -1200, opening_balance: 0, outstanding_balance: 0, credit_limit: 0, aging: { '0_30': 0, '31_60': 0, '61_90': 0, '91_plus': 0 }, sub_contacts: [] }
+               );
+             }
+             localContacts.push(newContact);
+             localStorage.setItem('mock_contacts', JSON.stringify(localContacts));
              navigate('/contacts');
           }}>
             حفظ وإنشاء
