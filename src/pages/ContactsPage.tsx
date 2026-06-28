@@ -8,6 +8,7 @@ export function ContactsPage() {
   const [contacts, setContacts] = useState<Contact[]>([]);
   const [activeModal, setActiveModal] = useState<null | 'view' | 'excel_import' | 'duplicate_check' | 'profitability'>(null);
   const [selectedContact, setSelectedContact] = useState<Contact | null>(null);
+  const [importedFile, setImportedFile] = useState<File | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -34,6 +35,68 @@ export function ContactsPage() {
   const handleAction = (type: 'view' | 'excel_import' | 'duplicate_check' | 'profitability', contact?: Contact) => {
     setActiveModal(type);
     if (contact) setSelectedContact(contact);
+    if (type === 'excel_import') setImportedFile(null);
+  };
+
+  const handleExport = () => {
+    const csvContent = [
+      ['الكود', 'الاسم', 'النوع', 'البريد الإلكتروني', 'الهاتف', 'الرصيد الحالي'],
+      ...contacts.map(c => [
+        c.code, 
+        c.name, 
+        c.type === 'customer' ? 'عميل' : 'مورد', 
+        c.email, 
+        c.phone, 
+        c.balance
+      ])
+    ].map(e => e.join(",")).join("\n");
+    
+    const blob = new Blob(["\ufeff" + csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", "contacts.csv");
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  const handleImport = () => {
+    if (!importedFile) {
+      alert('يرجى اختيار ملف CSV أولاً');
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const text = e.target?.result as string;
+      const lines = text.split('\n');
+      const newContacts: Contact[] = [];
+      for (let i = 1; i < lines.length; i++) {
+        if (!lines[i].trim()) continue;
+        const [code, name, type, email, phone, balance] = lines[i].split(',');
+        newContacts.push({
+          id: Date.now() + i,
+          code: code?.trim() || `IMP-${String(Date.now()).slice(-3)}`,
+          name: name?.trim() || 'بدون اسم',
+          type: type?.trim().includes('مورد') ? 'supplier' : 'customer',
+          email: email?.trim() || '',
+          phone: phone?.trim() || '',
+          balance: Number(balance) || 0,
+          outstanding_balance: Number(balance) || 0,
+          opening_balance: 0,
+          credit_limit: 0
+        });
+      }
+      
+      const localContacts = JSON.parse(localStorage.getItem('mock_contacts') || '[]');
+      const combined = [...localContacts, ...newContacts];
+      localStorage.setItem('mock_contacts', JSON.stringify(combined));
+      setContacts(combined);
+      alert(`تم استيراد ${newContacts.length} جهة اتصال بنجاح!`);
+      setActiveModal(null);
+      setImportedFile(null);
+    };
+    reader.readAsText(importedFile);
   };
 
   return (
@@ -55,7 +118,7 @@ export function ContactsPage() {
                 <button onClick={() => handleAction('excel_import')} className="flex items-center gap-2 w-full text-start px-4 py-2.5 text-sm hover:bg-slate-50">
                    <Upload className="w-4 h-4" /> استيراد إكسيل
                 </button>
-                <button onClick={() => alert('تم تصدير الداتا بنجاح')} className="flex items-center gap-2 w-full text-start px-4 py-2.5 text-sm hover:bg-slate-50">
+                <button onClick={handleExport} className="flex items-center gap-2 w-full text-start px-4 py-2.5 text-sm hover:bg-slate-50">
                    <Download className="w-4 h-4" /> تصدير إكسيل
                 </button>
                 <button onClick={() => handleAction('duplicate_check')} className="flex items-center gap-2 w-full text-start px-4 py-2.5 text-sm hover:bg-slate-50">
@@ -126,30 +189,13 @@ export function ContactsPage() {
             <div className="p-6">
                <div className="border border-dashed border-slate-300 rounded-xl p-8 flex flex-col items-center justify-center text-center bg-slate-50">
                   <Upload className="w-8 h-8 text-slate-400 mb-3" />
-                  <p className="text-sm text-slate-600 mb-2">اسحب وأفلت ملف إكسيل هنا (.xlsx, .csv)</p>
-                  <label className="bg-white border border-slate-200 text-slate-700 px-4 py-2 rounded-lg text-sm font-medium cursor-pointer hover:bg-slate-50 transition">
-                     تصفح الملفات
-                     <input type="file" className="hidden" accept=".xlsx,.csv" />
+                  <p className="text-sm text-slate-600 mb-2">اسحب وأفلت ملف إكسيل هنا (.csv)</p>
+                  <label className="bg-white border border-slate-200 text-slate-700 px-4 py-2 rounded-lg text-sm font-medium cursor-pointer hover:bg-slate-50 transition max-w-full overflow-hidden text-ellipsis whitespace-nowrap">
+                     {importedFile ? importedFile.name : 'تصفح الملفات'}
+                     <input type="file" className="hidden" accept=".csv" onChange={(e) => setImportedFile(e.target.files?.[0] || null)} />
                   </label>
                </div>
-               <button onClick={() => { 
-                  const localContacts = JSON.parse(localStorage.getItem('mock_contacts') || '[]');
-                  if (localContacts.length === 0) {
-                     localContacts.push(
-                        { id: 1, code: 'CUST-2026-001', name: 'بوهيميان جيكس (Bohemian Geeks)', type: 'customer', email: 'hello@bohemiangeeks.com', phone: '+20 100 123 4567', balance: 15400, opening_balance: 0, outstanding_balance: 15400, credit_limit: 50000, aging: { '0_30': 15400, '31_60': 0, '61_90': 0, '91_plus': 0 }, sub_contacts: [{ name: 'Heidi Medhat', email: 'heidi@bohemiangeeks.com', phone: '+20101111111' }] },
-                        { id: 2, code: 'CUST-2026-002', name: 'Sealy KSA', type: 'customer', email: 'finance@sealy.sa', phone: '+966 50 123 4567', balance: 120500, opening_balance: 20000, outstanding_balance: 100500, credit_limit: 200000, aging: { '0_30': 50000, '31_60': 50500, '61_90': 0, '91_plus': 0 }, sub_contacts: [] },
-                        { id: 3, code: 'SUPP-2026-001', name: 'Amazon Web Services', type: 'supplier', email: 'billing@aws.com', phone: '+1 800 123 4567', balance: -1200, opening_balance: 0, outstanding_balance: 0, credit_limit: 0, aging: { '0_30': 0, '31_60': 0, '61_90': 0, '91_plus': 0 }, sub_contacts: [] }
-                     );
-                  }
-                  const newImported = {
-                     id: Date.now(), code: `IMP-${String(Date.now()).slice(-3)}`, name: 'جهة مستوردة من إكسيل (Mock)', type: 'customer', email: 'imported@excel.com', phone: '+20 000', balance: 500, outstanding_balance: 500, sub_contacts: []
-                  };
-                  localContacts.push(newImported);
-                  localStorage.setItem('mock_contacts', JSON.stringify(localContacts));
-                  setContacts(localContacts);
-                  alert('تم الاستيراد بنجاح وتمت إضافة جهة اتصال تجريبية'); 
-                  setActiveModal(null); 
-               }} className="w-full bg-primary-600 text-white font-bold py-3 rounded-xl mt-4 hover:bg-primary-700 transition">بدء الاستيراد</button>
+               <button onClick={handleImport} className="w-full bg-primary-600 text-white font-bold py-3 rounded-xl mt-4 hover:bg-primary-700 transition">بدء الاستيراد</button>
             </div>
           </div>
          </div>
