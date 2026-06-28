@@ -4,6 +4,7 @@ import { clsx } from "clsx";
 import { format } from "date-fns";
 import { Monitor, Car, Briefcase, Armchair, Plus, RefreshCcw, DollarSign, Trash2, X, Settings } from "lucide-react";
 import { useNavigate } from "react-router";
+import { getCompanyKey } from '../utils/storage';
 
 const categoryIcons: Record<string, React.ReactNode> = {
   computers: <Monitor className="w-4 h-4" />,
@@ -40,7 +41,7 @@ export function AssetsPage() {
       })
       .then((data) => setAssets(data.data))
       .catch(() => {
-        const localAssets = JSON.parse(localStorage.getItem('mock_assets') || '[]');
+        const localAssets = JSON.parse(localStorage.getItem(getCompanyKey('mock_assets')) || '[]');
         if (localAssets.length > 0) {
           setAssets(localAssets);
         } else {
@@ -48,7 +49,7 @@ export function AssetsPage() {
             { id: "1", asset_code: "AST-2026-001", name: "سيرفرات ديل (Dell Servers)", category: "computers", purchase_price: 120000, net_book_value: 90000, accumulated_depreciation: 30000, status: "active", useful_life_years: 4, depreciation_method: "straight_line" },
             { id: "2", asset_code: "AST-2026-002", name: "سيارة نقل مرسيدس", category: "cars", purchase_price: 850000, net_book_value: 850000, accumulated_depreciation: 0, status: "active", useful_life_years: 5, depreciation_method: "straight_line" }
           ];
-          localStorage.setItem('mock_assets', JSON.stringify(defaults));
+          localStorage.setItem(getCompanyKey('mock_assets'), JSON.stringify(defaults));
           setAssets(defaults);
         }
       });
@@ -65,7 +66,7 @@ export function AssetsPage() {
   const handleRunDepreciation = async () => {
     setIsDepreciating(true);
     setTimeout(() => {
-      const localAssets = JSON.parse(localStorage.getItem('mock_assets') || '[]');
+      const localAssets = JSON.parse(localStorage.getItem(getCompanyKey('mock_assets')) || '[]');
       const updatedAssets = localAssets.map((asset: any) => {
         if (asset.status !== 'active' || asset.net_book_value <= (asset.salvage_value || 0)) return asset;
         
@@ -85,7 +86,7 @@ export function AssetsPage() {
           net_book_value: Math.max(newNetBook, asset.salvage_value || 0)
         };
       });
-      localStorage.setItem('mock_assets', JSON.stringify(updatedAssets));
+      localStorage.setItem(getCompanyKey('mock_assets'), JSON.stringify(updatedAssets));
       setAssets(updatedAssets);
       setIsDepreciating(false);
     }, 1000);
@@ -245,9 +246,9 @@ export function AssetsPage() {
               <div className="pt-2">
                  <button 
                    onClick={() => {
-                     const localAssets = JSON.parse(localStorage.getItem('mock_assets') || '[]');
+                     const localAssets = JSON.parse(localStorage.getItem(getCompanyKey('mock_assets')) || '[]');
                      const updatedAssets = localAssets.map((a: any) => a.id === focusedAsset.id ? { ...a, status: disposeType === 'sell' ? 'sold' : 'scrapped' } : a);
-                     localStorage.setItem('mock_assets', JSON.stringify(updatedAssets));
+                     localStorage.setItem(getCompanyKey('mock_assets'), JSON.stringify(updatedAssets));
                      setAssets(updatedAssets);
                      setActiveModal(null);
                    }}

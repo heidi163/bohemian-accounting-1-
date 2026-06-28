@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { clsx } from "clsx";
 import { Copy, Plus, Filter, Search, ChevronDown, ChevronUp, X } from "lucide-react";
+import { getCompanyKey } from '../utils/storage';
 
 interface Account {
   id: number;
@@ -54,7 +55,7 @@ export function ChartOfAccountsPage() {
         setExpandedCodes(toExpand);
       })
       .catch(() => {
-        const localAccounts = JSON.parse(localStorage.getItem('mock_accounts') || '[]');
+        const localAccounts = JSON.parse(localStorage.getItem(getCompanyKey('mock_accounts')) || '[]');
         let dataToUse = localAccounts;
         if (localAccounts.length === 0) {
           dataToUse = [
@@ -65,7 +66,7 @@ export function ChartOfAccountsPage() {
             { id: 5, code: '2', name: 'الخصوم', type: 'liability', level: 'main', parent_code: null, company_id: 'ALL', is_active: true },
             { id: 6, code: '3', name: 'حقوق الملكية', type: 'equity', level: 'main', parent_code: null, company_id: 'ALL', is_active: true },
           ];
-          localStorage.setItem('mock_accounts', JSON.stringify(dataToUse));
+          localStorage.setItem(getCompanyKey('mock_accounts'), JSON.stringify(dataToUse));
         }
         setAccounts(dataToUse);
         const toExpand = new Set<string>();
@@ -242,9 +243,9 @@ export function ChartOfAccountsPage() {
                   is_active: newAccount.is_active
                 };
 
-                const localAccounts = JSON.parse(localStorage.getItem('mock_accounts') || '[]');
+                const localAccounts = JSON.parse(localStorage.getItem(getCompanyKey('mock_accounts')) || '[]');
                 const updatedAccounts = [...localAccounts, payload];
-                localStorage.setItem('mock_accounts', JSON.stringify(updatedAccounts));
+                localStorage.setItem(getCompanyKey('mock_accounts'), JSON.stringify(updatedAccounts));
                 setAccounts(updatedAccounts);
                 
                 if (payload.parent_code) {

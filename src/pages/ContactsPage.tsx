@@ -3,6 +3,7 @@ import { type Contact } from "../types";
 import { useNavigate } from "react-router";
 import { Download, Upload, AlertTriangle, TrendingUp, X, Filter } from "lucide-react";
 import { clsx } from "clsx";
+import { getCompanyKey } from '../utils/storage';
 
 export function ContactsPage() {
   const [contacts, setContacts] = useState<Contact[]>([]);
@@ -19,7 +20,7 @@ export function ContactsPage() {
       })
       .then((data) => setContacts(data.data))
       .catch(() => {
-        const localContacts = JSON.parse(localStorage.getItem('mock_contacts') || '[]');
+        const localContacts = JSON.parse(localStorage.getItem(getCompanyKey('mock_contacts')) || '[]');
         if (localContacts.length > 0) {
           setContacts(localContacts);
         } else {
@@ -88,9 +89,9 @@ export function ContactsPage() {
         });
       }
       
-      const localContacts = JSON.parse(localStorage.getItem('mock_contacts') || '[]');
+      const localContacts = JSON.parse(localStorage.getItem(getCompanyKey('mock_contacts')) || '[]');
       const combined = [...localContacts, ...newContacts];
-      localStorage.setItem('mock_contacts', JSON.stringify(combined));
+      localStorage.setItem(getCompanyKey('mock_contacts'), JSON.stringify(combined));
       setContacts(combined);
       alert(`تم استيراد ${newContacts.length} جهة اتصال بنجاح!`);
       setActiveModal(null);

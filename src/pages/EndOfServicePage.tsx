@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Calculator, User, Calendar, DollarSign, FileDown, RefreshCw } from "lucide-react";
 import { type Employee } from "../types";
+import { getCompanyKey } from '../utils/storage';
 
 export function EndOfServicePage() {
   const [employees, setEmployees] = useState<Employee[]>([]);
@@ -33,7 +34,7 @@ export function EndOfServicePage() {
       })
       .then(data => setEmployees(data.data))
       .catch(() => {
-        const localEmployees = JSON.parse(localStorage.getItem('mock_employees') || '[]');
+        const localEmployees = JSON.parse(localStorage.getItem(getCompanyKey('mock_employees')) || '[]');
         if (localEmployees.length > 0) {
           setEmployees(localEmployees);
         }
@@ -107,7 +108,7 @@ export function EndOfServicePage() {
     setErrorMsg("");
     
     setTimeout(() => {
-      const localJournals = JSON.parse(localStorage.getItem('mock_journals') || '[]');
+      const localJournals = JSON.parse(localStorage.getItem(getCompanyKey('mock_journals')) || '[]');
       const emp = employees.find(e => e.id.toString() === form.employee_id);
       const empName = emp ? emp.name : '';
       
@@ -123,7 +124,7 @@ export function EndOfServicePage() {
       };
       
       localJournals.push(newJournal);
-      localStorage.setItem('mock_journals', JSON.stringify(localJournals));
+      localStorage.setItem(getCompanyKey('mock_journals'), JSON.stringify(localJournals));
       
       setJournalCreated(true);
       setIsProcessingJournal(false);

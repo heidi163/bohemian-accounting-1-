@@ -4,6 +4,7 @@ import { clsx } from "clsx";
 import { format } from "date-fns";
 import { useNavigate } from "react-router";
 import { FileText, Send, Download, DollarSign, Settings, X, ShieldCheck } from "lucide-react";
+import { getCompanyKey } from '../utils/storage';
 
 const statusStyles: Record<string, string> = {
   draft: 'bg-slate-100 text-slate-600',
@@ -41,7 +42,7 @@ export function PurchasesPage() {
       })
       .then((data) => setBills(data.data))
       .catch(() => {
-         const localBills = JSON.parse(localStorage.getItem('mock_bills') || '[]');
+         const localBills = JSON.parse(localStorage.getItem(getCompanyKey('mock_bills')) || '[]');
          if (localBills.length > 0) {
             setBills(localBills);
          } else {
@@ -78,7 +79,7 @@ export function PurchasesPage() {
       );
     }
     setBills(nextBills);
-    localStorage.setItem('mock_bills', JSON.stringify(nextBills));
+    localStorage.setItem(getCompanyKey('mock_bills'), JSON.stringify(nextBills));
     alert('تم إثبات السداد بنجاح وتحديث الأرصدة');
     setActiveModal(null);
     setSelectedBills(new Set());
@@ -90,7 +91,7 @@ export function PurchasesPage() {
         b.id === focusedBill.id ? { ...b, status } : b
       );
       setBills(nextBills);
-      localStorage.setItem('mock_bills', JSON.stringify(nextBills));
+      localStorage.setItem(getCompanyKey('mock_bills'), JSON.stringify(nextBills));
       alert(status === 'approved' ? 'تم اعتماد الفاتورة بنجاح' : 'تم رفض الفاتورة');
       setActiveModal(null);
     }

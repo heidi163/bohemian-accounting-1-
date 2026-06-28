@@ -3,6 +3,7 @@ import { type BankAccount } from "../types";
 import { useNavigate } from "react-router";
 import { Building2, Landmark, Wallet, ArrowRightLeft, ArrowDownToLine, ArrowUpFromLine, RefreshCcw, FileUp, Filter } from "lucide-react";
 import { clsx } from "clsx";
+import { getCompanyKey } from '../utils/storage';
 
 export function BanksPage() {
   const [banks, setBanks] = useState<BankAccount[]>([]);
@@ -30,7 +31,7 @@ export function BanksPage() {
       })
       .then((data) => setBanks(data.data))
       .catch(() => {
-        const localBanks = JSON.parse(localStorage.getItem('mock_banks') || '[]');
+        const localBanks = JSON.parse(localStorage.getItem(getCompanyKey('mock_banks')) || '[]');
         if (localBanks.length > 0) {
           setBanks(localBanks);
         } else {
@@ -40,7 +41,7 @@ export function BanksPage() {
             { id: "3", code: "1113", name: "CIB - USD", type: "bank", currency: "USD", balance: 45000, company_id: "O2N" },
             { id: "4", code: "1121", name: "صندوق المركز الرئيسي", type: "cash", currency: "EGP", balance: 25000, company_id: "ALL" }
           ];
-          localStorage.setItem('mock_banks', JSON.stringify(defaults));
+          localStorage.setItem(getCompanyKey('mock_banks'), JSON.stringify(defaults));
           setBanks(defaults);
         }
       });
@@ -80,7 +81,7 @@ export function BanksPage() {
     setErrorMsg('');
 
     setTimeout(() => {
-      const localBanks = JSON.parse(localStorage.getItem('mock_banks') || '[]');
+      const localBanks = JSON.parse(localStorage.getItem(getCompanyKey('mock_banks')) || '[]');
       let success = false;
       
       if (type === 'transfer') {
@@ -106,7 +107,7 @@ export function BanksPage() {
       }
 
       if (success) {
-        localStorage.setItem('mock_banks', JSON.stringify(localBanks));
+        localStorage.setItem(getCompanyKey('mock_banks'), JSON.stringify(localBanks));
         setBanks(localBanks);
         setActiveModal(null);
         setTransferForm({ fromBankId: '', toBankId: '', amount: 0, exchangeRate: 1.0, memo: '' });

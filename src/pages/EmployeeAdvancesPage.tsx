@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Banknote, Calculator, UserCheck, Clock, AlertCircle, Plus, Trash2, ChevronDown } from "lucide-react";
 import { clsx } from "clsx";
+import { getCompanyKey } from '../utils/storage';
 
 const mockAdvances = [
   { id: 1, employee: "أحمد محمود", amount: 3000, date: "2026-05-15", reason: "ظروف اجتماعية", remaining: 2000, status: "active" },
@@ -12,9 +13,9 @@ export function EmployeeAdvancesPage() {
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState({ employee: "", amount: "", reason: "", recovery_months: "3", bank_account: "" });
   const [advances, setAdvances] = useState(() => {
-    const local = localStorage.getItem('mock_advances');
+    const local = localStorage.getItem(getCompanyKey('mock_advances'));
     if (local) return JSON.parse(local);
-    localStorage.setItem('mock_advances', JSON.stringify(mockAdvances));
+    localStorage.setItem(getCompanyKey('mock_advances'), JSON.stringify(mockAdvances));
     return mockAdvances;
   });
 
@@ -33,7 +34,7 @@ export function EmployeeAdvancesPage() {
     
     const updatedAdvances = [...advances, newAdvance];
     setAdvances(updatedAdvances);
-    localStorage.setItem('mock_advances', JSON.stringify(updatedAdvances));
+    localStorage.setItem(getCompanyKey('mock_advances'), JSON.stringify(updatedAdvances));
     
     alert(`تم تسجيل سلفة بمبلغ ${form.amount} EGP للموظف ${form.employee}.\nسيتم استقطاعها على ${form.recovery_months} أشهر.`);
     setShowForm(false);

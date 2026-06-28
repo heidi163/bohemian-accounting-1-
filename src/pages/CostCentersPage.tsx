@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { type CostCenter } from "../types";
 import { clsx } from "clsx";
 import { Target, Users, FolderTree, ArrowDownRight, ArrowUpRight, ChevronRight, ChevronDown, Activity } from "lucide-react";
+import { getCompanyKey } from '../utils/storage';
 
 export function CostCentersPage() {
   const [costCentersTree, setCostCentersTree] = useState<CostCenter[]>([]);
@@ -19,7 +20,7 @@ export function CostCentersPage() {
         setCostCentersTree(data.data);
       })
       .catch(() => {
-        const localCenters = JSON.parse(localStorage.getItem('mock_cost_centers') || '[]');
+        const localCenters = JSON.parse(localStorage.getItem(getCompanyKey('mock_cost_centers')) || '[]');
         if (localCenters.length > 0) {
           setCostCentersTree(localCenters);
         } else {
@@ -37,7 +38,7 @@ export function CostCentersPage() {
               ]
             }
           ];
-          localStorage.setItem('mock_cost_centers', JSON.stringify(defaults));
+          localStorage.setItem(getCompanyKey('mock_cost_centers'), JSON.stringify(defaults));
           setCostCentersTree(defaults);
         }
       });
@@ -171,7 +172,7 @@ export function CostCentersPage() {
                </div>
                <button onClick={() => {
                  if (!newCenter.id || !newCenter.name) return;
-                 const localCenters = JSON.parse(localStorage.getItem('mock_cost_centers') || '[]');
+                 const localCenters = JSON.parse(localStorage.getItem(getCompanyKey('mock_cost_centers')) || '[]');
                  const addNode = (nodes: any[]) => {
                    for (let node of nodes) {
                      if (node.id === newCenter.parent_id) {
@@ -184,7 +185,7 @@ export function CostCentersPage() {
                    return false;
                  };
                  addNode(localCenters);
-                 localStorage.setItem('mock_cost_centers', JSON.stringify(localCenters));
+                 localStorage.setItem(getCompanyKey('mock_cost_centers'), JSON.stringify(localCenters));
                  setCostCentersTree(localCenters);
                  setIsModalOpen(false);
                  setNewCenter({ id: '', name: '', manager_name: '', parent_id: 'HQ' });

@@ -4,6 +4,7 @@ import { clsx } from "clsx";
 import { format } from "date-fns";
 import { useNavigate } from "react-router";
 import { FileText, Send, Download, DollarSign, Settings, X, Tag } from "lucide-react";
+import { getCompanyKey } from '../utils/storage';
 
 const statusStyles: Record<string, string> = {
   draft: 'bg-slate-100 text-slate-600',
@@ -55,7 +56,7 @@ export function InvoicesPage() {
           : inv
       );
       setInvoices(nextInvoices);
-      localStorage.setItem('mock_invoices', JSON.stringify(nextInvoices));
+      localStorage.setItem(getCompanyKey('mock_invoices'), JSON.stringify(nextInvoices));
       showToast('تم وضع الفاتورة في طابور الإرسال وتحديث حالتها إلى مُصدرة');
       setActiveModal(null);
     }
@@ -80,7 +81,7 @@ export function InvoicesPage() {
     }
     
     setInvoices(nextInvoices);
-    localStorage.setItem('mock_invoices', JSON.stringify(nextInvoices));
+    localStorage.setItem(getCompanyKey('mock_invoices'), JSON.stringify(nextInvoices));
     setActiveModal(null);
     setSelectedInvoices(new Set());
   };
@@ -93,7 +94,7 @@ export function InvoicesPage() {
       })
       .then((data) => setInvoices(data.data))
       .catch(() => {
-        const localInvoices = JSON.parse(localStorage.getItem('mock_invoices') || '[]');
+        const localInvoices = JSON.parse(localStorage.getItem(getCompanyKey('mock_invoices')) || '[]');
         if (localInvoices.length > 0) {
           setInvoices(localInvoices);
         } else {

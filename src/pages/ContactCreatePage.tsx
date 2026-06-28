@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router";
 import { ArrowRight, Plus, Trash2 } from "lucide-react";
 import { type SubContact } from "../types";
+import { getCompanyKey } from '../utils/storage';
 
 export function ContactCreatePage() {
   const navigate = useNavigate();
@@ -46,7 +47,7 @@ export function ContactCreatePage() {
                aging: { '0_30': 0, '31_60': 0, '61_90': 0, '91_plus': 0 },
                sub_contacts: subContacts
              };
-             const localContacts = JSON.parse(localStorage.getItem('mock_contacts') || '[]');
+             const localContacts = JSON.parse(localStorage.getItem(getCompanyKey('mock_contacts')) || '[]');
              if (localContacts.length === 0) {
                localContacts.push(
                   { id: 1, code: 'CUST-2026-001', name: 'بوهيميان جيكس (Bohemian Geeks)', type: 'customer', email: 'hello@bohemiangeeks.com', phone: '+20 100 123 4567', balance: 15400, opening_balance: 0, outstanding_balance: 15400, credit_limit: 50000, aging: { '0_30': 15400, '31_60': 0, '61_90': 0, '91_plus': 0 }, sub_contacts: [{ name: 'Heidi Medhat', email: 'heidi@bohemiangeeks.com', phone: '+20101111111' }] },
@@ -55,7 +56,7 @@ export function ContactCreatePage() {
                );
              }
              localContacts.push(newContact);
-             localStorage.setItem('mock_contacts', JSON.stringify(localContacts));
+             localStorage.setItem(getCompanyKey('mock_contacts'), JSON.stringify(localContacts));
              navigate('/contacts');
           }}>
             حفظ وإنشاء

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import { ArrowRight, Plus, Trash2, Save, Send } from "lucide-react";
+import { getCompanyKey } from '../utils/storage';
 
 export function InvoiceCreatePage() {
   const navigate = useNavigate();
@@ -67,7 +68,7 @@ export function InvoiceCreatePage() {
     } catch (err) {
       console.error(err);
       // Fallback for Vercel static hosting
-      const localInvoices = JSON.parse(localStorage.getItem('mock_invoices') || '[]');
+      const localInvoices = JSON.parse(localStorage.getItem(getCompanyKey('mock_invoices')) || '[]');
       if (localInvoices.length === 0) {
          localInvoices.push(
             { id: 1, type: 'invoice', invoice_number: 'BGK-INV-2026-00001', customer_name: 'Bohemian Geeks', total_amount: 15400, paid_amount: 15400, tax_amount: 1400, discount_amount: 0, status: 'paid', invoice_date: '2026-05-10', due_date: '2026-05-24', currency: 'EGP' },
@@ -79,7 +80,7 @@ export function InvoiceCreatePage() {
       const newId = Math.max(0, ...localInvoices.map((i: any) => i.id || 0)) + 1;
       const finalPayload = { ...payload, id: newId, invoice_number: `BGK-INV-2026-${String(newId).padStart(5, '0')}` };
       localInvoices.push(finalPayload);
-      localStorage.setItem('mock_invoices', JSON.stringify(localInvoices));
+      localStorage.setItem(getCompanyKey('mock_invoices'), JSON.stringify(localInvoices));
       navigate('/invoices');
     }
   };

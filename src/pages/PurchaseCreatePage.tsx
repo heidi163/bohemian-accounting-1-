@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import { ArrowRight, Plus, Trash2, Save, Send } from "lucide-react";
+import { getCompanyKey } from '../utils/storage';
 
 export function PurchaseCreatePage() {
   const navigate = useNavigate();
@@ -37,7 +38,7 @@ export function PurchaseCreatePage() {
       paid_amount: 0
     };
 
-    const localBills = JSON.parse(localStorage.getItem('mock_bills') || '[]');
+    const localBills = JSON.parse(localStorage.getItem(getCompanyKey('mock_bills')) || '[]');
     if (localBills.length === 0) {
        localBills.push(
           { id: 1, bill_number: 'BILL-2026-00001', reference_number: 'AWS-INV-001', supplier_name: 'Amazon Web Services', total_amount: 1200, paid_amount: 1200, tax_amount: 0, status: 'paid', bill_date: '2026-05-01', due_date: '2026-05-31', currency: 'USD', project_id: 'PRJ-001' },
@@ -49,7 +50,7 @@ export function PurchaseCreatePage() {
     const newId = Math.max(0, ...localBills.map((i: any) => i.id || 0)) + 1;
     const finalPayload = { ...payload, id: newId, bill_number: `BILL-2026-${String(newId).padStart(5, '0')}`, reference_number: 'REF-NEW' };
     localBills.push(finalPayload);
-    localStorage.setItem('mock_bills', JSON.stringify(localBills));
+    localStorage.setItem(getCompanyKey('mock_bills'), JSON.stringify(localBills));
     navigate('/purchases');
   };
 

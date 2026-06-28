@@ -3,6 +3,7 @@ import { type JournalEntry } from "../types";
 import { clsx } from "clsx";
 import { format } from "date-fns";
 import { useNavigate } from "react-router";
+import { getCompanyKey } from '../utils/storage';
 
 const statusStyles: Record<string, string> = {
   draft: 'bg-slate-100 text-slate-600',
@@ -30,7 +31,7 @@ export function JournalPage() {
       })
       .then((data) => setEntries(data.data))
       .catch(() => {
-        const localJournals = JSON.parse(localStorage.getItem('mock_journals') || '[]');
+        const localJournals = JSON.parse(localStorage.getItem(getCompanyKey('mock_journals')) || '[]');
         if (localJournals.length > 0) {
           setEntries(localJournals);
         } else {
@@ -39,7 +40,7 @@ export function JournalPage() {
             { id: 2, entry_number: 'JE-2026-00002', entry_date: '2026-05-15', description: 'إثبات رواتب شهر مايو', total_debit: 45000, total_credit: 45000, status: 'posted', company_id: 'BGK' },
             { id: 3, entry_number: 'JE-2026-00003', entry_date: '2026-06-01', description: 'تسوية عهدة موظف', total_debit: 1200, total_credit: 1200, status: 'pending_approval', company_id: 'O2N' }
           ];
-          localStorage.setItem('mock_journals', JSON.stringify(defaults));
+          localStorage.setItem(getCompanyKey('mock_journals'), JSON.stringify(defaults));
           setEntries(defaults);
         }
       });
@@ -88,7 +89,7 @@ export function JournalPage() {
                         onClick={() => {
                           if (entry.status === 'posted') {
                             if(confirm("هل تريد بالتأكيد عمل قيد عكسي (Reverse Entry) لهذا القيد؟")) {
-                               const localJournals = JSON.parse(localStorage.getItem('mock_journals') || '[]');
+                               const localJournals = JSON.parse(localStorage.getItem(getCompanyKey('mock_journals')) || '[]');
                                const updatedJournals = localJournals.map((j: any) => j.id === entry.id ? { ...j, status: 'reversed' } : j);
                                const reverseEntry = {
                                  ...entry,
@@ -98,7 +99,7 @@ export function JournalPage() {
                                  status: 'posted'
                                };
                                updatedJournals.unshift(reverseEntry);
-                               localStorage.setItem('mock_journals', JSON.stringify(updatedJournals));
+                               localStorage.setItem(getCompanyKey('mock_journals'), JSON.stringify(updatedJournals));
                                setEntries(updatedJournals);
                                alert("تم إنشاء القيد العكسي بنجاح");
                             }

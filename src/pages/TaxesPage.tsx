@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { type TaxRecord, type TaxSummary } from "../types";
 import { clsx } from "clsx";
 import { Calculator, FileText, CheckCircle, Clock, AlertCircle, Plus, RefreshCcw, Landmark, Receipt, X } from "lucide-react";
+import { getCompanyKey } from '../utils/storage';
 
 const taxTypeTranslations: Record<string, string> = {
   vat: 'ضريبة القيمة المضافة',
@@ -28,21 +29,21 @@ export function TaxesPage() {
         setRecords(data.records);
       })
       .catch(() => {
-        const localSummary = JSON.parse(localStorage.getItem('mock_taxes_summary') || 'null') || {
+        const localSummary = JSON.parse(localStorage.getItem(getCompanyKey('mock_taxes_summary')) || 'null') || {
           vat_liability: 150000, vat_paid: 100000,
           income_liability: 500000, income_paid: 200000,
           withholding_liability: 20000, withholding_paid: 5000,
           payroll_liability: 45000, payroll_paid: 30000
         };
-        const localRecords = JSON.parse(localStorage.getItem('mock_taxes_records') || '[]') || [
+        const localRecords = JSON.parse(localStorage.getItem(getCompanyKey('mock_taxes_records')) || '[]') || [
           { id: 1, type: 'vat', period: '2026-Q1', liability_amount: 50000, paid_amount: 50000, due_date: '2026-04-30', status: 'paid' },
           { id: 2, type: 'vat', period: '2026-Q2', liability_amount: 60000, paid_amount: 20000, due_date: '2026-07-30', status: 'partial' },
           { id: 3, type: 'income', period: '2025', liability_amount: 500000, paid_amount: 200000, due_date: '2026-04-30', status: 'partial' }
         ];
         
-        if (!localStorage.getItem('mock_taxes_summary')) {
-          localStorage.setItem('mock_taxes_summary', JSON.stringify(localSummary));
-          localStorage.setItem('mock_taxes_records', JSON.stringify(localRecords));
+        if (!localStorage.getItem(getCompanyKey('mock_taxes_summary'))) {
+          localStorage.setItem(getCompanyKey('mock_taxes_summary'), JSON.stringify(localSummary));
+          localStorage.setItem(getCompanyKey('mock_taxes_records'), JSON.stringify(localRecords));
         }
         
         setSummary(localSummary);
@@ -63,8 +64,8 @@ export function TaxesPage() {
   const handleRegisterPayment = async () => {
     if (!focusedRecord) return;
     setTimeout(() => {
-      const localRecords = JSON.parse(localStorage.getItem('mock_taxes_records') || '[]');
-      const localSummary = JSON.parse(localStorage.getItem('mock_taxes_summary') || 'null');
+      const localRecords = JSON.parse(localStorage.getItem(getCompanyKey('mock_taxes_records')) || '[]');
+      const localSummary = JSON.parse(localStorage.getItem(getCompanyKey('mock_taxes_summary')) || 'null');
       
       const updatedRecords = localRecords.map((r: any) => {
         if (r.id === focusedRecord.id) {
@@ -81,8 +82,8 @@ export function TaxesPage() {
         if (focusedRecord.type === 'payroll') localSummary.payroll_paid += paymentAmount;
       }
       
-      localStorage.setItem('mock_taxes_records', JSON.stringify(updatedRecords));
-      localStorage.setItem('mock_taxes_summary', JSON.stringify(localSummary));
+      localStorage.setItem(getCompanyKey('mock_taxes_records'), JSON.stringify(updatedRecords));
+      localStorage.setItem(getCompanyKey('mock_taxes_summary'), JSON.stringify(localSummary));
       
       alert('تم تسجيل الدفعة بنجاح');
       setActiveModal(null);
@@ -92,12 +93,12 @@ export function TaxesPage() {
 
   const handlePostTax = async (record: TaxRecord) => {
     setTimeout(() => {
-      const localRecords = JSON.parse(localStorage.getItem('mock_taxes_records') || '[]');
+      const localRecords = JSON.parse(localStorage.getItem(getCompanyKey('mock_taxes_records')) || '[]');
       const updatedRecords = localRecords.map((r: any) => {
         if (r.id === record.id) return { ...r, status: 'posted' };
         return r;
       });
-      localStorage.setItem('mock_taxes_records', JSON.stringify(updatedRecords));
+      localStorage.setItem(getCompanyKey('mock_taxes_records'), JSON.stringify(updatedRecords));
       alert('تم ترحيل الضريبة وإغلاق الفترة بنجاح');
       fetchTaxes();
     }, 500);

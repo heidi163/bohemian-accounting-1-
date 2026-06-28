@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { ArrowUpRight, ArrowDownRight, Users, Receipt, DollarSign, Percent, Clock, Wallet } from "lucide-react";
 import { type DashboardData } from "../types";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
+import { getActiveCompany } from "../utils/storage";
 
 const data = [
   { name: 'يناير', إيرادات: 400000, مصروفات: 240000 },
@@ -20,20 +21,30 @@ export function DashboardPage() {
       .then((res) => res.json())
       .then((data) => setStats(data.data))
       .catch(() => {
-        // Fallback for UI mock if API fails
-        setStats({ totalCash: 1250000, receivables: 450000, payables: 200000, netProfit: 150000 });
+        const company = getActiveCompany();
+        if (company === "BGK") {
+          setStats({ totalCash: 1250000, receivables: 450000, payables: 200000, netProfit: 150000 });
+        } else {
+          setStats({ totalCash: 350000, receivables: 120000, payables: 60000, netProfit: 45000 });
+        }
       });
   }, []);
 
   if (!stats) return <div className="animate-pulse p-8 shadow-sm rounded-2xl bg-white border border-slate-200">جاري التحميل...</div>;
 
-  // New mock data for required KPIs
-  const kpis = {
+  const company = getActiveCompany();
+  const kpis = company === "BGK" ? {
     revenue: 1606000,
     expenses: 944600,
-    margin: 41.1, // percentage
-    dso: 45, // Days Sales Outstanding
-    dpo: 30, // Days Payable Outstanding
+    margin: 41.1,
+    dso: 45,
+    dpo: 30,
+  } : {
+    revenue: 600000,
+    expenses: 250000,
+    margin: 58.3,
+    dso: 20,
+    dpo: 45,
   };
 
   const topClients = [

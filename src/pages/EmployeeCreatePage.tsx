@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import { ArrowRight, Save, UserPlus } from "lucide-react";
+import { getCompanyKey } from '../utils/storage';
 
 export function EmployeeCreatePage() {
   const navigate = useNavigate();
@@ -19,7 +20,7 @@ export function EmployeeCreatePage() {
       return;
     }
 
-    const localEmployees = JSON.parse(localStorage.getItem('mock_employees') || '[]');
+    const localEmployees = JSON.parse(localStorage.getItem(getCompanyKey('mock_employees')) || '[]');
     if (localEmployees.length === 0) {
       localEmployees.push(
         { id: 1, name: 'أحمد محمد علي', employee_code: 'EMP-001', department: 'الهندسة (Engineering)', position: 'مهندس برمجيات', join_date: '2023-01-15', basic_salary: 15000, allowances: 2000, status: 'active' },
@@ -33,7 +34,7 @@ export function EmployeeCreatePage() {
       status: 'active'
     };
     localEmployees.push(newEmployee);
-    localStorage.setItem('mock_employees', JSON.stringify(localEmployees));
+    localStorage.setItem(getCompanyKey('mock_employees'), JSON.stringify(localEmployees));
     
     alert('تمت إضافة الموظف بنجاح!');
     navigate('/employees');

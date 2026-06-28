@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import { ArrowRight, Plus, Trash2 } from "lucide-react";
+import { getCompanyKey } from '../utils/storage';
 
 export function JournalCreatePage() {
   const navigate = useNavigate();
@@ -52,7 +53,7 @@ export function JournalCreatePage() {
       base_total_credit: totalCredit * header.exchange_rate
     };
 
-    const localJournals = JSON.parse(localStorage.getItem('mock_journals') || '[]');
+    const localJournals = JSON.parse(localStorage.getItem(getCompanyKey('mock_journals')) || '[]');
     if (localJournals.length === 0) {
       localJournals.push(
         { id: 1, entry_number: 'JE-2026-00001', entry_date: '2026-05-01', description: 'رصيد افتتاحي', total_debit: 500000, total_credit: 500000, status: 'posted', company_id: 'BGK' },
@@ -62,7 +63,7 @@ export function JournalCreatePage() {
     }
     const newEntry = { ...payload, id: Date.now(), entry_number: `JE-2026-${String(localJournals.length + 1).padStart(5, '0')}` };
     localJournals.unshift(newEntry);
-    localStorage.setItem('mock_journals', JSON.stringify(localJournals));
+    localStorage.setItem(getCompanyKey('mock_journals'), JSON.stringify(localJournals));
     
     alert('تم حفظ قيد اليومية بنجاح!');
     navigate('/journal');

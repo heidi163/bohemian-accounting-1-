@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { FileSignature, Plus, Search, Filter, ArrowUpRight, ArrowDownLeft, Banknote, CalendarDays, Building2, User, Clock, CheckCircle2, AlertCircle, RefreshCw } from "lucide-react";
 import { clsx } from "clsx";
+import { getCompanyKey } from '../utils/storage';
 
 interface Check {
   id: string;
@@ -35,12 +36,12 @@ export function ChecksPage() {
   });
 
   useEffect(() => {
-    const local = localStorage.getItem("mock_checks");
+    const local = localStorage.getItem(getCompanyKey("mock_checks"));
     if (local) {
       setChecks(JSON.parse(local));
     } else {
       setChecks(mockChecks);
-      localStorage.setItem("mock_checks", JSON.stringify(mockChecks));
+      localStorage.setItem(getCompanyKey("mock_checks"), JSON.stringify(mockChecks));
     }
   }, []);
 
@@ -66,7 +67,7 @@ export function ChecksPage() {
 
     const updated = [check, ...checks];
     setChecks(updated);
-    localStorage.setItem("mock_checks", JSON.stringify(updated));
+    localStorage.setItem(getCompanyKey("mock_checks"), JSON.stringify(updated));
     setIsModalOpen(false);
     setNewCheck({ type: activeTab, status: "pending" });
     setStatusFilter("all"); // Reset filter so the new check appears in the table
@@ -76,7 +77,7 @@ export function ChecksPage() {
   const handleUpdateStatus = (id: string, newStatus: "pending" | "cleared" | "bounced") => {
     const updated = checks.map(c => c.id === id ? { ...c, status: newStatus } : c);
     setChecks(updated);
-    localStorage.setItem("mock_checks", JSON.stringify(updated));
+    localStorage.setItem(getCompanyKey("mock_checks"), JSON.stringify(updated));
   };
 
   const filteredChecks = checks.filter(c => {

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import { ArrowRight, Save } from "lucide-react";
+import { getCompanyKey } from '../utils/storage';
 
 export function AssetCreatePage() {
   const navigate = useNavigate();
@@ -20,7 +21,7 @@ export function AssetCreatePage() {
   const handleSave = async () => {
     if (!form.name || !form.purchase_price) return;
     setIsProcessing(true);
-    const localAssets = JSON.parse(localStorage.getItem('mock_assets') || '[]');
+    const localAssets = JSON.parse(localStorage.getItem(getCompanyKey('mock_assets')) || '[]');
     if (localAssets.length === 0) {
       localAssets.push(
         { id: "1", asset_code: "AST-2026-001", name: "سيرفرات ديل (Dell Servers)", category: "computers", purchase_price: 120000, net_book_value: 90000, accumulated_depreciation: 30000, status: "active", useful_life_years: 4, depreciation_method: "straight_line" },
@@ -38,7 +39,7 @@ export function AssetCreatePage() {
       status: 'active'
     };
     localAssets.push(newAsset);
-    localStorage.setItem('mock_assets', JSON.stringify(localAssets));
+    localStorage.setItem(getCompanyKey('mock_assets'), JSON.stringify(localAssets));
     navigate("/assets");
     setIsProcessing(false);
   };

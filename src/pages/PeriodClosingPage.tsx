@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { type AccountingPeriod } from "../types";
 import { clsx } from "clsx";
 import { Calendar, Lock, Unlock, CheckCircle, AlertTriangle, CheckSquare, Square, Save, RotateCcw } from "lucide-react";
+import { getCompanyKey } from '../utils/storage';
 
 export function PeriodClosingPage() {
   const [periods, setPeriods] = useState<AccountingPeriod[]>([]);
@@ -21,7 +22,7 @@ export function PeriodClosingPage() {
       })
       .then((data) => setPeriods(data.data))
       .catch(() => {
-        const localPeriods = JSON.parse(localStorage.getItem('mock_periods') || '[]');
+        const localPeriods = JSON.parse(localStorage.getItem(getCompanyKey('mock_periods')) || '[]');
         if (localPeriods.length > 0) {
           setPeriods(localPeriods);
         } else {
@@ -45,7 +46,7 @@ export function PeriodClosingPage() {
               { id: "t4", name: "احتساب الرواتب والضرائب", isCompleted: false, requiredForHardLock: true }
             ]}
           ];
-          localStorage.setItem('mock_periods', JSON.stringify(defaults));
+          localStorage.setItem(getCompanyKey('mock_periods'), JSON.stringify(defaults));
           setPeriods(defaults);
         }
       });
@@ -63,9 +64,9 @@ export function PeriodClosingPage() {
       task.isCompleted = !task.isCompleted;
       setActivePeriod(updated);
       
-      const localPeriods = JSON.parse(localStorage.getItem('mock_periods') || '[]');
+      const localPeriods = JSON.parse(localStorage.getItem(getCompanyKey('mock_periods')) || '[]');
       const updatedPeriods = localPeriods.map((p: any) => p.id === activePeriod.id ? updated : p);
-      localStorage.setItem('mock_periods', JSON.stringify(updatedPeriods));
+      localStorage.setItem(getCompanyKey('mock_periods'), JSON.stringify(updatedPeriods));
       setPeriods(updatedPeriods);
     }
   };
@@ -73,9 +74,9 @@ export function PeriodClosingPage() {
   const updatePeriodStatus = async (status: 'open' | 'soft_lock' | 'hard_lock') => {
     if (!activePeriod) return;
     const updated = { ...activePeriod, status };
-    const localPeriods = JSON.parse(localStorage.getItem('mock_periods') || '[]');
+    const localPeriods = JSON.parse(localStorage.getItem(getCompanyKey('mock_periods')) || '[]');
     const updatedPeriods = localPeriods.map((p: any) => p.id === activePeriod.id ? updated : p);
-    localStorage.setItem('mock_periods', JSON.stringify(updatedPeriods));
+    localStorage.setItem(getCompanyKey('mock_periods'), JSON.stringify(updatedPeriods));
     
     setPeriods(updatedPeriods);
     setActivePeriod(updated);

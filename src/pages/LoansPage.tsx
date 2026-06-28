@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { type Loan, type LoanInstallment } from "../types";
 import { clsx } from "clsx";
 import { Landmark, Calendar, Banknote, ShieldAlert, CheckCircle, Clock, ChevronDown, ChevronUp, X } from "lucide-react";
+import { getCompanyKey } from '../utils/storage';
 
 export function LoansPage() {
   const [loans, setLoans] = useState<Loan[]>([]);
@@ -16,7 +17,7 @@ export function LoansPage() {
       })
       .then((data) => setLoans(data.data))
       .catch(() => {
-        const localLoans = JSON.parse(localStorage.getItem('mock_loans') || '[]');
+        const localLoans = JSON.parse(localStorage.getItem(getCompanyKey('mock_loans')) || '[]');
         if (localLoans.length > 0) {
           setLoans(localLoans);
         } else {
@@ -36,7 +37,7 @@ export function LoansPage() {
               ]
             }
           ];
-          localStorage.setItem('mock_loans', JSON.stringify(defaults));
+          localStorage.setItem(getCompanyKey('mock_loans'), JSON.stringify(defaults));
           setLoans(defaults);
         }
       });
@@ -49,7 +50,7 @@ export function LoansPage() {
   const handlePayInstallment = async () => {
     if (!activeModal) return;
     setTimeout(() => {
-      const localLoans = JSON.parse(localStorage.getItem('mock_loans') || '[]');
+      const localLoans = JSON.parse(localStorage.getItem(getCompanyKey('mock_loans')) || '[]');
       const updatedLoans = localLoans.map((loan: any) => {
         if (loan.id === activeModal.loanId) {
           const updatedInstallments = loan.installments.map((inst: any) => {
@@ -66,7 +67,7 @@ export function LoansPage() {
         }
         return loan;
       });
-      localStorage.setItem('mock_loans', JSON.stringify(updatedLoans));
+      localStorage.setItem(getCompanyKey('mock_loans'), JSON.stringify(updatedLoans));
       setLoans(updatedLoans);
       setActiveModal(null);
       alert('تم سداد القسط بنجاح');

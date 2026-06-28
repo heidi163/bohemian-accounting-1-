@@ -3,6 +3,7 @@ import { type PayrollRun } from "../types";
 import { clsx } from "clsx";
 import { format } from "date-fns";
 import { PlayCircle, Download, Send, CheckCircle2, FileText, Banknote, X, RefreshCw } from "lucide-react";
+import { getCompanyKey } from '../utils/storage';
 
 export function PayrollPage() {
   const [payrolls, setPayrolls] = useState<PayrollRun[]>([]);
@@ -27,14 +28,14 @@ export function PayrollPage() {
       })
       .then((data) => setPayrolls(data.data))
       .catch(() => {
-        const localPayrolls = JSON.parse(localStorage.getItem('mock_payrolls') || '[]');
+        const localPayrolls = JSON.parse(localStorage.getItem(getCompanyKey('mock_payrolls')) || '[]');
         if (localPayrolls.length > 0) {
           setPayrolls(localPayrolls);
         } else {
           const defaults = [
             { id: 1, period: "2026-05", date: "2026-05-28", total_basic: 70000, total_allowances: 15000, total_bonuses: 4000, total_deductions: 2000, total_taxes: 8000, total_social_insurance: 7700, net_salary: 71300, status: "paid" }
           ];
-          localStorage.setItem('mock_payrolls', JSON.stringify(defaults));
+          localStorage.setItem(getCompanyKey('mock_payrolls'), JSON.stringify(defaults));
           setPayrolls(defaults);
         }
       });
@@ -42,7 +43,7 @@ export function PayrollPage() {
 
   useEffect(() => {
     fetchPayrolls();
-    const localBanks = JSON.parse(localStorage.getItem('mock_banks') || '[]');
+    const localBanks = JSON.parse(localStorage.getItem(getCompanyKey('mock_banks')) || '[]');
     if (localBanks.length > 0) {
       setBanks(localBanks);
       setSelectedBankId(localBanks[0].id.toString());
@@ -57,7 +58,7 @@ export function PayrollPage() {
   const handleCreateRun = async () => {
     setIsProcessing(true);
     setTimeout(() => {
-      const localPayrolls = JSON.parse(localStorage.getItem('mock_payrolls') || '[]');
+      const localPayrolls = JSON.parse(localStorage.getItem(getCompanyKey('mock_payrolls')) || '[]');
       const newRun = {
         id: Date.now(),
         period: selectedMonth,
@@ -72,7 +73,7 @@ export function PayrollPage() {
         status: 'under_review'
       };
       localPayrolls.push(newRun);
-      localStorage.setItem('mock_payrolls', JSON.stringify(localPayrolls));
+      localStorage.setItem(getCompanyKey('mock_payrolls'), JSON.stringify(localPayrolls));
       
       setPayrolls(localPayrolls);
       setActiveModal(null);
@@ -84,11 +85,11 @@ export function PayrollPage() {
   const handlePayTaxes = async () => {
     setIsProcessing(true);
     setTimeout(() => {
-      const localBanks = JSON.parse(localStorage.getItem('mock_banks') || '[]');
+      const localBanks = JSON.parse(localStorage.getItem(getCompanyKey('mock_banks')) || '[]');
       const bank = localBanks.find((b: any) => b.id === selectedBankId);
       if (bank) {
         bank.balance -= 15700;
-        localStorage.setItem('mock_banks', JSON.stringify(localBanks));
+        localStorage.setItem(getCompanyKey('mock_banks'), JSON.stringify(localBanks));
       }
       setActiveModal(null);
       setIsTaxesPaid(true);

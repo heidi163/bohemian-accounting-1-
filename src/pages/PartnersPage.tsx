@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { type PartnerAccount } from "../types";
 import { clsx } from "clsx";
 import { Briefcase, ArrowUpRight, ArrowDownRight, RefreshCcw, Landmark, PieChart, Plus, X } from "lucide-react";
+import { getCompanyKey } from '../utils/storage';
 
 export function PartnersPage() {
   const [partners, setPartners] = useState<PartnerAccount[]>([]);
@@ -20,7 +21,7 @@ export function PartnersPage() {
       })
       .then((data) => setPartners(data.data))
       .catch(() => {
-        const local = localStorage.getItem('mock_partners');
+        const local = localStorage.getItem(getCompanyKey('mock_partners'));
         if (local) {
           setPartners(JSON.parse(local));
         } else {
@@ -28,7 +29,7 @@ export function PartnersPage() {
             { id: 1, partner_name: 'أحمد صلاح', equity_share: 60, capital_balance: 500000, current_balance: 25000, transactions: [{id: 1, date: '2026-01-01', description: 'رأس مال أولي', type: 'capital_injection', amount: 500000}] },
             { id: 2, partner_name: 'محمد عبدالله', equity_share: 40, capital_balance: 333333, current_balance: -5000, transactions: [{id: 2, date: '2026-01-01', description: 'رأس مال أولي', type: 'capital_injection', amount: 333333}, {id: 3, date: '2026-03-15', description: 'مسحوبات شخصية', type: 'withdrawal', amount: 5000}] }
           ];
-          localStorage.setItem('mock_partners', JSON.stringify(defaultPartners));
+          localStorage.setItem(getCompanyKey('mock_partners'), JSON.stringify(defaultPartners));
           setPartners(defaultPartners);
         }
       });
@@ -60,7 +61,7 @@ export function PartnersPage() {
         return p;
       });
       setPartners(nextPartners);
-      localStorage.setItem('mock_partners', JSON.stringify(nextPartners));
+      localStorage.setItem(getCompanyKey('mock_partners'), JSON.stringify(nextPartners));
       setActiveModal(null);
       setTxAmount(0);
       setTxDesc('');

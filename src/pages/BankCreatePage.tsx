@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import { ArrowRight } from "lucide-react";
+import { getCompanyKey } from '../utils/storage';
 
 export function BankCreatePage() {
   const navigate = useNavigate();
@@ -25,7 +26,7 @@ export function BankCreatePage() {
       company_id: 'ALL'
     };
 
-    const localBanks = JSON.parse(localStorage.getItem('mock_banks') || '[]');
+    const localBanks = JSON.parse(localStorage.getItem(getCompanyKey('mock_banks')) || '[]');
     if (localBanks.length === 0) {
       localBanks.push(
         { id: "1", code: "1111", name: "البنك الأهلي - EGP", type: "bank", currency: "EGP", balance: 1500000, company_id: "BGK" },
@@ -37,7 +38,7 @@ export function BankCreatePage() {
     
     const newBank = { ...payload, id: Date.now().toString() };
     localBanks.push(newBank);
-    localStorage.setItem('mock_banks', JSON.stringify(localBanks));
+    localStorage.setItem(getCompanyKey('mock_banks'), JSON.stringify(localBanks));
     
     alert("تم إضافة الحساب بنجاح!");
     navigate('/banks');
