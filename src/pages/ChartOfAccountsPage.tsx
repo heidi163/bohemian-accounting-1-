@@ -57,7 +57,7 @@ export function ChartOfAccountsPage() {
       .catch(() => {
         const localAccounts = JSON.parse(localStorage.getItem(getCompanyKey('mock_accounts')) || '[]');
         let dataToUse = localAccounts;
-        if (localAccounts.length === 0) {
+        if (false) {
           dataToUse = [
             { id: 1, code: '1', name: 'الأصول', type: 'asset', level: 'main', parent_code: null, company_id: 'ALL', is_active: true },
             { id: 2, code: '11', name: 'الأصول المتداولة', type: 'asset', level: 'sub', parent_code: '1', company_id: 'ALL', is_active: true },
