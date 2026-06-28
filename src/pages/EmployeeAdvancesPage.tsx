@@ -11,12 +11,17 @@ const mockAdvances = [
 export function EmployeeAdvancesPage() {
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState({ employee: "", amount: "", reason: "", recovery_months: "3", bank_account: "" });
-  const [advances, setAdvances] = useState(mockAdvances);
+  const [advances, setAdvances] = useState(() => {
+    const local = localStorage.getItem('mock_advances');
+    if (local) return JSON.parse(local);
+    localStorage.setItem('mock_advances', JSON.stringify(mockAdvances));
+    return mockAdvances;
+  });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!form.employee || !form.amount) { alert("يرجى تعبئة جميع الحقول المطلوبة."); return; }
-    setAdvances(prev => [...prev, {
+    const newAdvance = {
       id: Date.now(),
       employee: form.employee,
       amount: Number(form.amount),
@@ -24,7 +29,12 @@ export function EmployeeAdvancesPage() {
       reason: form.reason,
       remaining: Number(form.amount),
       status: "active",
-    }]);
+    };
+    
+    const updatedAdvances = [...advances, newAdvance];
+    setAdvances(updatedAdvances);
+    localStorage.setItem('mock_advances', JSON.stringify(updatedAdvances));
+    
     alert(`تم تسجيل سلفة بمبلغ ${form.amount} EGP للموظف ${form.employee}.\nسيتم استقطاعها على ${form.recovery_months} أشهر.`);
     setShowForm(false);
     setForm({ employee: "", amount: "", reason: "", recovery_months: "3", bank_account: "" });

@@ -15,11 +15,17 @@ export function SettingsPage() {
   const [isSaving, setIsSaving] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
 
-  const [usersList, setUsersList] = useState<User[]>([
-    { id: 1, name: 'أحمد محمد', email: 'ahmed@bohemiangeeks.com', role: 'مدير نظام', status: 'مفعل' },
-    { id: 2, name: 'سارة علي', email: 'sara@bohemiangeeks.com', role: 'محاسب', status: 'مفعل' },
-    { id: 3, name: 'محمود خالد', email: 'mahmoud@bohemiangeeks.com', role: 'مُدخل بيانات', status: 'غير مفعل' }
-  ]);
+  const [usersList, setUsersList] = useState<User[]>(() => {
+    const local = localStorage.getItem('mock_users');
+    if (local) return JSON.parse(local);
+    const defaults = [
+      { id: 1, name: 'أحمد محمد', email: 'ahmed@bohemiangeeks.com', role: 'مدير نظام', status: 'مفعل' },
+      { id: 2, name: 'سارة علي', email: 'sara@bohemiangeeks.com', role: 'محاسب', status: 'مفعل' },
+      { id: 3, name: 'محمود خالد', email: 'mahmoud@bohemiangeeks.com', role: 'مُدخل بيانات', status: 'غير مفعل' }
+    ];
+    localStorage.setItem('mock_users', JSON.stringify(defaults));
+    return defaults;
+  });
   const [isUserModalOpen, setIsUserModalOpen] = useState(false);
   const [newUserName, setNewUserName] = useState('');
   const [newUserEmail, setNewUserEmail] = useState('');
@@ -526,13 +532,15 @@ export function SettingsPage() {
               onSubmit={(e) => {
                 e.preventDefault();
                 if (!newUserName || !newUserEmail) return;
-                setUsersList([...usersList, {
+                const nextUsers = [...usersList, {
                   id: Date.now(),
                   name: newUserName,
                   email: newUserEmail,
                   role: newUserRole,
                   status: 'مفعل'
-                }]);
+                }];
+                setUsersList(nextUsers);
+                localStorage.setItem('mock_users', JSON.stringify(nextUsers));
                 setIsUserModalOpen(false);
                 setNewUserName('');
                 setNewUserEmail('');

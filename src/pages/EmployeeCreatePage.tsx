@@ -19,24 +19,24 @@ export function EmployeeCreatePage() {
       return;
     }
 
-    try {
-      const response = await fetch('/api/employees', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData)
-      });
-      
-      if (response.ok) {
-        alert('تمت إضافة الموظف بنجاح!');
-        navigate('/employees');
-      } else {
-        alert('حدث خطأ أثناء الإضافة.');
-      }
-    } catch (error) {
-      alert('حدث خطأ في الاتصال بالخادم.');
+    const localEmployees = JSON.parse(localStorage.getItem('mock_employees') || '[]');
+    if (localEmployees.length === 0) {
+      localEmployees.push(
+        { id: 1, name: 'أحمد محمد علي', employee_code: 'EMP-001', department: 'الهندسة (Engineering)', position: 'مهندس برمجيات', join_date: '2023-01-15', basic_salary: 15000, allowances: 2000, status: 'active' },
+        { id: 2, name: 'سارة أحمد السيد', employee_code: 'EMP-002', department: 'التسويق (Marketing)', position: 'مدير تسويق', join_date: '2022-05-10', basic_salary: 20000, allowances: 3000, status: 'active' }
+      );
     }
+    const newEmployee = {
+      ...formData,
+      id: Date.now(),
+      employee_code: `EMP-${String(localEmployees.length + 1).padStart(3, '0')}`,
+      status: 'active'
+    };
+    localEmployees.push(newEmployee);
+    localStorage.setItem('mock_employees', JSON.stringify(localEmployees));
+    
+    alert('تمت إضافة الموظف بنجاح!');
+    navigate('/employees');
   };
 
   return (

@@ -27,8 +27,17 @@ export function EndOfServicePage() {
 
   useEffect(() => {
     fetch("/api/employees")
-      .then(res => res.json())
-      .then(data => setEmployees(data.data));
+      .then(res => {
+        if (!res.ok) throw new Error();
+        return res.json();
+      })
+      .then(data => setEmployees(data.data))
+      .catch(() => {
+        const localEmployees = JSON.parse(localStorage.getItem('mock_employees') || '[]');
+        if (localEmployees.length > 0) {
+          setEmployees(localEmployees);
+        }
+      });
   }, []);
 
   const handleEmployeeChange = (employeeId: string) => {
@@ -97,33 +106,28 @@ export function EndOfServicePage() {
     setIsProcessingJournal(true);
     setErrorMsg("");
     
-    const emp = employees.find(e => e.id.toString() === form.employee_id);
-    const empName = emp ? emp.name : '';
-
-    try {
-      const response = await fetch('/api/journal-entries', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          entry_number: `JE-EOS-${Date.now().toString().slice(-4)}`,
-          entry_date: new Date().toISOString().split('T')[0],
-          description: `إثبات مستحقات نهاية الخدمة للموظف ${empName}`,
-          total_debit: result.total,
-          total_credit: result.total,
-          status: 'draft',
-          company_id: 'BGK'
-        })
-      });
-      if (response.ok) {
-        setJournalCreated(true);
-      } else {
-        setErrorMsg('حدث خطأ أثناء إنشاء القيد.');
-      }
-    } catch {
-      setErrorMsg('خطأ في الاتصال بالخادم.');
-    } finally {
+    setTimeout(() => {
+      const localJournals = JSON.parse(localStorage.getItem('mock_journals') || '[]');
+      const emp = employees.find(e => e.id.toString() === form.employee_id);
+      const empName = emp ? emp.name : '';
+      
+      const newJournal = {
+        id: Date.now().toString(),
+        entry_number: `JE-EOS-${Date.now().toString().slice(-4)}`,
+        entry_date: new Date().toISOString().split('T')[0],
+        description: `إثبات مستحقات نهاية الخدمة للموظف ${empName}`,
+        total_debit: result.total,
+        total_credit: result.total,
+        status: 'draft',
+        company_id: 'BGK'
+      };
+      
+      localJournals.push(newJournal);
+      localStorage.setItem('mock_journals', JSON.stringify(localJournals));
+      
+      setJournalCreated(true);
       setIsProcessingJournal(false);
-    }
+    }, 1000);
   };
 
   const fmt = (n: number) => new Intl.NumberFormat("ar-EG", { style: "currency", currency: "EGP" }).format(n);
