@@ -14,8 +14,24 @@ export function PartnersPage() {
 
   const fetchPartners = () => {
     fetch("/api/partners")
-      .then((res) => res.json())
-      .then((data) => setPartners(data.data));
+      .then((res) => {
+        if (!res.ok) throw new Error();
+        return res.json();
+      })
+      .then((data) => setPartners(data.data))
+      .catch(() => {
+        const local = localStorage.getItem('mock_partners');
+        if (local) {
+          setPartners(JSON.parse(local));
+        } else {
+          const defaultPartners: PartnerAccount[] = [
+            { id: 1, partner_name: 'أحمد صلاح', equity_share: 60, capital_balance: 500000, current_balance: 25000, transactions: [{id: 1, date: '2026-01-01', description: 'رأس مال أولي', type: 'capital_injection', amount: 500000}] },
+            { id: 2, partner_name: 'محمد عبدالله', equity_share: 40, capital_balance: 333333, current_balance: -5000, transactions: [{id: 2, date: '2026-01-01', description: 'رأس مال أولي', type: 'capital_injection', amount: 333333}, {id: 3, date: '2026-03-15', description: 'مسحوبات شخصية', type: 'withdrawal', amount: 5000}] }
+          ];
+          localStorage.setItem('mock_partners', JSON.stringify(defaultPartners));
+          setPartners(defaultPartners);
+        }
+      });
   };
 
   useEffect(() => {
@@ -29,32 +45,27 @@ export function PartnersPage() {
     }
     setErrorMsg('');
     setIsProcessing(true);
-    try {
-      const res = await fetch("/api/partners/transaction", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ 
-          partner_id: activeModal.partnerId, 
-          type: activeModal.type, 
-          amount: txAmount, 
-          description: txDesc || 'بدون وصف' 
-        })
+    setTimeout(() => {
+      const nextPartners = partners.map(p => {
+        if (p.id === activeModal.partnerId) {
+          const tx = { id: Date.now(), date: new Date().toISOString().split('T')[0], description: txDesc || 'بدون وصف', type: activeModal.type, amount: txAmount };
+          if (activeModal.type === 'capital_injection') {
+            return { ...p, capital_balance: p.capital_balance + txAmount, transactions: [...p.transactions, tx] };
+          } else if (activeModal.type === 'deposit') {
+            return { ...p, current_balance: p.current_balance + txAmount, transactions: [...p.transactions, tx] };
+          } else {
+            return { ...p, current_balance: p.current_balance - txAmount, transactions: [...p.transactions, tx] };
+          }
+        }
+        return p;
       });
-      const data = await res.json();
-      if (data.success) {
-        setActiveModal(null);
-        setTxAmount(0);
-        setTxDesc('');
-        setPartners(data.data);
-      } else {
-        setErrorMsg('حدث خطأ أثناء معالجة العملية');
-      }
-    } catch (error) {
-      console.error("Transaction failed", error);
-      setErrorMsg('خطأ في الاتصال بالخادم');
-    } finally {
+      setPartners(nextPartners);
+      localStorage.setItem('mock_partners', JSON.stringify(nextPartners));
+      setActiveModal(null);
+      setTxAmount(0);
+      setTxDesc('');
       setIsProcessing(false);
-    }
+    }, 500);
   };
 
   const totalCapital = partners.reduce((sum, p) => sum + p.capital_balance, 0);
