@@ -46,7 +46,10 @@ export function ChecksPage() {
 
   const handleSaveCheck = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newCheck.checkNumber || !newCheck.amount || !newCheck.partyName || !newCheck.bankName) return;
+    if (!newCheck.checkNumber || !newCheck.amount || !newCheck.partyName || !newCheck.bankName) {
+      alert("الرجاء تعبئة جميع الحقول المطلوبة (رقم الشيك، المبلغ، اسم البنك، واسم الطرف الآخر)");
+      return;
+    }
     
     const check: Check = {
       id: `CHK-${Math.floor(Math.random() * 10000)}`,
@@ -66,6 +69,7 @@ export function ChecksPage() {
     localStorage.setItem("mock_checks", JSON.stringify(updated));
     setIsModalOpen(false);
     setNewCheck({ type: activeTab, status: "pending" });
+    alert("تم حفظ الشيك بنجاح!");
   };
 
   const handleUpdateStatus = (id: string, newStatus: "pending" | "cleared" | "bounced") => {
