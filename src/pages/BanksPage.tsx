@@ -3,7 +3,7 @@ import { type BankAccount } from "../types";
 import { useNavigate } from "react-router";
 import { Building2, Landmark, Wallet, ArrowRightLeft, ArrowDownToLine, ArrowUpFromLine, RefreshCcw, FileUp, Filter } from "lucide-react";
 import { clsx } from "clsx";
-import { getCompanyKey } from '../utils/storage';
+import { getCompanyKey, getActiveCompany } from '../utils/storage';
 
 export function BanksPage() {
   const [banks, setBanks] = useState<BankAccount[]>([]);
@@ -34,8 +34,8 @@ export function BanksPage() {
         const localBanks = JSON.parse(localStorage.getItem(getCompanyKey('mock_banks')) || '[]');
         if (localBanks.length > 0) {
           setBanks(localBanks);
-        } else {
-          const defaults = [
+        } else if (getActiveCompany() !== 'O2N') {
+            const defaults = [
             { id: "1", code: "1111", name: "البنك الأهلي - EGP", type: "bank", currency: "EGP", balance: 1500000, company_id: "BGK" },
             { id: "2", code: "1112", name: "بنك الراجحي - SAR", type: "bank", currency: "SAR", balance: 250000, company_id: "BGK" },
             { id: "3", code: "1113", name: "CIB - USD", type: "bank", currency: "USD", balance: 45000, company_id: "O2N" },

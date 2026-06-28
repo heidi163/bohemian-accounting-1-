@@ -4,7 +4,7 @@ import { clsx } from "clsx";
 import { format } from "date-fns";
 import { useNavigate } from "react-router";
 import { FileText, Send, Download, DollarSign, Settings, X, Tag } from "lucide-react";
-import { getCompanyKey } from '../utils/storage';
+import { getCompanyKey, getActiveCompany } from '../utils/storage';
 
 const statusStyles: Record<string, string> = {
   draft: 'bg-slate-100 text-slate-600',
@@ -97,8 +97,8 @@ export function InvoicesPage() {
         const localInvoices = JSON.parse(localStorage.getItem(getCompanyKey('mock_invoices')) || '[]');
         if (localInvoices.length > 0) {
           setInvoices(localInvoices);
-        } else {
-          setInvoices([
+        } else if (getActiveCompany() !== 'O2N') {
+            setInvoices([
             { id: 1, type: 'invoice', invoice_number: 'BGK-INV-2026-00001', customer_name: 'Bohemian Geeks', total_amount: 15400, paid_amount: 15400, tax_amount: 1400, discount_amount: 0, status: 'paid', invoice_date: '2026-05-10', due_date: '2026-05-24', currency: 'EGP', project_id: 'PRJ-001', recurring_status: 'none' },
             { id: 2, type: 'invoice', invoice_number: 'O2N-INV-2026-00001', customer_name: 'TechFlow Inc', total_amount: 45000, paid_amount: 20000, tax_amount: 5000, discount_amount: 2000, status: 'partial', invoice_date: '2026-05-15', due_date: '2026-05-30', currency: 'EGP', recurring_status: 'active', recurring_frequency: 'monthly' },
             { id: 3, type: 'quotation', invoice_number: 'BGK-QT-2026-00002', customer_name: 'Sealy KSA', total_amount: 120500, paid_amount: 0, tax_amount: 15000, discount_amount: 5000, status: 'draft', invoice_date: '2026-06-01', due_date: '2026-06-15', currency: 'SAR', recurring_status: 'none' },

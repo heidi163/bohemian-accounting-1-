@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { type CostCenter } from "../types";
 import { clsx } from "clsx";
 import { Target, Users, FolderTree, ArrowDownRight, ArrowUpRight, ChevronRight, ChevronDown, Activity } from "lucide-react";
-import { getCompanyKey } from '../utils/storage';
+import { getCompanyKey, getActiveCompany } from '../utils/storage';
 
 export function CostCentersPage() {
   const [costCentersTree, setCostCentersTree] = useState<CostCenter[]>([]);
@@ -23,8 +23,8 @@ export function CostCentersPage() {
         const localCenters = JSON.parse(localStorage.getItem(getCompanyKey('mock_cost_centers')) || '[]');
         if (localCenters.length > 0) {
           setCostCentersTree(localCenters);
-        } else {
-          const defaults = [
+        } else if (getActiveCompany() !== 'O2N') {
+            const defaults = [
             {
               id: "HQ",
               name: "المركز الرئيسي (المقر)",

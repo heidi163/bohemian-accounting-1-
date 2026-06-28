@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { type AccountingPeriod } from "../types";
 import { clsx } from "clsx";
 import { Calendar, Lock, Unlock, CheckCircle, AlertTriangle, CheckSquare, Square, Save, RotateCcw } from "lucide-react";
-import { getCompanyKey } from '../utils/storage';
+import { getCompanyKey, getActiveCompany } from '../utils/storage';
 
 export function PeriodClosingPage() {
   const [periods, setPeriods] = useState<AccountingPeriod[]>([]);
@@ -25,8 +25,8 @@ export function PeriodClosingPage() {
         const localPeriods = JSON.parse(localStorage.getItem(getCompanyKey('mock_periods')) || '[]');
         if (localPeriods.length > 0) {
           setPeriods(localPeriods);
-        } else {
-          const defaults = [
+        } else if (getActiveCompany() !== 'O2N') {
+            const defaults = [
             { id: "2026-05", month: 5, year: 2026, status: "hard_lock", checklists: [
               { id: "t1", name: "مراجعة قيود اليومية", isCompleted: true, requiredForHardLock: true },
               { id: "t2", name: "تسوية البنوك", isCompleted: true, requiredForHardLock: true },

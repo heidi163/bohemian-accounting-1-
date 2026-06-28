@@ -4,7 +4,7 @@ import { clsx } from "clsx";
 import { format } from "date-fns";
 import { Monitor, Car, Briefcase, Armchair, Plus, RefreshCcw, DollarSign, Trash2, X, Settings } from "lucide-react";
 import { useNavigate } from "react-router";
-import { getCompanyKey } from '../utils/storage';
+import { getCompanyKey, getActiveCompany } from '../utils/storage';
 
 const categoryIcons: Record<string, React.ReactNode> = {
   computers: <Monitor className="w-4 h-4" />,
@@ -44,8 +44,8 @@ export function AssetsPage() {
         const localAssets = JSON.parse(localStorage.getItem(getCompanyKey('mock_assets')) || '[]');
         if (localAssets.length > 0) {
           setAssets(localAssets);
-        } else {
-          const defaults = [
+        } else if (getActiveCompany() !== 'O2N') {
+            const defaults = [
             { id: "1", asset_code: "AST-2026-001", name: "سيرفرات ديل (Dell Servers)", category: "computers", purchase_price: 120000, net_book_value: 90000, accumulated_depreciation: 30000, status: "active", useful_life_years: 4, depreciation_method: "straight_line" },
             { id: "2", asset_code: "AST-2026-002", name: "سيارة نقل مرسيدس", category: "cars", purchase_price: 850000, net_book_value: 850000, accumulated_depreciation: 0, status: "active", useful_life_years: 5, depreciation_method: "straight_line" }
           ];

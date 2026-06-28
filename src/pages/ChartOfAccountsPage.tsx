@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { clsx } from "clsx";
 import { Copy, Plus, Filter, Search, ChevronDown, ChevronUp, X } from "lucide-react";
-import { getCompanyKey } from '../utils/storage';
+import { getCompanyKey, getActiveCompany } from '../utils/storage';
 
 interface Account {
   id: number;

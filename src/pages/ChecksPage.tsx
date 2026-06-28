@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { FileSignature, Plus, Search, Filter, ArrowUpRight, ArrowDownLeft, Banknote, CalendarDays, Building2, User, Clock, CheckCircle2, AlertCircle, RefreshCw } from "lucide-react";
 import { clsx } from "clsx";
-import { getCompanyKey } from '../utils/storage';
+import { getCompanyKey, getActiveCompany } from '../utils/storage';
 
 interface Check {
   id: string;
@@ -39,8 +39,8 @@ export function ChecksPage() {
     const local = localStorage.getItem(getCompanyKey("mock_checks"));
     if (local) {
       setChecks(JSON.parse(local));
-    } else {
-      setChecks(mockChecks);
+    } else if (getActiveCompany() !== 'O2N') {
+            setChecks(mockChecks);
       localStorage.setItem(getCompanyKey("mock_checks"), JSON.stringify(mockChecks));
     }
   }, []);
