@@ -69,6 +69,7 @@ export function ChecksPage() {
     localStorage.setItem("mock_checks", JSON.stringify(updated));
     setIsModalOpen(false);
     setNewCheck({ type: activeTab, status: "pending" });
+    setStatusFilter("all"); // Reset filter so the new check appears in the table
     alert("تم حفظ الشيك بنجاح!");
   };
 
@@ -330,6 +331,18 @@ export function ChecksPage() {
                     onChange={(e) => setNewCheck({...newCheck, dueDate: e.target.value})}
                     className="w-full bg-white border border-slate-200 text-slate-900 text-sm rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
                   />
+                </div>
+                <div>
+                  <label className="block text-sm font-bold text-slate-700 mb-2">حالة الشيك</label>
+                  <select
+                    value={newCheck.status}
+                    onChange={(e) => setNewCheck({...newCheck, status: e.target.value as any})}
+                    className="w-full bg-white border border-slate-200 text-slate-900 text-sm rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
+                  >
+                    <option value="pending">معلق</option>
+                    <option value="cleared">محصل / مصروف</option>
+                    <option value="bounced">مرتجع</option>
+                  </select>
                 </div>
                 <div className="md:col-span-2">
                   <label className="block text-sm font-bold text-slate-700 mb-2">المبلغ</label>
