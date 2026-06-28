@@ -34,8 +34,24 @@ export function AssetsPage() {
 
   useEffect(() => {
     fetch("/api/assets")
-      .then((res) => res.json())
-      .then((data) => setAssets(data.data));
+      .then((res) => {
+        if (!res.ok) throw new Error('API Error');
+        return res.json();
+      })
+      .then((data) => setAssets(data.data))
+      .catch(() => {
+        const localAssets = JSON.parse(localStorage.getItem('mock_assets') || '[]');
+        if (localAssets.length > 0) {
+          setAssets(localAssets);
+        } else {
+          const defaults = [
+            { id: "1", asset_code: "AST-2026-001", name: "سيرفرات ديل (Dell Servers)", category: "computers", purchase_price: 120000, net_book_value: 90000, accumulated_depreciation: 30000, status: "active", useful_life_years: 4, depreciation_method: "straight_line" },
+            { id: "2", asset_code: "AST-2026-002", name: "سيارة نقل مرسيدس", category: "cars", purchase_price: 850000, net_book_value: 850000, accumulated_depreciation: 0, status: "active", useful_life_years: 5, depreciation_method: "straight_line" }
+          ];
+          localStorage.setItem('mock_assets', JSON.stringify(defaults));
+          setAssets(defaults);
+        }
+      });
   }, []);
 
   const openDispose = (asset: Asset) => {
@@ -48,17 +64,31 @@ export function AssetsPage() {
 
   const handleRunDepreciation = async () => {
     setIsDepreciating(true);
-    try {
-      const res = await fetch("/api/assets/depreciation", { method: "POST" });
-      const data = await res.json();
-      if (data.success) {
-        setAssets(data.data);
-      }
-    } catch (error) {
-      console.error("Failed to run depreciation", error);
-    } finally {
+    setTimeout(() => {
+      const localAssets = JSON.parse(localStorage.getItem('mock_assets') || '[]');
+      const updatedAssets = localAssets.map((asset: any) => {
+        if (asset.status !== 'active' || asset.net_book_value <= (asset.salvage_value || 0)) return asset;
+        
+        let depAmount = 0;
+        if (asset.depreciation_method === 'straight_line') {
+          depAmount = (asset.purchase_price - (asset.salvage_value || 0)) / (asset.useful_life_years * 12);
+        } else {
+          depAmount = asset.net_book_value * 0.02; // simplified declining balance for mock
+        }
+        
+        const newAccumulated = asset.accumulated_depreciation + depAmount;
+        const newNetBook = asset.purchase_price - newAccumulated;
+        
+        return {
+          ...asset,
+          accumulated_depreciation: newAccumulated,
+          net_book_value: Math.max(newNetBook, asset.salvage_value || 0)
+        };
+      });
+      localStorage.setItem('mock_assets', JSON.stringify(updatedAssets));
+      setAssets(updatedAssets);
       setIsDepreciating(false);
-    }
+    }, 1000);
   };
 
   const calculateGainLoss = () => {
@@ -215,8 +245,10 @@ export function AssetsPage() {
               <div className="pt-2">
                  <button 
                    onClick={() => {
-                     // In a real app, this would post to an endpoint and update the asset status to 'sold'/'scrapped'
-                     setAssets(assets.map(a => a.id === focusedAsset.id ? { ...a, status: disposeType === 'sell' ? 'sold' : 'scrapped' } : a));
+                     const localAssets = JSON.parse(localStorage.getItem('mock_assets') || '[]');
+                     const updatedAssets = localAssets.map((a: any) => a.id === focusedAsset.id ? { ...a, status: disposeType === 'sell' ? 'sold' : 'scrapped' } : a);
+                     localStorage.setItem('mock_assets', JSON.stringify(updatedAssets));
+                     setAssets(updatedAssets);
                      setActiveModal(null);
                    }}
                    className="w-full bg-rose-600 text-white font-bold py-3 text-sm rounded-xl hover:bg-rose-700 transition"

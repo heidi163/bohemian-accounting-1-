@@ -20,27 +20,27 @@ export function AssetCreatePage() {
   const handleSave = async () => {
     if (!form.name || !form.purchase_price) return;
     setIsProcessing(true);
-    try {
-      const response = await fetch('/api/assets', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          ...form,
-          purchase_price: Number(form.purchase_price),
-          useful_life_years: Number(form.useful_life_years),
-          salvage_value: Number(form.salvage_value) || 0,
-          accumulated_depreciation: 0,
-          net_book_value: Number(form.purchase_price)
-        })
-      });
-      if (response.ok) {
-        navigate("/assets");
-      }
-    } catch (e) {
-      console.error(e);
-    } finally {
-      setIsProcessing(false);
+    const localAssets = JSON.parse(localStorage.getItem('mock_assets') || '[]');
+    if (localAssets.length === 0) {
+      localAssets.push(
+        { id: "1", asset_code: "AST-2026-001", name: "سيرفرات ديل (Dell Servers)", category: "computers", purchase_price: 120000, net_book_value: 90000, accumulated_depreciation: 30000, status: "active", useful_life_years: 4, depreciation_method: "straight_line" },
+        { id: "2", asset_code: "AST-2026-002", name: "سيارة نقل مرسيدس", category: "cars", purchase_price: 850000, net_book_value: 850000, accumulated_depreciation: 0, status: "active", useful_life_years: 5, depreciation_method: "straight_line" }
+      );
     }
+    const newAsset = {
+      ...form,
+      id: Date.now().toString(),
+      purchase_price: Number(form.purchase_price),
+      useful_life_years: Number(form.useful_life_years),
+      salvage_value: Number(form.salvage_value) || 0,
+      accumulated_depreciation: 0,
+      net_book_value: Number(form.purchase_price),
+      status: 'active'
+    };
+    localAssets.push(newAsset);
+    localStorage.setItem('mock_assets', JSON.stringify(localAssets));
+    navigate("/assets");
+    setIsProcessing(false);
   };
 
   return (

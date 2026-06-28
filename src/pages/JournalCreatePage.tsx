@@ -52,24 +52,20 @@ export function JournalCreatePage() {
       base_total_credit: totalCredit * header.exchange_rate
     };
 
-    try {
-      const response = await fetch('/api/journal-entries', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(payload)
-      });
-      
-      if (response.ok) {
-        alert('تم حفظ قيد اليومية بنجاح!');
-        navigate('/journal');
-      } else {
-        alert('حدث خطأ أثناء حفظ القيد.');
-      }
-    } catch (error) {
-      alert('حدث خطأ في الاتصال بالخادم.');
+    const localJournals = JSON.parse(localStorage.getItem('mock_journals') || '[]');
+    if (localJournals.length === 0) {
+      localJournals.push(
+        { id: 1, entry_number: 'JE-2026-00001', entry_date: '2026-05-01', description: 'رصيد افتتاحي', total_debit: 500000, total_credit: 500000, status: 'posted', company_id: 'BGK' },
+        { id: 2, entry_number: 'JE-2026-00002', entry_date: '2026-05-15', description: 'إثبات رواتب شهر مايو', total_debit: 45000, total_credit: 45000, status: 'posted', company_id: 'BGK' },
+        { id: 3, entry_number: 'JE-2026-00003', entry_date: '2026-06-01', description: 'تسوية عهدة موظف', total_debit: 1200, total_credit: 1200, status: 'pending_approval', company_id: 'O2N' }
+      );
     }
+    const newEntry = { ...payload, id: Date.now(), entry_number: `JE-2026-${String(localJournals.length + 1).padStart(5, '0')}` };
+    localJournals.unshift(newEntry);
+    localStorage.setItem('mock_journals', JSON.stringify(localJournals));
+    
+    alert('تم حفظ قيد اليومية بنجاح!');
+    navigate('/journal');
   };
 
   return (

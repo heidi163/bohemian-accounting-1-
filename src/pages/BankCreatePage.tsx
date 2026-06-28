@@ -25,21 +25,22 @@ export function BankCreatePage() {
       company_id: 'ALL'
     };
 
-    try {
-      const response = await fetch('/api/banks', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
-      if (response.ok) {
-        alert("تم إضافة الحساب بنجاح!");
-        navigate('/banks');
-      } else {
-        alert("حدث خطأ أثناء إضافة الحساب.");
-      }
-    } catch (error) {
-      alert("تعذر الاتصال بالخادم.");
+    const localBanks = JSON.parse(localStorage.getItem('mock_banks') || '[]');
+    if (localBanks.length === 0) {
+      localBanks.push(
+        { id: "1", code: "1111", name: "البنك الأهلي - EGP", type: "bank", currency: "EGP", balance: 1500000, company_id: "BGK" },
+        { id: "2", code: "1112", name: "بنك الراجحي - SAR", type: "bank", currency: "SAR", balance: 250000, company_id: "BGK" },
+        { id: "3", code: "1113", name: "CIB - USD", type: "bank", currency: "USD", balance: 45000, company_id: "O2N" },
+        { id: "4", code: "1121", name: "صندوق المركز الرئيسي", type: "cash", currency: "EGP", balance: 25000, company_id: "ALL" }
+      );
     }
+    
+    const newBank = { ...payload, id: Date.now().toString() };
+    localBanks.push(newBank);
+    localStorage.setItem('mock_banks', JSON.stringify(localBanks));
+    
+    alert("تم إضافة الحساب بنجاح!");
+    navigate('/banks');
   };
 
   return (

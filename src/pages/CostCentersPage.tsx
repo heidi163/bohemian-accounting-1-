@@ -6,12 +6,40 @@ import { Target, Users, FolderTree, ArrowDownRight, ArrowUpRight, ChevronRight, 
 export function CostCentersPage() {
   const [costCentersTree, setCostCentersTree] = useState<CostCenter[]>([]);
   const [expandedNodes, setExpandedNodes] = useState<Set<string>>(new Set(['HQ']));
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [newCenter, setNewCenter] = useState({ id: '', name: '', manager_name: '', parent_id: 'HQ' });
 
   const fetchCostCenters = () => {
     fetch("/api/cost-centers")
-      .then((res) => res.json())
+      .then((res) => {
+        if (!res.ok) throw new Error('API Error');
+        return res.json();
+      })
       .then((data) => {
         setCostCentersTree(data.data);
+      })
+      .catch(() => {
+        const localCenters = JSON.parse(localStorage.getItem('mock_cost_centers') || '[]');
+        if (localCenters.length > 0) {
+          setCostCentersTree(localCenters);
+        } else {
+          const defaults = [
+            {
+              id: "HQ",
+              name: "المركز الرئيسي (المقر)",
+              manager_name: "أحمد صلاح",
+              budget: 5000000,
+              actual_cost: 4200000,
+              revenue: 12000000,
+              children: [
+                { id: "TECH", name: "قطاع التكنولوجيا (BGK)", manager_name: "محمد علي", budget: 2000000, actual_cost: 2100000, revenue: 8000000, children: [] },
+                { id: "MKT", name: "قطاع التسويق (O2N)", manager_name: "سارة أحمد", budget: 1500000, actual_cost: 1200000, revenue: 4000000, children: [] }
+              ]
+            }
+          ];
+          localStorage.setItem('mock_cost_centers', JSON.stringify(defaults));
+          setCostCentersTree(defaults);
+        }
       });
   };
 
@@ -107,6 +135,9 @@ export function CostCentersPage() {
           <h2 className="font-bold text-slate-800 text-2xl">مراكز التكلفة (Cost Centers)</h2>
           <p className="text-slate-500 mt-1">إدارة الهيكل الشجري وتوزيع التكاليف وتحليل الأرباح والخسائر.</p>
         </div>
+        <button onClick={() => setIsModalOpen(true)} className="bg-primary-600 text-white px-4 py-2.5 rounded-xl text-sm font-semibold hover:bg-primary-700 transition">
+          إضافة مركز تكلفة
+        </button>
       </div>
 
       <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
@@ -117,6 +148,54 @@ export function CostCentersPage() {
             {renderTree(costCentersTree)}
          </div>
       </div>
+
+      {isModalOpen && (
+         <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+           <div className="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden">
+             <div className="flex items-center justify-between p-6 border-b border-slate-100">
+               <h3 className="text-lg font-bold text-slate-800">إضافة مركز تكلفة</h3>
+               <button onClick={() => setIsModalOpen(false)} className="text-slate-400 hover:text-slate-500 transition">✕</button>
+             </div>
+             <div className="p-6 space-y-4">
+               <div>
+                 <label className="block text-sm font-medium text-slate-700 mb-2">كود المركز</label>
+                 <input type="text" value={newCenter.id} onChange={e => setNewCenter({...newCenter, id: e.target.value})} className="w-full bg-slate-50 border border-slate-200 text-slate-900 text-sm rounded-xl px-4 py-2.5 outline-none focus:border-primary-500" placeholder="مثال: HR" />
+               </div>
+               <div>
+                 <label className="block text-sm font-medium text-slate-700 mb-2">اسم المركز</label>
+                 <input type="text" value={newCenter.name} onChange={e => setNewCenter({...newCenter, name: e.target.value})} className="w-full bg-slate-50 border border-slate-200 text-slate-900 text-sm rounded-xl px-4 py-2.5 outline-none focus:border-primary-500" placeholder="مثال: الموارد البشرية" />
+               </div>
+               <div>
+                 <label className="block text-sm font-medium text-slate-700 mb-2">اسم المدير</label>
+                 <input type="text" value={newCenter.manager_name} onChange={e => setNewCenter({...newCenter, manager_name: e.target.value})} className="w-full bg-slate-50 border border-slate-200 text-slate-900 text-sm rounded-xl px-4 py-2.5 outline-none focus:border-primary-500" />
+               </div>
+               <button onClick={() => {
+                 if (!newCenter.id || !newCenter.name) return;
+                 const localCenters = JSON.parse(localStorage.getItem('mock_cost_centers') || '[]');
+                 const addNode = (nodes: any[]) => {
+                   for (let node of nodes) {
+                     if (node.id === newCenter.parent_id) {
+                       node.children = node.children || [];
+                       node.children.push({ ...newCenter, budget: 0, actual_cost: 0, revenue: 0, children: [] });
+                       return true;
+                     }
+                     if (node.children && addNode(node.children)) return true;
+                   }
+                   return false;
+                 };
+                 addNode(localCenters);
+                 localStorage.setItem('mock_cost_centers', JSON.stringify(localCenters));
+                 setCostCentersTree(localCenters);
+                 setIsModalOpen(false);
+                 setNewCenter({ id: '', name: '', manager_name: '', parent_id: 'HQ' });
+                 setExpandedNodes(new Set(expandedNodes).add('HQ'));
+               }} className="w-full bg-primary-600 text-white font-bold py-3 rounded-xl hover:bg-primary-700 transition">
+                 حفظ المركز
+               </button>
+             </div>
+           </div>
+         </div>
+      )}
     </div>
   );
 }

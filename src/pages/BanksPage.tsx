@@ -24,8 +24,26 @@ export function BanksPage() {
 
   const fetchBanks = () => {
     fetch("/api/banks", { cache: 'no-store' })
-      .then((res) => res.json())
-      .then((data) => setBanks(data.data));
+      .then((res) => {
+        if (!res.ok) throw new Error('API Error');
+        return res.json();
+      })
+      .then((data) => setBanks(data.data))
+      .catch(() => {
+        const localBanks = JSON.parse(localStorage.getItem('mock_banks') || '[]');
+        if (localBanks.length > 0) {
+          setBanks(localBanks);
+        } else {
+          const defaults = [
+            { id: "1", code: "1111", name: "البنك الأهلي - EGP", type: "bank", currency: "EGP", balance: 1500000, company_id: "BGK" },
+            { id: "2", code: "1112", name: "بنك الراجحي - SAR", type: "bank", currency: "SAR", balance: 250000, company_id: "BGK" },
+            { id: "3", code: "1113", name: "CIB - USD", type: "bank", currency: "USD", balance: 45000, company_id: "O2N" },
+            { id: "4", code: "1121", name: "صندوق المركز الرئيسي", type: "cash", currency: "EGP", balance: 25000, company_id: "ALL" }
+          ];
+          localStorage.setItem('mock_banks', JSON.stringify(defaults));
+          setBanks(defaults);
+        }
+      });
   };
 
   useEffect(() => {
@@ -61,26 +79,44 @@ export function BanksPage() {
     setIsProcessing(true);
     setErrorMsg('');
 
-    try {
-      const response = await fetch('/api/banks/transaction', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
-      if (response.ok) {
+    setTimeout(() => {
+      const localBanks = JSON.parse(localStorage.getItem('mock_banks') || '[]');
+      let success = false;
+      
+      if (type === 'transfer') {
+        const fromBank = localBanks.find((b: any) => b.id === payload.fromBankId);
+        const toBank = localBanks.find((b: any) => b.id === payload.toBankId);
+        if (fromBank && toBank) {
+          fromBank.balance -= payload.amount;
+          toBank.balance += (payload.amount * payload.exchangeRate);
+          success = true;
+        }
+      } else if (type === 'deposit') {
+        const bank = localBanks.find((b: any) => b.id === payload.bankId);
+        if (bank) {
+          bank.balance += payload.amount;
+          success = true;
+        }
+      } else if (type === 'withdraw') {
+        const bank = localBanks.find((b: any) => b.id === payload.bankId);
+        if (bank) {
+          bank.balance -= payload.amount;
+          success = true;
+        }
+      }
+
+      if (success) {
+        localStorage.setItem('mock_banks', JSON.stringify(localBanks));
+        setBanks(localBanks);
         setActiveModal(null);
-        fetchBanks(); // Refresh data
         setTransferForm({ fromBankId: '', toBankId: '', amount: 0, exchangeRate: 1.0, memo: '' });
         setTransactionForm({ amount: 0 });
         showToast(type === 'transfer' ? 'تم تحويل المبلغ بنجاح ' : type === 'deposit' ? 'تم تسجيل الإيداع بنجاح ' : 'تم تسجيل السحب بنجاح ');
       } else {
         setErrorMsg('حدث خطأ أثناء تنفيذ العملية');
       }
-    } catch {
-      setErrorMsg('خطأ في الاتصال بالخادم');
-    } finally {
       setIsProcessing(false);
-    }
+    }, 500);
   };
 
   const handleAction = (type: 'deposit' | 'withdraw' | 'transfer' | 'reconcile', bank?: BankAccount) => {

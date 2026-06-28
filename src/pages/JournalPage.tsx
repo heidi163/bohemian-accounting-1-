@@ -24,8 +24,25 @@ export function JournalPage() {
 
   useEffect(() => {
     fetch("/api/journal-entries")
-      .then((res) => res.json())
-      .then((data) => setEntries(data.data));
+      .then((res) => {
+        if (!res.ok) throw new Error('API Error');
+        return res.json();
+      })
+      .then((data) => setEntries(data.data))
+      .catch(() => {
+        const localJournals = JSON.parse(localStorage.getItem('mock_journals') || '[]');
+        if (localJournals.length > 0) {
+          setEntries(localJournals);
+        } else {
+          const defaults = [
+            { id: 1, entry_number: 'JE-2026-00001', entry_date: '2026-05-01', description: 'رصيد افتتاحي', total_debit: 500000, total_credit: 500000, status: 'posted', company_id: 'BGK' },
+            { id: 2, entry_number: 'JE-2026-00002', entry_date: '2026-05-15', description: 'إثبات رواتب شهر مايو', total_debit: 45000, total_credit: 45000, status: 'posted', company_id: 'BGK' },
+            { id: 3, entry_number: 'JE-2026-00003', entry_date: '2026-06-01', description: 'تسوية عهدة موظف', total_debit: 1200, total_credit: 1200, status: 'pending_approval', company_id: 'O2N' }
+          ];
+          localStorage.setItem('mock_journals', JSON.stringify(defaults));
+          setEntries(defaults);
+        }
+      });
   }, []);
 
   return (
@@ -71,6 +88,18 @@ export function JournalPage() {
                         onClick={() => {
                           if (entry.status === 'posted') {
                             if(confirm("هل تريد بالتأكيد عمل قيد عكسي (Reverse Entry) لهذا القيد؟")) {
+                               const localJournals = JSON.parse(localStorage.getItem('mock_journals') || '[]');
+                               const updatedJournals = localJournals.map((j: any) => j.id === entry.id ? { ...j, status: 'reversed' } : j);
+                               const reverseEntry = {
+                                 ...entry,
+                                 id: Date.now(),
+                                 entry_number: `REV-${entry.entry_number}`,
+                                 description: `قيد عكسي لـ ${entry.entry_number}: ${entry.description}`,
+                                 status: 'posted'
+                               };
+                               updatedJournals.unshift(reverseEntry);
+                               localStorage.setItem('mock_journals', JSON.stringify(updatedJournals));
+                               setEntries(updatedJournals);
                                alert("تم إنشاء القيد العكسي بنجاح");
                             }
                           }
