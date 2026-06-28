@@ -13,10 +13,9 @@ import { useTheme } from "../contexts/ThemeContext";
 export function AppLayout() {
   const location = useLocation();
   const navigate = useNavigate();
-  const [company, setCompany] = useState<"BGK" | "O2N">("BGK");
   const [showCompanyMenu, setShowCompanyMenu] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const { primaryColor, logoUrl } = useTheme();
+  const { activeCompany, setActiveCompany, primaryColor, logoUrl } = useTheme();
 
   // Close mobile menu on route change
   useEffect(() => {
@@ -118,9 +117,9 @@ export function AppLayout() {
             <div className="flex items-center gap-2">
               <Building2 className="w-4 h-4 text-primary" />
               <span className="text-sm font-bold text-white">
-                {company === "BGK" ? "Bohemian Geeks" : "O2Nation"}
+                {activeCompany === "BGK" ? "Bohemian Geeks" : "O2Nation"}
               </span>
-              <span className="text-[10px] bg-primary/30 text-primary px-1.5 py-0.5 rounded font-bold">{company}</span>
+              <span className="text-[10px] bg-primary/30 text-primary px-1.5 py-0.5 rounded font-bold">{activeCompany}</span>
             </div>
             <ChevronDown className={clsx("w-4 h-4 text-slate-400 transition-transform", showCompanyMenu && "rotate-180")} />
           </button>
@@ -129,15 +128,15 @@ export function AppLayout() {
               {(["BGK", "O2N"] as const).map((c) => (
                 <button
                   key={c}
-                  onClick={() => { setCompany(c); setShowCompanyMenu(false); alert(`تم التبديل إلى شركة ${c === "BGK" ? "Bohemian Geeks" : "O2Nation"}`); }}
+                  onClick={() => { setActiveCompany(c); setShowCompanyMenu(false); }}
                   className={clsx(
                     "w-full flex items-center gap-2 px-4 py-3 text-sm transition hover:bg-slate-700",
-                    company === c ? "text-primary font-bold" : "text-slate-300"
+                    activeCompany === c ? "text-primary font-bold" : "text-slate-300"
                   )}
                 >
                   <Building2 className="w-4 h-4" />
                   {c === "BGK" ? "Bohemian Geeks (BGK)" : "O2Nation (O2N)"}
-                  {company === c && <span className="ms-auto text-primary text-xs"> نشط</span>}
+                  {activeCompany === c && <span className="ms-auto text-primary text-xs"> نشط</span>}
                 </button>
               ))}
             </div>
@@ -205,7 +204,7 @@ export function AppLayout() {
               <Menu className="w-5 h-5" />
             </button>
             <div className="flex items-center gap-2">
-              <span className="font-bold text-slate-700 hidden sm:inline">{company === "BGK" ? "Bohemian Geeks" : "O2Nation"}</span>
+              <span className="font-bold text-slate-700 hidden sm:inline">{activeCompany === "BGK" ? "Bohemian Geeks" : "O2Nation"}</span>
               <span className="text-slate-300 hidden sm:inline">/</span>
               <span className="truncate">النظام المحاسبي</span>
             </div>
