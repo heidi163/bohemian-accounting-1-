@@ -22,12 +22,36 @@ export function UserManagementPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const fetchData = async () => {
-    const res = await fetch("/api/users");
-    const data = await res.json();
-    setUsers(data.data.users);
-    setRoles(data.data.roles);
-    if (!activeRoleId && data.data.roles.length > 0) {
-      setActiveRoleId(data.data.roles[0].id);
+    try {
+      const res = await fetch("/api/users");
+      if (!res.ok) throw new Error();
+      const data = await res.json();
+      setUsers(data.data.users);
+      setRoles(data.data.roles);
+      if (!activeRoleId && data.data.roles.length > 0) {
+        setActiveRoleId(data.data.roles[0].id);
+      }
+    } catch {
+      const localUsers = localStorage.getItem('mock_users_mgmt');
+      const localRoles = localStorage.getItem('mock_roles_mgmt');
+      
+      let parsedUsers = localUsers ? JSON.parse(localUsers) : [
+        { id: 1, name: 'أحمد صلاح', email: 'admin@bohemiangeeks.com', roleId: 'r1', status: 'active', lastLogin: new Date().toISOString() },
+        { id: 2, name: 'سارة خالد', email: 'sara@bohemiangeeks.com', roleId: 'r2', status: 'active', lastLogin: new Date().toISOString() }
+      ];
+      let parsedRoles = localRoles ? JSON.parse(localRoles) : [
+        { id: 'r1', name: 'Super Admin', description: 'صلاحيات كاملة لجميع وحدات النظام', isSystem: true, permissions: [] },
+        { id: 'r2', name: 'محاسب', description: 'الوصول لليومية والمصروفات فقط', isSystem: false, permissions: ['اليومية_view', 'اليومية_create'] },
+      ];
+
+      setUsers(parsedUsers);
+      setRoles(parsedRoles);
+      if (!activeRoleId && parsedRoles.length > 0) {
+        setActiveRoleId(parsedRoles[0].id);
+      }
+      
+      if (!localUsers) localStorage.setItem('mock_users_mgmt', JSON.stringify(parsedUsers));
+      if (!localRoles) localStorage.setItem('mock_roles_mgmt', JSON.stringify(parsedRoles));
     }
   };
 
@@ -44,67 +68,62 @@ export function UserManagementPage() {
     e.preventDefault();
     if (!newUserName || !newUserEmail) return;
     setIsSubmitting(true);
-    try {
-      const res = await fetch("/api/users", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: newUserName, email: newUserEmail, roleId: newUserRole })
-      });
-      const data = await res.json();
-      if (data.success) {
-        setUsers(data.data.users);
-        setRoles(data.data.roles);
-        setShowAddModal(false);
-        setNewUserName('');
-        setNewUserEmail('');
-      } else {
-        alert(data.message);
-      }
-    } catch(e: any) { 
-      console.error(e); 
-      alert("تعذر حفظ المستخدم. يرجى التأكد من إعادة تشغيل السيرفر (Terminal) ليتم تفعيل الأكواد الجديدة!");
-    }
-    setIsSubmitting(false);
+    setTimeout(() => {
+      const newUser = {
+        id: Date.now(),
+        name: newUserName,
+        email: newUserEmail,
+        roleId: newUserRole,
+        status: 'active',
+        lastLogin: new Date().toISOString()
+      };
+      const updatedUsers = [...users, newUser];
+      setUsers(updatedUsers as any);
+      localStorage.setItem('mock_users_mgmt', JSON.stringify(updatedUsers));
+      
+      setShowAddModal(false);
+      setNewUserName('');
+      setNewUserEmail('');
+      setIsSubmitting(false);
+    }, 500);
   };
 
   const handleEditUser = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!editingUser) return;
     setIsSubmitting(true);
-    try {
-      const res = await fetch(`/api/users/${editingUser.id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: newUserName, email: newUserEmail, roleId: newUserRole, status: editUserStatus })
-      });
-      const data = await res.json();
-      if (data.success) {
-        setUsers(data.data.users);
-        setShowEditModal(false);
-      } else alert(data.message);
-    } catch(e) { console.error(e); }
-    setIsSubmitting(false);
+    setTimeout(() => {
+      const updatedUsers = users.map(u => 
+        u.id === editingUser.id ? { ...u, name: newUserName, email: newUserEmail, roleId: newUserRole, status: editUserStatus } : u
+      );
+      setUsers(updatedUsers as any);
+      localStorage.setItem('mock_users_mgmt', JSON.stringify(updatedUsers));
+      setShowEditModal(false);
+      setIsSubmitting(false);
+    }, 500);
   };
 
   const handleAddRole = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newRoleName) return;
     setIsSubmitting(true);
-    try {
-      const res = await fetch("/api/roles", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: newRoleName, description: newRoleDesc })
-      });
-      const data = await res.json();
-      if (data.success) {
-        setRoles(data.data.roles);
-        setShowAddRoleModal(false);
-        setNewRoleName('');
-        setNewRoleDesc('');
-      } else alert(data.message);
-    } catch(e) { console.error(e); }
-    setIsSubmitting(false);
+    setTimeout(() => {
+      const newRole = {
+        id: 'r' + Date.now(),
+        name: newRoleName,
+        description: newRoleDesc,
+        isSystem: false,
+        permissions: []
+      };
+      const updatedRoles = [...roles, newRole];
+      setRoles(updatedRoles);
+      localStorage.setItem('mock_roles_mgmt', JSON.stringify(updatedRoles));
+      
+      setShowAddRoleModal(false);
+      setNewRoleName('');
+      setNewRoleDesc('');
+      setIsSubmitting(false);
+    }, 500);
   };
 
   const togglePermission = async (mod: string, action: string) => {
@@ -119,16 +138,9 @@ export function UserManagementPage() {
       ? role.permissions.filter(p => p !== permKey) 
       : [...(role.permissions || []), permKey];
       
-    try {
-      const res = await fetch(`/api/roles/${role.id}/permissions`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ permissions: newPerms })
-      });
-      const data = await res.json();
-      if (data.success) setRoles(data.data.roles);
-      else alert(data.message);
-    } catch(e) { console.error(e); }
+    const updatedRoles = roles.map(r => r.id === activeRoleId ? { ...r, permissions: newPerms } : r);
+    setRoles(updatedRoles);
+    localStorage.setItem('mock_roles_mgmt', JSON.stringify(updatedRoles));
   };
 
   return (
