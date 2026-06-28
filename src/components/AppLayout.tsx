@@ -1,0 +1,226 @@
+import { Link, Outlet, useLocation, useNavigate } from "react-router";
+import {
+  LayoutDashboard, FileText, BookOpen, Users, WalletCards, Settings,
+  Network, ShoppingCart, Box, Receipt, Landmark, Briefcase, Target,
+  FolderKanban, LineChart, BarChart4, LockKeyhole, ShieldCheck,
+  FolderOpen, ShieldAlert, Bot, Globe, DownloadCloud, Mail,
+  Banknote, Calculator, ChevronDown, Building2, LogOut, Menu, X
+} from "lucide-react";
+import { clsx } from "clsx";
+import { useState, useEffect } from "react";
+import { useTheme } from "../contexts/ThemeContext";
+
+export function AppLayout() {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const [company, setCompany] = useState<"BGK" | "O2N">("BGK");
+  const [showCompanyMenu, setShowCompanyMenu] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { primaryColor, logoUrl } = useTheme();
+
+  // Close mobile menu on route change
+  useEffect(() => {
+    setIsMobileMenuOpen(false);
+  }, [location.pathname]);
+
+  useEffect(() => {
+    const authUser = localStorage.getItem("auth_user");
+    if (!authUser) {
+      navigate("/login");
+    }
+  }, [navigate]);
+
+  const navigation = [
+    { group: "الرئيسية", items: [
+      { name: 'لوحة القيادة', href: '/', icon: LayoutDashboard },
+    ]},
+    { group: "المبيعات والمشتريات", items: [
+      { name: 'المبيعات والفواتير', href: '/invoices', icon: FileText },
+      { name: 'المشتريات', href: '/purchases', icon: ShoppingCart },
+      { name: 'العملاء والموردون', href: '/contacts', icon: Users },
+    ]},
+    { group: "المحاسبة العامة", items: [
+      { name: 'شجرة الحسابات', href: '/accounts', icon: Network },
+      { name: 'دفتر اليومية', href: '/journal', icon: BookOpen },
+      { name: 'البنوك والنقد', href: '/banks', icon: WalletCards },
+      { name: 'تعدد العملات', href: '/multi-currency', icon: Globe },
+    ]},
+    { group: "الموارد البشرية", items: [
+      { name: 'الموظفين', href: '/employees', icon: Users },
+      { name: 'الرواتب', href: '/payroll', icon: FileText },
+      { name: 'السُّلَف', href: '/employees/advances', icon: Banknote },
+      { name: 'حاسبة نهاية الخدمة', href: '/employees/end-of-service', icon: Calculator },
+    ]},
+    { group: "الأصول والالتزامات", items: [
+      { name: 'الأصول الثابتة', href: '/assets', icon: Box },
+      { name: 'الضرائب', href: '/taxes', icon: Receipt },
+      { name: 'إدارة القروض', href: '/loans', icon: Landmark },
+      { name: 'حسابات الشركاء', href: '/partners', icon: Briefcase },
+    ]},
+    { group: "التحليل والتقارير", items: [
+      { name: 'التقارير المالية', href: '/reports', icon: BarChart4 },
+      { name: 'مُنشئ التقارير', href: '/report-builder', icon: FolderKanban },
+      { name: 'تحليل الربحية', href: '/profitability', icon: BarChart4 },
+      { name: 'مراكز التكلفة', href: '/cost-centers', icon: Target },
+      { name: 'حسابات المشاريع', href: '/projects', icon: FolderKanban },
+      { name: 'توقعات التدفق النقدي', href: '/cash-flow', icon: LineChart },
+    ]},
+    { group: "الإدارة والأمان", items: [
+      { name: 'إغلاق الفترات', href: '/period-closing', icon: LockKeyhole },
+      { name: 'إدارة الصلاحيات', href: '/users', icon: ShieldCheck },
+      { name: 'التدقيق والامتثال', href: '/audit-compliance', icon: ShieldAlert },
+      { name: 'الأتمتة والمهام', href: '/automation', icon: Bot },
+      { name: 'إدارة الملفات', href: '/file-management', icon: FolderOpen },
+      { name: 'الاستيراد والتصدير', href: '/import-export', icon: DownloadCloud },
+      { name: 'قوالب البريد', href: '/email-templates', icon: Mail },
+      { name: 'الإعدادات', href: '/settings', icon: Settings },
+    ]},
+  ];
+
+  return (
+    <div className="flex h-screen w-full bg-slate-50 text-slate-900 overflow-hidden font-sans relative">
+      {/* Mobile Sidebar Overlay */}
+      {isMobileMenuOpen && (
+        <div
+          className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-40 md:hidden"
+          onClick={() => setIsMobileMenuOpen(false)}
+        />
+      )}
+
+      {/* Sidebar */}
+      <aside className={clsx(
+        "fixed inset-y-0 start-0 z-50 w-72 md:w-64 bg-slate-900 text-white flex flex-col border-e border-slate-800 shrink-0 transition-transform duration-300 md:relative md:translate-x-0",
+        isMobileMenuOpen ? "translate-x-0" : "translate-x-full md:translate-x-0"
+      )}>
+        {/* Logo */}
+        <div className="p-4 flex items-center justify-between border-b border-slate-800 h-14 shrink-0">
+          <div className="flex items-center gap-3">
+            {logoUrl ? (
+              <img src={logoUrl} alt="Logo" className="w-8 h-8 rounded-lg object-cover shrink-0 bg-white" />
+            ) : (
+              <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0" style={{ backgroundColor: primaryColor }}>
+                <LayoutDashboard className="w-5 h-5 text-white" />
+              </div>
+            )}
+            <span className="font-bold text-base tracking-tight truncate">بوهيميان جيكس</span>
+          </div>
+          <button onClick={() => setIsMobileMenuOpen(false)} className="md:hidden text-slate-400 hover:text-white p-1">
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+
+        {/* Company Switcher */}
+        <div className="px-3 py-2 border-b border-slate-800 relative">
+          <button
+            onClick={() => setShowCompanyMenu(!showCompanyMenu)}
+            className="w-full flex items-center justify-between bg-slate-800 hover:bg-slate-700 transition px-3 py-2 rounded-lg"
+          >
+            <div className="flex items-center gap-2">
+              <Building2 className="w-4 h-4 text-primary" />
+              <span className="text-sm font-bold text-white">
+                {company === "BGK" ? "Bohemian Geeks" : "O2Nation"}
+              </span>
+              <span className="text-[10px] bg-primary/30 text-primary px-1.5 py-0.5 rounded font-bold">{company}</span>
+            </div>
+            <ChevronDown className={clsx("w-4 h-4 text-slate-400 transition-transform", showCompanyMenu && "rotate-180")} />
+          </button>
+          {showCompanyMenu && (
+            <div className="absolute top-full start-3 end-3 mt-1 bg-slate-800 border border-slate-700 rounded-xl shadow-xl z-50 overflow-hidden">
+              {(["BGK", "O2N"] as const).map((c) => (
+                <button
+                  key={c}
+                  onClick={() => { setCompany(c); setShowCompanyMenu(false); alert(`تم التبديل إلى شركة ${c === "BGK" ? "Bohemian Geeks" : "O2Nation"}`); }}
+                  className={clsx(
+                    "w-full flex items-center gap-2 px-4 py-3 text-sm transition hover:bg-slate-700",
+                    company === c ? "text-primary font-bold" : "text-slate-300"
+                  )}
+                >
+                  <Building2 className="w-4 h-4" />
+                  {c === "BGK" ? "Bohemian Geeks (BGK)" : "O2Nation (O2N)"}
+                  {company === c && <span className="ms-auto text-primary text-xs"> نشط</span>}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Nav */}
+        <nav className="flex-1 px-2 py-3 overflow-y-auto space-y-4">
+          {navigation.map((group) => (
+            <div key={group.group}>
+              <div className="text-[9px] font-bold text-slate-500 uppercase tracking-widest px-2 mb-1">{group.group}</div>
+              <div className="space-y-0.5">
+                {group.items.map((item) => {
+                  const isActive = location.pathname === item.href || (item.href !== '/' && location.pathname.startsWith(item.href));
+                  return (
+                    <Link
+                      key={item.name}
+                      to={item.href}
+                      className={clsx(
+                        isActive
+                          ? 'bg-primary/20 text-primary border border-primary/30'
+                          : 'text-slate-400 hover:bg-slate-800 hover:text-white border border-transparent',
+                        'flex items-center gap-2.5 px-3 py-2 rounded-lg transition-all text-sm font-medium'
+                      )}
+                    >
+                      <item.icon className="w-4 h-4 shrink-0" aria-hidden="true" />
+                      <span className="truncate">{item.name}</span>
+                    </Link>
+                  );
+                })}
+              </div>
+            </div>
+          ))}
+        </nav>
+
+        {/* User Footer */}
+        <div className="p-3 border-t border-slate-800 flex items-center gap-2">
+          <div className="w-8 h-8 rounded-full flex items-center justify-center font-bold text-white text-sm shrink-0" style={{ backgroundColor: primaryColor }}>أ</div>
+          <div className="flex-1 min-w-0">
+            <div className="text-sm font-bold text-white truncate">أحمد صلاح</div>
+            <div className="text-[10px] text-slate-400 truncate">Super Admin</div>
+          </div>
+          <button
+            onClick={() => {
+              localStorage.removeItem("auth_user");
+              navigate("/login");
+            }}
+            title="تسجيل الخروج"
+            className="text-slate-500 hover:text-rose-400 transition"
+          >
+            <LogOut className="w-4 h-4" />
+          </button>
+        </div>
+      </aside>
+
+      {/* Main Content */}
+      <main className="flex-1 flex flex-col min-w-0 overflow-hidden">
+        {/* Topbar */}
+        <header className="h-14 bg-white border-b border-slate-200 flex items-center justify-between px-4 md:px-6 shadow-sm z-10 shrink-0">
+          <div className="flex items-center gap-3 text-sm text-slate-500">
+            <button
+              onClick={() => setIsMobileMenuOpen(true)}
+              className="p-1.5 -ms-1.5 rounded-lg text-slate-500 hover:bg-slate-100 md:hidden"
+            >
+              <Menu className="w-5 h-5" />
+            </button>
+            <div className="flex items-center gap-2">
+              <span className="font-bold text-slate-700 hidden sm:inline">{company === "BGK" ? "Bohemian Geeks" : "O2Nation"}</span>
+              <span className="text-slate-300 hidden sm:inline">/</span>
+              <span className="truncate">النظام المحاسبي</span>
+            </div>
+          </div>
+          <div className="flex items-center gap-3">
+            <span className="text-[10px] sm:text-xs bg-emerald-50 text-emerald-700 border border-emerald-200 px-2 py-1 rounded-lg font-bold hidden sm:inline-block">● متصل</span>
+            <div className="w-8 h-8 rounded-full flex items-center justify-center font-bold text-white text-sm shrink-0" style={{ backgroundColor: primaryColor }}>أ</div>
+          </div>
+        </header>
+
+        {/* Page Content */}
+        <div key={location.pathname} className="flex-1 p-6 space-y-6 overflow-y-auto animate-fade-in">
+          <Outlet />
+        </div>
+      </main>
+    </div>
+  );
+}

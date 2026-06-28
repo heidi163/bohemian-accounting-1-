@@ -1,0 +1,6 @@
+{
+  "name": "Bohemian Accounting",
+  "description": "Comprehensive accounting platform for Bohemian Geeks & O2Nation with multi-entity support.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

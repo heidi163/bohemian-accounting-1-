@@ -1,0 +1,239 @@
+import { useEffect, useState } from "react";
+import { type Bill } from "../types";
+import { clsx } from "clsx";
+import { format } from "date-fns";
+import { useNavigate } from "react-router";
+import { FileText, Send, Download, DollarSign, Settings, X, ShieldCheck } from "lucide-react";
+
+const statusStyles: Record<string, string> = {
+  draft: 'bg-slate-100 text-slate-600',
+  pending_approval: 'bg-amber-100 text-amber-700',
+  approved: 'bg-primary-100 text-primary-700',
+  partial: 'bg-blue-100 text-blue-700',
+  paid: 'bg-emerald-100 text-emerald-700',
+  overdue: 'bg-red-100 text-red-700',
+  cancelled: 'bg-slate-100 text-slate-500',
+};
+
+const statusTranslations: Record<string, string> = {
+  draft: 'مسودة',
+  pending_approval: 'في انتظار الموافقة',
+  approved: 'مُعتمدة',
+  partial: 'جزئي',
+  paid: 'مسددة',
+  overdue: 'متأخرة',
+  cancelled: 'ملغاة',
+};
+
+export function PurchasesPage() {
+  const [bills, setBills] = useState<Bill[]>([]);
+  const [selectedBills, setSelectedBills] = useState<Set<number>>(new Set());
+  const [activeModal, setActiveModal] = useState<null | 'payment' | 'approval'>(null);
+  const [focusedBill, setFocusedBill] = useState<Bill | null>(null);
+  
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    fetch("/api/bills")
+      .then((res) => res.json())
+      .then((data) => setBills(data.data));
+  }, []);
+
+  const toggleSelect = (id: number) => {
+    const next = new Set(selectedBills);
+    if (next.has(id)) next.delete(id);
+    else next.add(id);
+    setSelectedBills(next);
+  };
+
+  const openModal = (type: 'payment' | 'approval', bill?: Bill) => {
+    setFocusedBill(bill || null);
+    setActiveModal(type);
+  };
+
+  return (
+    <div className="space-y-6">
+      <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div>
+          <h2 className="font-bold text-slate-800 text-2xl">المشتريات والموردين (Payables)</h2>
+          <p className="text-slate-500 mt-1">إدارة فواتير المشتريات، متابعة المدفوعات المستحقة، والموردين.</p>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          {selectedBills.size > 0 && (
+            <button onClick={() => openModal('payment')} className="bg-emerald-100 text-emerald-800 px-4 py-2.5 rounded-xl text-sm font-semibold hover:bg-emerald-200 transition flex items-center gap-2">
+              <DollarSign className="w-4 h-4" /> سداد مجمع ({selectedBills.size})
+            </button>
+          )}
+          <button onClick={() => navigate('/purchases/new')} className="bg-primary-600 text-white px-4 py-2.5 rounded-xl text-sm font-semibold hover:bg-primary-700 transition">
+            فاتورة مشتريات جديدة
+          </button>
+        </div>
+      </div>
+
+      <div className="bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col overflow-hidden">
+        <div className="flex-1 overflow-x-auto">
+          <table className="w-full text-start border-collapse">
+            <thead className="bg-slate-50 text-slate-400 text-xs uppercase font-bold tracking-widest">
+              <tr className="border-b border-slate-100">
+                <th className="px-6 py-4 text-center w-12">
+                  <input 
+                    type="checkbox" 
+                    onChange={(e) => {
+                      if (e.target.checked) setSelectedBills(new Set(bills.map(i => i.id)));
+                      else setSelectedBills(new Set());
+                    }} 
+                    checked={selectedBills.size === bills.length && bills.length > 0}
+                    className="rounded text-primary-600 focus:ring-primary-500 w-4 h-4 cursor-pointer" 
+                  />
+                </th>
+                <th className="px-6 py-4 text-start">الرقم / رقم مرجعي</th>
+                <th className="px-6 py-4 text-start">المورد (Supplier)</th>
+                <th className="px-6 py-4 text-start">التاريخ</th>
+                <th className="px-6 py-4 text-end">المبلغ (VAT)</th>
+                <th className="px-6 py-4 text-start">الحالة</th>
+                <th className="px-6 py-4 text-end">الإجراءات</th>
+              </tr>
+            </thead>
+            <tbody className="text-sm text-slate-600">
+              {bills.map((bill) => (
+                <tr key={bill.id} className="border-b border-slate-50 hover:bg-slate-50 transition-colors">
+                  <td className="px-6 py-4 text-center">
+                    <input 
+                      type="checkbox" 
+                      onChange={() => toggleSelect(bill.id)} 
+                      checked={selectedBills.has(bill.id)}
+                      className="rounded text-primary-600 focus:ring-primary-500 w-4 h-4 cursor-pointer" 
+                    />
+                  </td>
+                  <td className="px-6 py-4 text-start">
+                    <div className="font-semibold text-slate-900">{bill.bill_number}</div>
+                    <div className="text-xs text-slate-500 mt-1 font-mono">{bill.reference_number || 'بدون مرجع'}</div>
+                    {bill.project_id && <div className="text-[10px] bg-slate-100 text-slate-600 px-1 inline-block mt-1 font-mono rounded">{bill.project_id}</div>}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-start font-medium text-slate-800">{bill.supplier_name}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-start">
+                    <div>{format(new Date(bill.bill_date), 'yyyy/MM/dd')}</div>
+                    <div className="text-xs text-slate-400 mt-0.5">استحقاق {format(new Date(bill.due_date), 'yyyy/MM/dd')}</div>
+                  </td>
+                  <td className="px-6 py-4 text-end font-mono whitespace-nowrap text-slate-900 font-bold" dir="ltr">
+                    <div>{new Intl.NumberFormat('ar-EG', { style: 'currency', currency: bill.currency }).format(bill.total_amount)}</div>
+                    {bill.tax_amount ? (
+                      <div className="text-[10px] text-slate-500 font-normal mt-1 flex gap-1 justify-end">
+                        <span className="text-rose-500">+{bill.tax_amount} VAT</span>
+                      </div>
+                    ) : null}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-start">
+                    <span className={clsx('inline-flex items-center rounded-md px-2.5 py-1 text-xs font-bold leading-none', statusStyles[bill.status])}>
+                      {statusTranslations[bill.status]}
+                    </span>
+                    {['partial', 'approved', 'overdue'].includes(bill.status) && (
+                      <div className="text-[10px] text-slate-500 mt-1.5 font-mono" dir="ltr">
+                        {bill.paid_amount > 0 ? `${new Intl.NumberFormat('ar-EG', { style: 'decimal' }).format(bill.paid_amount)} paid` : ''}
+                      </div>
+                    )}
+                  </td>
+                  <td className="px-6 py-4 text-end whitespace-nowrap flex items-center justify-end gap-1">
+                    {bill.status === 'pending_approval' && (
+                      <button onClick={() => openModal('approval', bill)} title="اعتماد الفاتورة" className="p-2 text-slate-400 hover:bg-amber-50 hover:text-amber-600 rounded-lg transition"><ShieldCheck className="w-4 h-4" /></button>
+                    )}
+                    <button onClick={() => alert('جاري تحميل المرفق...')} title="تنزيل المرفقات" className="p-2 text-slate-400 hover:bg-rose-50 hover:text-rose-600 rounded-lg transition"><Download className="w-4 h-4" /></button>
+                    {['approved', 'partial', 'overdue'].includes(bill.status) && (
+                      <button onClick={() => openModal('payment', bill)} title="تسجيل صرف" className="p-2 text-slate-400 hover:bg-emerald-50 hover:text-emerald-600 rounded-lg transition"><DollarSign className="w-4 h-4" /></button>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      {activeModal === 'payment' && (
+        <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl shadow-xl w-full max-w-lg overflow-hidden">
+            <div className="flex items-center justify-between p-6 border-b border-slate-100">
+              <h3 className="text-lg font-bold text-slate-800">
+                {focusedBill ? 'دفع فاتورة مشتريات' : 'تسجيل صرف مجمع (Bulk Payment Allocation)'}
+              </h3>
+              <button onClick={() => setActiveModal(null)} className="text-slate-400 hover:text-slate-500"><X className="w-5 h-5"/></button>
+            </div>
+            <div className="p-6 space-y-4">
+              {focusedBill ? (
+                <div className="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                  <div className="flex justify-between items-center mb-1">
+                     <span className="text-sm font-semibold text-slate-700">فاتورة {focusedBill.bill_number}</span>
+                     <span className="text-xs text-slate-500">{focusedBill.supplier_name}</span>
+                  </div>
+                  <div className="text-lg font-black text-rose-600 font-mono">المديونية: {new Intl.NumberFormat('ar-EG', { style: 'currency', currency: focusedBill.currency }).format(focusedBill.total_amount - focusedBill.paid_amount)}</div>
+                </div>
+              ) : (
+                <div className="bg-primary-50 p-4 rounded-xl border border-primary-100 text-primary-800 text-sm">
+                  سيتم سداد مستحقات الفواتير المحددة بعدد ({selectedBills.size}).
+                </div>
+              )}
+              
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-2">المبلغ المدفوع (Paid Amount)</label>
+                <input type="number" placeholder="0.00" className="w-full bg-slate-50 border border-rose-200 focus:border-rose-500 text-slate-900 text-sm rounded-xl px-4 py-3 outline-none text-right font-bold text-lg" dir="ltr" />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-2">صرف من حساب (Pay From)</label>
+                <select className="w-full bg-white border border-slate-200 text-slate-900 text-sm rounded-xl px-4 py-2.5 outline-none">
+                  <option>البنك الأهلي - EGP</option>
+                  <option>CIB - USD</option>
+                  <option>الخزينة</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-2">طريقة السداد</label>
+                <select className="w-full bg-white border border-slate-200 text-slate-900 text-sm rounded-xl px-4 py-2.5 outline-none">
+                  <option>تحويل بنكي</option>
+                  <option>شيك</option>
+                  <option>نقدي</option>
+                </select>
+              </div>
+              <button 
+                onClick={() => {
+                  alert('تم إثبات السداد بنجاح');
+                  setActiveModal(null);
+                  setSelectedBills(new Set());
+                }}
+                className="w-full bg-emerald-600 text-white font-bold py-3 text-sm rounded-xl hover:bg-emerald-700 transition mt-4"
+              >
+                تأكيد الدفع (Record Payment)
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {activeModal === 'approval' && focusedBill && (
+        <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl shadow-xl w-full max-w-lg overflow-hidden">
+            <div className="flex items-center justify-between p-6 border-b border-slate-100">
+              <h3 className="text-lg font-bold text-slate-800">مراجعة واعتماد الفاتورة</h3>
+              <button onClick={() => setActiveModal(null)} className="text-slate-400 hover:text-slate-500"><X className="w-5 h-5"/></button>
+            </div>
+            <div className="p-6 space-y-4">
+              <div className="bg-amber-50 p-4 rounded-xl border border-amber-100 text-amber-800 text-sm mb-4">
+                 يجب اعتماد الفاتورة من الإدارة المالية قبل التمكن من إجراء مدفوعات عليها.
+              </div>
+              <ul className="space-y-2 text-sm text-slate-700 mb-6">
+                 <li className="flex justify-between"><span>رقم الفاتورة:</span> <strong>{focusedBill.bill_number}</strong></li>
+                 <li className="flex justify-between"><span>المورد:</span> <strong>{focusedBill.supplier_name}</strong></li>
+                 <li className="flex justify-between"><span>الإجمالي:</span> <strong className="font-mono text-rose-600" dir="ltr">{new Intl.NumberFormat('ar-EG', { style: 'currency', currency: focusedBill.currency }).format(focusedBill.total_amount)}</strong></li>
+              </ul>
+              
+              <div className="flex gap-2">
+                <button onClick={() => { alert('تم اعتماد الفاتورة'); setActiveModal(null); }} className="flex-1 bg-primary-600 text-white font-bold py-3 text-sm rounded-xl hover:bg-primary-700 transition">اعتماد (Approve)</button>
+                <button onClick={() => { alert('تم رفض الفاتورة'); setActiveModal(null); }} className="flex-1 bg-rose-50 text-rose-600 font-bold py-3 text-sm rounded-xl hover:bg-rose-100 transition border border-rose-200">رفض (Reject)</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+    </div>
+  );
+}
