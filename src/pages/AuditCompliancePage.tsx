@@ -47,13 +47,15 @@ export function AuditCompliancePage() {
       ...filteredLogs.map(l => `"${l.id}","${l.action}","${l.type}","${l.user}","${l.ip}","${l.date}","${l.status}"`)
     ].join("\n");
 
-    const encodedUri = "data:text/csv;charset=utf-8,\uFEFF" + encodeURIComponent(csvRows);
+    const blob = new Blob(["\uFEFF" + csvRows], { type: "text/csv;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
-    link.setAttribute("href", encodedUri);
+    link.setAttribute("href", url);
     link.setAttribute("download", `audit_logs_${new Date().toISOString().split('T')[0]}.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+    URL.revokeObjectURL(url);
     showToast('تم تصدير سجل التدقيق بنجاح بصيغة CSV');
   };
 
