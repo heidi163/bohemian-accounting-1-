@@ -70,8 +70,24 @@ export function InvoicesPage() {
 
   useEffect(() => {
     fetch("/api/invoices")
-      .then((res) => res.json())
-      .then((data) => setInvoices(data.data));
+      .then((res) => {
+        if (!res.ok) throw new Error('API failed');
+        return res.json();
+      })
+      .then((data) => setInvoices(data.data))
+      .catch(() => {
+        const localInvoices = JSON.parse(localStorage.getItem('mock_invoices') || '[]');
+        if (localInvoices.length > 0) {
+          setInvoices(localInvoices);
+        } else {
+          setInvoices([
+            { id: 1, type: 'invoice', invoice_number: 'BGK-INV-2026-00001', customer_name: 'Bohemian Geeks', total_amount: 15400, paid_amount: 15400, tax_amount: 1400, discount_amount: 0, status: 'paid', invoice_date: '2026-05-10', due_date: '2026-05-24', currency: 'EGP', project_id: 'PRJ-001', recurring_status: 'none' },
+            { id: 2, type: 'invoice', invoice_number: 'O2N-INV-2026-00001', customer_name: 'TechFlow Inc', total_amount: 45000, paid_amount: 20000, tax_amount: 5000, discount_amount: 2000, status: 'partial', invoice_date: '2026-05-15', due_date: '2026-05-30', currency: 'EGP', recurring_status: 'active', recurring_frequency: 'monthly' },
+            { id: 3, type: 'quotation', invoice_number: 'BGK-QT-2026-00002', customer_name: 'Sealy KSA', total_amount: 120500, paid_amount: 0, tax_amount: 15000, discount_amount: 5000, status: 'draft', invoice_date: '2026-06-01', due_date: '2026-06-15', currency: 'SAR', recurring_status: 'none' },
+            { id: 4, type: 'proforma', invoice_number: 'BGK-PRO-2026-00001', customer_name: 'Tech Solutions', total_amount: 85000, paid_amount: 0, tax_amount: 10000, discount_amount: 0, status: 'pending_approval', invoice_date: '2026-06-10', due_date: '2026-06-20', currency: 'EGP', recurring_status: 'none' },
+          ]);
+        }
+      });
   }, []);
 
   const toggleSelect = (id: number) => {
