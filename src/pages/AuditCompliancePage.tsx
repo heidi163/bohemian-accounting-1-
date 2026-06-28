@@ -42,15 +42,14 @@ export function AuditCompliancePage() {
 
   const handleExport = () => {
     const headers = ["ID", "Action", "Type", "User", "IP Address", "Date", "Status"];
-    const csvContent = [
+    const csvRows = [
       headers.join(","),
       ...filteredLogs.map(l => `"${l.id}","${l.action}","${l.type}","${l.user}","${l.ip}","${l.date}","${l.status}"`)
     ].join("\n");
 
-    const blob = new Blob(["\uFEFF" + csvContent], { type: "text/csv;charset=utf-8;" });
-    const url = URL.createObjectURL(blob);
+    const encodedUri = "data:text/csv;charset=utf-8,\uFEFF" + encodeURIComponent(csvRows);
     const link = document.createElement("a");
-    link.setAttribute("href", url);
+    link.setAttribute("href", encodedUri);
     link.setAttribute("download", `audit_logs_${new Date().toISOString().split('T')[0]}.csv`);
     document.body.appendChild(link);
     link.click();
