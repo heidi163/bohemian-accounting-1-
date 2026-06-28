@@ -217,7 +217,7 @@ export function AppLayout() {
         </header>
 
         {/* Page Content */}
-        <div key={location.pathname} className="flex-1 p-6 space-y-6 overflow-y-auto animate-fade-in">
+        <div key={`${location.pathname}-${activeCompany}`} className="flex-1 p-6 space-y-6 overflow-y-auto animate-fade-in">
           <Outlet />
         </div>
       </main>
