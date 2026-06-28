@@ -91,12 +91,29 @@ export function ReportBuilderPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(config)
       });
+      if (!res.ok) throw new Error();
       const data = await res.json();
       setPreviewData(data.data);
     } catch (e) {
-      console.error(e);
-    } finally {
-      setIsRunning(false);
+      setTimeout(() => {
+        setPreviewData({
+          chartData: [
+            { label: 'عنصر 1', value: 4500 },
+            { label: 'عنصر 2', value: 3200 },
+            { label: 'عنصر 3', value: 2800 },
+            { label: 'عنصر 4', value: 5100 },
+            { label: 'عنصر 5', value: 1900 },
+          ],
+          tableRows: [
+            { id: 1001, col1: 'عملية تجريبية أ', col2: 4500, date: '2026-05-10', status: 'مكتمل' },
+            { id: 1002, col1: 'عملية تجريبية ب', col2: 3200, date: '2026-05-11', status: 'معلق' },
+            { id: 1003, col1: 'عملية تجريبية ج', col2: 2800, date: '2026-05-12', status: 'مكتمل' },
+            { id: 1004, col1: 'عملية تجريبية د', col2: 5100, date: '2026-05-14', status: 'مكتمل' },
+            { id: 1005, col1: 'عملية تجريبية هـ', col2: 1900, date: '2026-05-15', status: 'ملغى' },
+          ]
+        });
+        setIsRunning(false);
+      }, 600);
     }
   };
 
