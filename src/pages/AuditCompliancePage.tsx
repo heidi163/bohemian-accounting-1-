@@ -42,21 +42,40 @@ export function AuditCompliancePage() {
 
   const handleExport = () => {
     const headers = ["ID", "Action", "Type", "User", "IP Address", "Date", "Status"];
-    const csvRows = [
-      headers.join(","),
-      ...filteredLogs.map(l => `"${l.id}","${l.action}","${l.type}","${l.user}","${l.ip}","${l.date}","${l.status}"`)
-    ].join("\n");
+    const htmlContent = `
+      <html xmlns:x="urn:schemas-microsoft-com:office:excel">
+        <head>
+          <meta charset="utf-8">
+        </head>
+        <body>
+          <table border="1">
+            <tr>${headers.map(h => `<th>${h}</th>`).join('')}</tr>
+            ${filteredLogs.map(l => `
+              <tr>
+                <td>${l.id}</td>
+                <td>${l.action}</td>
+                <td>${l.type}</td>
+                <td>${l.user}</td>
+                <td>${l.ip}</td>
+                <td>${l.date}</td>
+                <td>${l.status}</td>
+              </tr>
+            `).join('')}
+          </table>
+        </body>
+      </html>
+    `;
 
-    const blob = new Blob(["\uFEFF" + csvRows], { type: "text/csv;charset=utf-8" });
+    const blob = new Blob([htmlContent], { type: "application/vnd.ms-excel" });
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.setAttribute("href", url);
-    link.setAttribute("download", `audit_logs_${new Date().toISOString().split('T')[0]}.csv`);
+    link.setAttribute("download", `audit_logs_${new Date().toISOString().split('T')[0]}.xls`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
-    showToast('تم تصدير سجل التدقيق بنجاح بصيغة CSV');
+    showToast('تم تصدير سجل التدقيق بنجاح بصيغة XLS');
   };
 
   const handleSecurityScan = () => {
