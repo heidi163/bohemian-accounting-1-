@@ -4,7 +4,7 @@ import {
   Network, ShoppingCart, Box, Receipt, Landmark, Briefcase, Target,
   FolderKanban, LineChart, BarChart4, LockKeyhole, ShieldCheck,
   FolderOpen, ShieldAlert, Bot, Globe, DownloadCloud, Mail,
-  Banknote, Calculator, ChevronDown, Building2, LogOut, Menu, X
+  Banknote, Calculator, ChevronDown, Building2, LogOut, Menu, X, FileSignature
 } from "lucide-react";
 import { clsx } from "clsx";
 import { useState, useEffect } from "react";
@@ -42,6 +42,7 @@ export function AppLayout() {
       { name: 'شجرة الحسابات', href: '/accounts', icon: Network },
       { name: 'دفتر اليومية', href: '/journal', icon: BookOpen },
       { name: 'البنوك والنقد', href: '/banks', icon: WalletCards },
+      { name: 'إدارة الشيكات', href: '/checks', icon: FileSignature },
       { name: 'تعدد العملات', href: '/multi-currency', icon: Globe },
     ]},
     { group: "الموارد البشرية", items: [

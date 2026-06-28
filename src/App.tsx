@@ -45,6 +45,7 @@ import { ForgotPasswordPage } from "./pages/ForgotPasswordPage";
 import { EmployeeAdvancesPage } from "./pages/EmployeeAdvancesPage";
 import { EndOfServicePage } from "./pages/EndOfServicePage";
 import { EmailTemplatesPage } from "./pages/EmailTemplatesPage";
+import { ChecksPage } from "./pages/ChecksPage";
 
 export default function App() {
   return (
@@ -93,6 +94,7 @@ export default function App() {
             <Route path="contacts/new" element={<ContactCreatePage />} />
             <Route path="banks" element={<BanksPage />} />
             <Route path="banks/new" element={<BankCreatePage />} />
+            <Route path="checks" element={<ChecksPage />} />
             <Route path="settings" element={<SettingsPage />} />
           </Route>
         </Routes>
