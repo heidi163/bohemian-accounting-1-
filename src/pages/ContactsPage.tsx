@@ -3,7 +3,7 @@ import { type Contact } from "../types";
 import { useNavigate } from "react-router";
 import { Download, Upload, AlertTriangle, TrendingUp, X, Filter } from "lucide-react";
 import { clsx } from "clsx";
-import { getCompanyKey } from '../utils/storage';
+import apiClient from "../api/client";
 
 export function ContactsPage() {
   const [contacts, setContacts] = useState<Contact[]>([]);
@@ -12,30 +12,40 @@ export function ContactsPage() {
   const [importedFile, setImportedFile] = useState<File | null>(null);
   const navigate = useNavigate();
 
+  const loadCustomers = async () => {
+    try {
+      const res = await apiClient.get('/customers');
+      setContacts(res.data.data);
+    } catch (error) {
+      console.error("Failed to load customers", error);
+      setContacts([]);
+    }
+  };
+
   useEffect(() => {
-    fetch("/api/contacts")
-      .then((res) => {
-        if (!res.ok) throw new Error('API Error');
-        return res.json();
-      })
-      .then((data) => setContacts(data.data))
-      .catch(() => {
-        const localContacts = JSON.parse(localStorage.getItem(getCompanyKey('mock_contacts')) || '[]');
-        if (localContacts.length > 0) {
-          setContacts(localContacts);
-        } else {
-          setContacts([
-            { id: 1, code: 'CUST-2026-001', name: 'بوهيميان جيكس (Bohemian Geeks)', type: 'customer', email: 'hello@bohemiangeeks.com', phone: '+20 100 123 4567', balance: 15400, opening_balance: 0, outstanding_balance: 15400, credit_limit: 50000, aging: { '0_30': 15400, '31_60': 0, '61_90': 0, '91_plus': 0 }, sub_contacts: [{ name: 'Heidi Medhat', email: 'heidi@bohemiangeeks.com', phone: '+20101111111' }] },
-            { id: 2, code: 'CUST-2026-002', name: 'Sealy KSA', type: 'customer', email: 'finance@sealy.sa', phone: '+966 50 123 4567', balance: 120500, opening_balance: 20000, outstanding_balance: 100500, credit_limit: 200000, aging: { '0_30': 50000, '31_60': 50500, '61_90': 0, '91_plus': 0 }, sub_contacts: [] },
-            { id: 3, code: 'SUPP-2026-001', name: 'Amazon Web Services', type: 'supplier', email: 'billing@aws.com', phone: '+1 800 123 4567', balance: -1200, opening_balance: 0, outstanding_balance: 0, credit_limit: 0, aging: { '0_30': 0, '31_60': 0, '61_90': 0, '91_plus': 0 }, sub_contacts: [] }
-          ]);
-        }
-      });
+    loadCustomers();
   }, []);
 
-  const handleAction = (type: 'view' | 'excel_import' | 'duplicate_check' | 'profitability', contact?: Contact) => {
+  const [statementData, setStatementData] = useState<any>(null);
+  const [agingData, setAgingData] = useState<any>(null);
+
+  const handleAction = async (type: 'view' | 'excel_import' | 'duplicate_check' | 'profitability', contact?: Contact) => {
     setActiveModal(type);
-    if (contact) setSelectedContact(contact);
+    if (contact) {
+      setSelectedContact(contact);
+      if (type === 'view') {
+        try {
+          const [statementRes, agingRes] = await Promise.all([
+            apiClient.get(`/customers/${contact.id}/statement`),
+            apiClient.get(`/customers/${contact.id}/aging`)
+          ]);
+          setStatementData(statementRes.data.data);
+          setAgingData(agingRes.data.data);
+        } catch (error) {
+          console.error("Failed to load customer details", error);
+        }
+      }
+    }
     if (type === 'excel_import') setImportedFile(null);
   };
 
@@ -159,8 +169,8 @@ export function ContactsPage() {
                     )}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-start">
-                    <span className={`inline-flex items-center rounded-md px-2.5 py-1 text-xs font-bold leading-none ${contact.type === 'customer' ? 'bg-blue-100 text-blue-700' : 'bg-fuchsia-100 text-fuchsia-700'}`}>
-                      {contact.type === 'customer' ? 'عميل' : 'مورد'}
+                    <span className={`inline-flex items-center rounded-md px-2.5 py-1 text-xs font-bold leading-none bg-blue-100 text-blue-700`}>
+                      عميل
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-start">{contact.email}</td>
@@ -291,26 +301,26 @@ export function ContactsPage() {
                   </div>
                </div>
 
-               {selectedContact.aging && (
+               {agingData && agingData.aging_summary && (
                  <div>
                    <h4 className="font-bold text-slate-800 mb-3">أعمار الديون (Customer Aging Buckets)</h4>
                    <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
                      <div className="grid grid-cols-4 text-center divide-x divide-slate-100">
                        <div className="p-4">
                          <div className="text-sm font-semibold text-slate-500 mb-1">0 - 30 يوماً</div>
-                         <div className="font-bold text-emerald-600" dir="ltr">{new Intl.NumberFormat('ar-EG', { style: 'currency', currency: 'EGP' }).format(selectedContact.aging['0_30'])}</div>
+                         <div className="font-bold text-emerald-600" dir="ltr">{new Intl.NumberFormat('ar-EG', { style: 'currency', currency: 'EGP' }).format(agingData.aging_summary['0_30'])}</div>
                        </div>
                        <div className="p-4">
                          <div className="text-sm font-semibold text-slate-500 mb-1">31 - 60 يوماً</div>
-                         <div className="font-bold text-amber-600" dir="ltr">{new Intl.NumberFormat('ar-EG', { style: 'currency', currency: 'EGP' }).format(selectedContact.aging['31_60'])}</div>
+                         <div className="font-bold text-amber-600" dir="ltr">{new Intl.NumberFormat('ar-EG', { style: 'currency', currency: 'EGP' }).format(agingData.aging_summary['31_60'])}</div>
                        </div>
                        <div className="p-4">
                          <div className="text-sm font-semibold text-slate-500 mb-1">61 - 90 يوماً</div>
-                         <div className="font-bold text-orange-600" dir="ltr">{new Intl.NumberFormat('ar-EG', { style: 'currency', currency: 'EGP' }).format(selectedContact.aging['61_90'])}</div>
+                         <div className="font-bold text-orange-600" dir="ltr">{new Intl.NumberFormat('ar-EG', { style: 'currency', currency: 'EGP' }).format(agingData.aging_summary['61_90'])}</div>
                        </div>
                        <div className="p-4 bg-rose-50/30">
                          <div className="text-sm font-semibold text-rose-500 mb-1">91+ يوماً</div>
-                         <div className="font-bold text-rose-600" dir="ltr">{new Intl.NumberFormat('ar-EG', { style: 'currency', currency: 'EGP' }).format(selectedContact.aging['91_plus'])}</div>
+                         <div className="font-bold text-rose-600" dir="ltr">{new Intl.NumberFormat('ar-EG', { style: 'currency', currency: 'EGP' }).format(agingData.aging_summary['90_plus'])}</div>
                        </div>
                      </div>
                    </div>
@@ -335,20 +345,20 @@ export function ContactsPage() {
                          </tr>
                        </thead>
                        <tbody className="divide-y divide-slate-100">
-                         <tr>
-                           <td className="p-3">2026-05-01</td>
-                           <td className="p-3">رصيد افتتاحي</td>
-                           <td className="p-3 text-end">-</td>
-                           <td className="p-3 text-end">-</td>
-                           <td className="p-3 text-end font-mono">{new Intl.NumberFormat('ar-EG', { style: 'currency', currency: 'EGP' }).format(selectedContact.opening_balance ?? 0)}</td>
-                         </tr>
-                         <tr>
-                           <td className="p-3">2026-06-01</td>
-                           <td className="p-3">فاتورة مبيعات #INV-001</td>
-                           <td className="p-3 text-end font-mono">{new Intl.NumberFormat('ar-EG', { style: 'currency', currency: 'EGP' }).format(selectedContact.balance ?? 0)}</td>
-                           <td className="p-3 text-end">-</td>
-                           <td className="p-3 text-end font-mono">{new Intl.NumberFormat('ar-EG', { style: 'currency', currency: 'EGP' }).format((selectedContact.opening_balance ?? 0) + (selectedContact.balance ?? 0))}</td>
-                         </tr>
+                         {statementData?.statement?.map((line: any, index: number) => (
+                            <tr key={index}>
+                              <td className="p-3">{line.entry_date}</td>
+                              <td className="p-3">{line.description}</td>
+                              <td className="p-3 text-end font-mono">{line.debit > 0 ? new Intl.NumberFormat('ar-EG', { style: 'currency', currency: 'EGP' }).format(line.debit) : '-'}</td>
+                              <td className="p-3 text-end font-mono">{line.credit > 0 ? new Intl.NumberFormat('ar-EG', { style: 'currency', currency: 'EGP' }).format(line.credit) : '-'}</td>
+                              <td className="p-3 text-end font-mono">{new Intl.NumberFormat('ar-EG', { style: 'currency', currency: 'EGP' }).format(line.balance)}</td>
+                            </tr>
+                         ))}
+                         {!statementData?.statement?.length && (
+                            <tr>
+                              <td colSpan={5} className="p-4 text-center text-slate-500">لا توجد حركات مسجلة لهذا العميل</td>
+                            </tr>
+                         )}
                        </tbody>
                      </table>
                    </div>

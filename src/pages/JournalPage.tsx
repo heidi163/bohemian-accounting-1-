@@ -3,7 +3,7 @@ import { type JournalEntry } from "../types";
 import { clsx } from "clsx";
 import { format } from "date-fns";
 import { useNavigate } from "react-router";
-import { getCompanyKey, getActiveCompany } from '../utils/storage';
+import apiClient from "../api/client";
 
 const statusStyles: Record<string, string> = {
   draft: 'bg-slate-100 text-slate-600',
@@ -23,27 +23,18 @@ export function JournalPage() {
   const [entries, setEntries] = useState<JournalEntry[]>([]);
   const navigate = useNavigate();
 
+  const loadJournals = async () => {
+    try {
+      const res = await apiClient.get('/journal-entries');
+      setEntries(res.data.data);
+    } catch (error) {
+      console.error("Failed to load journals", error);
+      setEntries([]);
+    }
+  };
+
   useEffect(() => {
-    fetch("/api/journal-entries")
-      .then((res) => {
-        if (!res.ok) throw new Error('API Error');
-        return res.json();
-      })
-      .then((data) => setEntries(data.data))
-      .catch(() => {
-        const localJournals = JSON.parse(localStorage.getItem(getCompanyKey('mock_journals')) || '[]');
-        if (localJournals.length > 0) {
-          setEntries(localJournals);
-        } else if (false) {
-            const defaults = [
-            { id: 1, entry_number: 'JE-2026-00001', entry_date: '2026-05-01', description: 'رصيد افتتاحي', total_debit: 500000, total_credit: 500000, status: 'posted', company_id: 'BGK' },
-            { id: 2, entry_number: 'JE-2026-00002', entry_date: '2026-05-15', description: 'إثبات رواتب شهر مايو', total_debit: 45000, total_credit: 45000, status: 'posted', company_id: 'BGK' },
-            { id: 3, entry_number: 'JE-2026-00003', entry_date: '2026-06-01', description: 'تسوية عهدة موظف', total_debit: 1200, total_credit: 1200, status: 'pending_approval', company_id: 'O2N' }
-          ];
-          localStorage.setItem(getCompanyKey('mock_journals'), JSON.stringify(defaults));
-          setEntries(defaults);
-        }
-      });
+    loadJournals();
   }, []);
 
   return (
@@ -86,22 +77,17 @@ export function JournalPage() {
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-start">
                   <span className={clsx('inline-flex items-center rounded-md px-2.5 py-1 text-xs font-bold leading-none disabled:opacity-50 cursor-pointer hover:opacity-80', statusStyles[entry.status])}
-                        onClick={() => {
+                        onClick={async () => {
                           if (entry.status === 'posted') {
                             if(confirm("هل تريد بالتأكيد عمل قيد عكسي (Reverse Entry) لهذا القيد؟")) {
-                               const localJournals = JSON.parse(localStorage.getItem(getCompanyKey('mock_journals')) || '[]');
-                               const updatedJournals = localJournals.map((j: any) => j.id === entry.id ? { ...j, status: 'reversed' } : j);
-                               const reverseEntry = {
-                                 ...entry,
-                                 id: Date.now(),
-                                 entry_number: `REV-${entry.entry_number}`,
-                                 description: `قيد عكسي لـ ${entry.entry_number}: ${entry.description}`,
-                                 status: 'posted'
-                               };
-                               updatedJournals.unshift(reverseEntry);
-                               localStorage.setItem(getCompanyKey('mock_journals'), JSON.stringify(updatedJournals));
-                               setEntries(updatedJournals);
-                               alert("تم إنشاء القيد العكسي بنجاح");
+                               try {
+                                 await apiClient.post(`/journal-entries/${entry.id}/reverse`);
+                                 alert("تم إنشاء القيد العكسي بنجاح");
+                                 loadJournals();
+                               } catch (error) {
+                                 console.error(error);
+                                 alert("حدث خطأ أثناء عكس القيد");
+                               }
                             }
                           }
                         }}
