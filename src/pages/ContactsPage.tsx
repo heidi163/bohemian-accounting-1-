@@ -29,7 +29,17 @@ export function ContactsPage() {
       setContacts(data.data);
     } catch (error) {
       const localContacts = JSON.parse(localStorage.getItem(getCompanyKey('mock_contacts')) || '[]');
-      setContacts(localContacts);
+      if (localContacts.length > 0) {
+        setContacts(localContacts);
+      } else {
+        const defaultContacts = [
+          { id: 1, code: 'CUST-2026-001', name: 'بوهيميان جيكس (Bohemian Geeks)', type: 'customer', email: 'hello@bohemiangeeks.com', phone: '+20 100 123 4567', balance: 15400, opening_balance: 0, outstanding_balance: 15400, credit_limit: 50000, aging: { '0_30': 15400, '31_60': 0, '61_90': 0, '91_plus': 0 }, sub_contacts: [{ name: 'Heidi Medhat', email: 'heidi@bohemiangeeks.com', phone: '+20101111111' }] },
+          { id: 2, code: 'CUST-2026-002', name: 'Sealy KSA', type: 'customer', email: 'finance@sealy.sa', phone: '+966 50 123 4567', balance: 120500, opening_balance: 20000, outstanding_balance: 100500, credit_limit: 200000, aging: { '0_30': 50000, '31_60': 50500, '61_90': 0, '91_plus': 0 }, sub_contacts: [] },
+          { id: 3, code: 'SUPP-2026-001', name: 'Amazon Web Services', type: 'supplier', email: 'billing@aws.com', phone: '+1 800 123 4567', balance: -1200, opening_balance: 0, outstanding_balance: 0, credit_limit: 0, aging: { '0_30': 0, '31_60': 0, '61_90': 0, '91_plus': 0 }, sub_contacts: [] }
+        ];
+        setContacts(defaultContacts);
+        localStorage.setItem(getCompanyKey('mock_contacts'), JSON.stringify(defaultContacts));
+      }
     }
   };
 
