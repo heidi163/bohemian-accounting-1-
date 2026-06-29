@@ -219,7 +219,7 @@ export function AppLayout() {
           </header>
 
           {/* Page Content */}
-          <div key={`${location.pathname}-${activeCompany}`} className="flex-1 p-4 md:p-6 space-y-6 overflow-y-auto animate-smooth-up relative z-10">
+          <div id="main-scroll-container" key={`${location.pathname}-${activeCompany}`} className="flex-1 p-4 md:p-6 space-y-6 overflow-y-auto animate-smooth-up relative z-10">
             <Outlet />
           </div>
         </div>
