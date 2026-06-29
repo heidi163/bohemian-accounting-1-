@@ -95,7 +95,7 @@ export function JournalCreatePage() {
   };
 
   return (
-    <div className="bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col overflow-hidden">
+    <div className="bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col">
       <div className="p-6 border-b border-slate-100 flex items-center justify-between">
         <div className="flex items-center space-x-4 ">
           <button onClick={() => navigate('/journal')} className="text-slate-400 hover:text-slate-600 transition">

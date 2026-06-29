@@ -121,7 +121,7 @@ export function InvoiceCreatePage() {
   };
 
   return (
-    <div className="bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col overflow-hidden max-w-5xl mx-auto">
+    <div className="bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col max-w-5xl mx-auto">
       <div className="p-6 border-b border-slate-100 flex items-center justify-between bg-slate-50">
         <div className="flex items-center space-x-4 ">
           <button onClick={() => navigate('/invoices')} className="text-slate-400 hover:text-slate-600 transition bg-white p-2 border border-slate-200 rounded-lg">
