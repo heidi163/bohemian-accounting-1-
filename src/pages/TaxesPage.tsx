@@ -191,7 +191,7 @@ export function TaxesPage() {
                       {record.status === 'paid' ? 'مسدد' : record.status === 'posted' ? 'مُرحل' : record.status === 'partial' ? 'جزئي' : 'معلق'}
                     </span>
                   </td>
-                  <td className="px-6 py-4 text-end whitespace-nowrap space-x-2 space-x-reverse">
+                  <td className="px-6 py-4 text-end space-x-2 space-x-reverse">
                      {(record.status === 'pending' || record.status === 'partial') && (
                         <button onClick={() => openPayment(record)} className="text-primary-600 font-semibold text-xs hover:underline bg-primary-50 px-2 py-1.5 rounded-lg">
                            تسجيل دفعة

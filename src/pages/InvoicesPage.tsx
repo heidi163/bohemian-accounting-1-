@@ -207,12 +207,12 @@ export function InvoicesPage() {
                     <div className="text-xs text-slate-500 mt-1">{typeTranslations[invoice.type || 'invoice']}</div>
                     {invoice.project_id && <div className="text-[10px] bg-slate-100 text-slate-600 px-1 inline-block mt-1 font-mono rounded">{invoice.project_id}</div>}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-start font-medium text-slate-800">{invoice.customer_name}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-start">
+                  <td className="px-6 py-4 text-start font-medium text-slate-800">{invoice.customer_name}</td>
+                  <td className="px-6 py-4 text-start">
                     <div>{format(new Date(invoice.invoice_date), 'yyyy/MM/dd')}</div>
                     <div className="text-xs text-slate-400 mt-0.5">م. {format(new Date(invoice.due_date), 'yyyy/MM/dd')}</div>
                   </td>
-                  <td className="px-6 py-4 text-end font-mono whitespace-nowrap text-slate-900 font-bold" dir="ltr">
+                  <td className="px-6 py-4 text-end font-mono text-slate-900 font-bold" dir="ltr">
                     <div>{new Intl.NumberFormat('ar-EG', { style: 'currency', currency: invoice.currency }).format(invoice.total_amount)}</div>
                     {(invoice.tax_amount || invoice.discount_amount) ? (
                       <div className="text-[10px] text-slate-500 font-normal mt-1 flex gap-1 justify-end">
@@ -221,7 +221,7 @@ export function InvoicesPage() {
                       </div>
                     ) : null}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-start">
+                  <td className="px-6 py-4 text-start">
                     <span className={clsx('inline-flex items-center rounded-md px-2.5 py-1 text-xs font-bold leading-none', statusStyles[invoice.status])}>
                       {statusTranslations[invoice.status]}
                     </span>
@@ -240,7 +240,7 @@ export function InvoicesPage() {
                        <button onClick={() => openModal('recurring', invoice)} className="text-slate-300 hover:text-primary-600 transition"><Settings className="w-4 h-4 mx-auto" /></button>
                     )}
                   </td>
-                  <td className="px-6 py-4 text-end whitespace-nowrap flex items-center justify-end gap-1">
+                  <td className="px-6 py-4 text-end flex items-center justify-end gap-1">
                     <button onClick={() => openModal('email', invoice)} title="إرسال إيميل" className="p-2 text-slate-400 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition"><Send className="w-4 h-4" /></button>
                     <button onClick={() => handleDownload(invoice)} title="تحميل PDF" className="p-2 text-slate-400 hover:bg-rose-50 hover:text-rose-600 rounded-lg transition"><Download className="w-4 h-4" /></button>
                     {['issued', 'partial', 'overdue'].includes(invoice.status) && (

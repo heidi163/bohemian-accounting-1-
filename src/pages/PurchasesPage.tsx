@@ -156,12 +156,12 @@ export function PurchasesPage() {
                     <div className="text-xs text-slate-500 mt-1 font-mono">{bill.reference_number || 'بدون مرجع'}</div>
                     {bill.project_id && <div className="text-[10px] bg-slate-100 text-slate-600 px-1 inline-block mt-1 font-mono rounded">{bill.project_id}</div>}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-start font-medium text-slate-800">{bill.supplier_name}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-start">
+                  <td className="px-6 py-4 text-start font-medium text-slate-800">{bill.supplier_name}</td>
+                  <td className="px-6 py-4 text-start">
                     <div>{format(new Date(bill.bill_date), 'yyyy/MM/dd')}</div>
                     <div className="text-xs text-slate-400 mt-0.5">استحقاق {format(new Date(bill.due_date), 'yyyy/MM/dd')}</div>
                   </td>
-                  <td className="px-6 py-4 text-end font-mono whitespace-nowrap text-slate-900 font-bold" dir="ltr">
+                  <td className="px-6 py-4 text-end font-mono text-slate-900 font-bold" dir="ltr">
                     <div>{new Intl.NumberFormat('ar-EG', { style: 'currency', currency: bill.currency }).format(bill.total_amount)}</div>
                     {bill.tax_amount ? (
                       <div className="text-[10px] text-slate-500 font-normal mt-1 flex gap-1 justify-end">
@@ -169,7 +169,7 @@ export function PurchasesPage() {
                       </div>
                     ) : null}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-start">
+                  <td className="px-6 py-4 text-start">
                     <span className={clsx('inline-flex items-center rounded-md px-2.5 py-1 text-xs font-bold leading-none', statusStyles[bill.status])}>
                       {statusTranslations[bill.status]}
                     </span>
@@ -179,7 +179,7 @@ export function PurchasesPage() {
                       </div>
                     )}
                   </td>
-                  <td className="px-6 py-4 text-end whitespace-nowrap flex items-center justify-end gap-1">
+                  <td className="px-6 py-4 text-end flex items-center justify-end gap-1">
                     {bill.status === 'pending_approval' && (
                       <button onClick={() => openModal('approval', bill)} title="اعتماد الفاتورة" className="p-2 text-slate-400 hover:bg-amber-50 hover:text-amber-600 rounded-lg transition"><ShieldCheck className="w-4 h-4" /></button>
                     )}

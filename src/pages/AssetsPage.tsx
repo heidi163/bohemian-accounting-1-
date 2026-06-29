@@ -182,7 +182,7 @@ export function AssetsPage() {
                       {asset.status === 'active' ? 'نشط' : asset.status === 'sold' ? 'مباع' : 'مهلك'}
                     </span>
                   </td>
-                  <td className="px-6 py-4 text-end whitespace-nowrap">
+                  <td className="px-6 py-4 text-end">
                      {asset.status === 'active' ? (
                         <button onClick={() => openDispose(asset)} className="text-rose-600 font-semibold text-xs hover:underline bg-rose-50 px-2 py-1.5 rounded-lg flex justify-end gap-1 items-center ms-auto">
                            <Trash2 className="w-3 h-3" /> استبعاد

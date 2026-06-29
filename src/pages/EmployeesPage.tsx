@@ -71,7 +71,7 @@ export function EmployeesPage() {
                     <div className="text-slate-800 font-medium">{emp.department}</div>
                     <div className="text-xs text-slate-500 mt-0.5">{emp.position}</div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-start">
+                  <td className="px-6 py-4 text-start">
                     {format(new Date(emp.join_date), 'yyyy/MM/dd')}
                   </td>
                   <td className="px-6 py-4 text-end font-mono font-medium text-slate-900" dir="ltr">
@@ -85,7 +85,7 @@ export function EmployeesPage() {
                       {emp.status === 'active' ? 'نشط' : 'غير نشط'}
                     </span>
                   </td>
-                  <td className="px-6 py-4 text-end whitespace-nowrap flex items-center justify-end gap-1">
+                  <td className="px-6 py-4 text-end flex items-center justify-end gap-1">
                      <button title="سلف وقروض" className="p-2 text-slate-400 hover:bg-rose-50 hover:text-rose-600 rounded-lg transition"><Calculator className="w-4 h-4" /></button>
                      <button title="إدارة التأمينات" className="p-2 text-slate-400 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition"><ShieldCheck className="w-4 h-4" /></button>
                      <button title="نهاية الخدمة / ملف الموظف" className="p-2 text-slate-400 hover:bg-slate-100 hover:text-slate-700 rounded-lg transition"><FileText className="w-4 h-4" /></button>

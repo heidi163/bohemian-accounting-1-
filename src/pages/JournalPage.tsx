@@ -61,21 +61,21 @@ export function JournalPage() {
           <tbody className="text-sm text-slate-600">
             {entries.map((entry) => (
               <tr key={entry.id} className="border-b border-slate-50 hover:bg-slate-50 transition-colors">
-                <td className="px-6 py-4 font-semibold text-slate-900 whitespace-nowrap text-start">
+                <td className="px-6 py-4 font-semibold text-slate-900 text-start">
                   {entry.entry_number}
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-start">
+                <td className="px-6 py-4 text-start">
                   {format(new Date(entry.entry_date), 'yyyy/MM/dd')}
                 </td>
-                <td className="px-6 py-4 font-medium text-slate-900 whitespace-nowrap text-start">{entry.company_id}</td>
+                <td className="px-6 py-4 font-medium text-slate-900 text-start">{entry.company_id}</td>
                 <td className="px-6 py-4 max-w-xs truncate text-start">{entry.description}</td>
-                <td className="px-6 py-4 text-end font-mono font-medium whitespace-nowrap" dir="ltr">
+                <td className="px-6 py-4 text-end font-mono font-medium" dir="ltr">
                   {new Intl.NumberFormat('ar-EG', { style: 'currency', currency: 'EGP' }).format(entry.total_debit)}
                 </td>
-                <td className="px-6 py-4 text-end font-mono font-medium whitespace-nowrap" dir="ltr">
+                <td className="px-6 py-4 text-end font-mono font-medium" dir="ltr">
                   {new Intl.NumberFormat('ar-EG', { style: 'currency', currency: 'EGP' }).format(entry.total_credit)}
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-start">
+                <td className="px-6 py-4 text-start">
                   <span className={clsx('inline-flex items-center rounded-md px-2.5 py-1 text-xs font-bold leading-none disabled:opacity-50 cursor-pointer hover:opacity-80', statusStyles[entry.status])}
                         onClick={async () => {
                           if (entry.status === 'posted') {

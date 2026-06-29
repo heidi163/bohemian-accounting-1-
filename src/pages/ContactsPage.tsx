@@ -159,26 +159,26 @@ export function ContactsPage() {
             <tbody className="text-sm text-slate-600">
               {contacts.map((contact) => (
                 <tr key={contact.id} className="border-b border-slate-50 hover:bg-slate-50 transition-colors">
-                  <td className="px-6 py-4 font-semibold text-slate-900 whitespace-nowrap text-start">
+                  <td className="px-6 py-4 font-semibold text-slate-900 text-start">
                     {contact.code}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-start">
+                  <td className="px-6 py-4 text-start">
                     <div>{contact.name}</div>
                     {contact.sub_contacts && contact.sub_contacts.length > 0 && (
                       <div className="text-xs text-slate-400 mt-0.5">{contact.sub_contacts.length} جهات اتصال إضافية</div>
                     )}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-start">
+                  <td className="px-6 py-4 text-start">
                     <span className={`inline-flex items-center rounded-md px-2.5 py-1 text-xs font-bold leading-none bg-blue-100 text-blue-700`}>
                       عميل
                     </span>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-start">{contact.email}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-start" dir="ltr">{contact.phone}</td>
-                  <td className="px-6 py-4 text-end font-mono font-medium whitespace-nowrap" dir="ltr">
+                  <td className="px-6 py-4 text-start">{contact.email}</td>
+                  <td className="px-6 py-4 text-start" dir="ltr">{contact.phone}</td>
+                  <td className="px-6 py-4 text-end font-mono font-medium" dir="ltr">
                     {new Intl.NumberFormat('ar-EG', { style: 'currency', currency: 'EGP' }).format(contact.outstanding_balance ?? contact.balance)}
                   </td>
-                  <td className="px-6 py-4 text-end whitespace-nowrap">
+                  <td className="px-6 py-4 text-end">
                     <button onClick={() => handleAction('view', contact)} className="text-primary-600 font-semibold hover:underline">
                       أعمار الديون / كشف حساب
                     </button>
