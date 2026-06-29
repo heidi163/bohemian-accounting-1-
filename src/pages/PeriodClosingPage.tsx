@@ -25,7 +25,7 @@ export function PeriodClosingPage() {
         const localPeriods = JSON.parse(localStorage.getItem(getCompanyKey('mock_periods')) || '[]');
         if (localPeriods.length > 0) {
           setPeriods(localPeriods);
-        } else if (getActiveCompany() !== 'O2N') {
+        } else if (false) {
             const defaults = [
             { id: "2026-05", month: 5, year: 2026, status: "hard_lock", checklists: [
               { id: "t1", name: "مراجعة قيود اليومية", isCompleted: true, requiredForHardLock: true },

@@ -44,7 +44,7 @@ export function AssetsPage() {
         const localAssets = JSON.parse(localStorage.getItem(getCompanyKey('mock_assets')) || '[]');
         if (localAssets.length > 0) {
           setAssets(localAssets);
-        } else if (getActiveCompany() !== 'O2N') {
+        } else if (false) {
             const defaults = [
             { id: "1", asset_code: "AST-2026-001", name: "سيرفرات ديل (Dell Servers)", category: "computers", purchase_price: 120000, net_book_value: 90000, accumulated_depreciation: 30000, status: "active", useful_life_years: 4, depreciation_method: "straight_line" },
             { id: "2", asset_code: "AST-2026-002", name: "سيارة نقل مرسيدس", category: "cars", purchase_price: 850000, net_book_value: 850000, accumulated_depreciation: 0, status: "active", useful_life_years: 5, depreciation_method: "straight_line" }

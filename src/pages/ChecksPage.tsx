@@ -39,7 +39,7 @@ export function ChecksPage() {
     const local = localStorage.getItem(getCompanyKey("mock_checks"));
     if (local) {
       setChecks(JSON.parse(local));
-    } else if (getActiveCompany() !== 'O2N') {
+    } else if (false) {
             setChecks(mockChecks);
       localStorage.setItem(getCompanyKey("mock_checks"), JSON.stringify(mockChecks));
     }

@@ -34,7 +34,7 @@ export function JournalPage() {
         const localJournals = JSON.parse(localStorage.getItem(getCompanyKey('mock_journals')) || '[]');
         if (localJournals.length > 0) {
           setEntries(localJournals);
-        } else if (getActiveCompany() !== 'O2N') {
+        } else if (false) {
             const defaults = [
             { id: 1, entry_number: 'JE-2026-00001', entry_date: '2026-05-01', description: 'رصيد افتتاحي', total_debit: 500000, total_credit: 500000, status: 'posted', company_id: 'BGK' },
             { id: 2, entry_number: 'JE-2026-00002', entry_date: '2026-05-15', description: 'إثبات رواتب شهر مايو', total_debit: 45000, total_credit: 45000, status: 'posted', company_id: 'BGK' },

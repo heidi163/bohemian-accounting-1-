@@ -97,7 +97,7 @@ export function InvoicesPage() {
         const localInvoices = JSON.parse(localStorage.getItem(getCompanyKey('mock_invoices')) || '[]');
         if (localInvoices.length > 0) {
           setInvoices(localInvoices);
-        } else if (getActiveCompany() !== 'O2N') {
+        } else if (false) {
             setInvoices([
             { id: 1, type: 'invoice', invoice_number: 'BGK-INV-2026-00001', customer_name: 'Bohemian Geeks', total_amount: 15400, paid_amount: 15400, tax_amount: 1400, discount_amount: 0, status: 'paid', invoice_date: '2026-05-10', due_date: '2026-05-24', currency: 'EGP', project_id: 'PRJ-001', recurring_status: 'none' },
             { id: 2, type: 'invoice', invoice_number: 'O2N-INV-2026-00001', customer_name: 'TechFlow Inc', total_amount: 45000, paid_amount: 20000, tax_amount: 5000, discount_amount: 2000, status: 'partial', invoice_date: '2026-05-15', due_date: '2026-05-30', currency: 'EGP', recurring_status: 'active', recurring_frequency: 'monthly' },

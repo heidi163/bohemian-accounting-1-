@@ -21,7 +21,7 @@ export function EmployeesPage() {
         const localEmployees = JSON.parse(localStorage.getItem(getCompanyKey('mock_employees')) || '[]');
         if (localEmployees.length > 0) {
           setEmployees(localEmployees);
-        } else if (getActiveCompany() !== 'O2N') {
+        } else if (false) {
             const defaults = [
             { id: 1, name: 'أحمد محمد علي', employee_code: 'EMP-001', department: 'الهندسة (Engineering)', position: 'مهندس برمجيات', join_date: '2023-01-15', basic_salary: 15000, allowances: 2000, status: 'active' },
             { id: 2, name: 'سارة أحمد السيد', employee_code: 'EMP-002', department: 'التسويق (Marketing)', position: 'مدير تسويق', join_date: '2022-05-10', basic_salary: 20000, allowances: 3000, status: 'active' }

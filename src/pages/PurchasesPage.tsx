@@ -45,7 +45,7 @@ export function PurchasesPage() {
          const localBills = JSON.parse(localStorage.getItem(getCompanyKey('mock_bills')) || '[]');
          if (localBills.length > 0) {
             setBills(localBills);
-         } else if (getActiveCompany() !== 'O2N') {
+         } else if (false) {
             setBills([
               { id: 1, bill_number: 'BILL-2026-00001', reference_number: 'AWS-INV-001', supplier_name: 'Amazon Web Services', total_amount: 1200, paid_amount: 1200, tax_amount: 0, status: 'paid', bill_date: '2026-05-01', due_date: '2026-05-31', currency: 'USD', project_id: 'PRJ-001' },
               { id: 2, bill_number: 'BILL-2026-00002', reference_number: 'AD-2026', supplier_name: 'Google Ads', total_amount: 15000, paid_amount: 5000, tax_amount: 2100, status: 'partial', bill_date: '2026-06-01', due_date: '2026-06-15', currency: 'EGP', cost_center: 'HQ' },

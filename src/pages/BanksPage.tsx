@@ -34,7 +34,7 @@ export function BanksPage() {
         const localBanks = JSON.parse(localStorage.getItem(getCompanyKey('mock_banks')) || '[]');
         if (localBanks.length > 0) {
           setBanks(localBanks);
-        } else if (getActiveCompany() !== 'O2N') {
+        } else if (false) {
             const defaults = [
             { id: "1", code: "1111", name: "البنك الأهلي - EGP", type: "bank", currency: "EGP", balance: 1500000, company_id: "BGK" },
             { id: "2", code: "1112", name: "بنك الراجحي - SAR", type: "bank", currency: "SAR", balance: 250000, company_id: "BGK" },
