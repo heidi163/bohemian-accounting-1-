@@ -108,7 +108,7 @@ export function SettingsPage() {
               className={`w-full flex items-center space-x-3  px-4 py-3 rounded-xl transition-all font-medium ${
                 activeTab === 'company' 
                   ? 'bg-white shadow-sm text-primary border border-slate-200' 
-                  : 'text-slate-600 hover:bg-slate-200/50'
+                  : 'text-slate-600 hover:bg-slate-200/50 border border-transparent'
               }`}
             >
               <Building className="w-5 h-5 shrink-0" />
@@ -119,7 +119,7 @@ export function SettingsPage() {
               className={`w-full flex items-center space-x-3  px-4 py-3 rounded-xl transition-all font-medium ${
                 activeTab === 'taxes' 
                   ? 'bg-white shadow-sm text-primary border border-slate-200' 
-                  : 'text-slate-600 hover:bg-slate-200/50'
+                  : 'text-slate-600 hover:bg-slate-200/50 border border-transparent'
               }`}
             >
               <Percent className="w-5 h-5 opacity-70 shrink-0" />
@@ -130,7 +130,7 @@ export function SettingsPage() {
               className={`w-full flex items-center space-x-3  px-4 py-3 rounded-xl transition-all font-medium ${
                 activeTab === 'users' 
                   ? 'bg-white shadow-sm text-primary border border-slate-200' 
-                  : 'text-slate-600 hover:bg-slate-200/50'
+                  : 'text-slate-600 hover:bg-slate-200/50 border border-transparent'
               }`}
             >
               <Users className="w-5 h-5 opacity-70 shrink-0" />
@@ -141,7 +141,7 @@ export function SettingsPage() {
               className={`w-full flex items-center space-x-3  px-4 py-3 rounded-xl transition-all font-medium ${
                 activeTab === 'security' 
                   ? 'bg-white shadow-sm text-primary border border-slate-200' 
-                  : 'text-slate-600 hover:bg-slate-200/50'
+                  : 'text-slate-600 hover:bg-slate-200/50 border border-transparent'
               }`}
             >
               <KeyRound className="w-5 h-5 opacity-70 shrink-0" />
@@ -152,7 +152,7 @@ export function SettingsPage() {
               className={`w-full flex items-center space-x-3  px-4 py-3 rounded-xl transition-all font-medium ${
                 activeTab === 'theme' 
                   ? 'bg-white shadow-sm text-primary border border-slate-200' 
-                  : 'text-slate-600 hover:bg-slate-200/50'
+                  : 'text-slate-600 hover:bg-slate-200/50 border border-transparent'
               }`}
             >
               <Palette className="w-5 h-5 opacity-70 shrink-0" />
