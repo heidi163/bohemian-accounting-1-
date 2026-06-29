@@ -10,6 +10,24 @@ export function PurchaseCreatePage() {
   const [currency, setCurrency] = useState('EGP');
   const [supplierId, setSupplierId] = useState('');
   const [costCenter, setCostCenter] = useState('');
+  const [attachment, setAttachment] = useState<string | null>(null);
+
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setAttachment(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleRemoveAttachment = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setAttachment(null);
+  };
 
   const supplierOptions = [
     { value: '1', label: 'Amazon Web Services' },
@@ -211,10 +229,30 @@ export function PurchaseCreatePage() {
              </div>
              <div>
                 <label className="block text-sm font-medium text-slate-700 mb-2">مرفقات (صورة الفاتورة)</label>
-                <div className="border-2 border-dashed border-slate-200 rounded-xl p-6 text-center hover:bg-slate-50 transition cursor-pointer">
-                    <p className="text-xs text-slate-500 font-bold mb-1">اضغط هنا لرفع مرفق الفاتورة (أو اسحب الإفلات)</p>
-                    <p className="text-xs text-slate-400">يدعم PDF و JPG و PNG</p>
-                </div>
+                <label className="block border-2 border-dashed border-slate-200 rounded-xl p-4 text-center hover:bg-slate-50 transition cursor-pointer relative overflow-hidden group min-h-[8rem] flex flex-col items-center justify-center">
+                    <input type="file" accept=".pdf,image/png,image/jpeg" className="hidden" onChange={handleFileUpload} />
+                    {attachment ? (
+                      <div className="relative w-full h-full flex items-center justify-center">
+                         {attachment.startsWith('data:image') ? (
+                           <img src={attachment} alt="Attachment Preview" className="max-h-24 max-w-full object-contain rounded" />
+                         ) : (
+                           <div className="flex flex-col items-center text-primary-600 font-semibold text-sm">
+                             تم رفع ملف مستند بنجاح
+                           </div>
+                         )}
+                         <div className="absolute inset-0 bg-white/60 backdrop-blur-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                            <button type="button" onClick={handleRemoveAttachment} className="bg-red-50 text-red-600 hover:bg-red-100 p-2 rounded-lg font-medium text-xs flex items-center gap-1 shadow-sm">
+                               <Trash2 className="w-4 h-4" /> حذف المرفق
+                            </button>
+                         </div>
+                      </div>
+                    ) : (
+                      <>
+                        <p className="text-xs text-slate-500 font-bold mb-1">اضغط هنا لرفع مرفق الفاتورة (أو اسحب الإفلات)</p>
+                        <p className="text-xs text-slate-400">يدعم PDF و JPG و PNG</p>
+                      </>
+                    )}
+                </label>
              </div>
            </div>
            
