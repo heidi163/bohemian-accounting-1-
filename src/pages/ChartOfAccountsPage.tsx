@@ -84,13 +84,16 @@ export function ChartOfAccountsPage() {
     if (typesData.length > 0 && !newAccount.type) {
       setNewAccount(prev => ({...prev, type: typesData[0].id.toString()}));
     }
-    const toExpand = new Set<string>();
-    loadedAccounts.forEach((acc: Account) => {
-      if (acc.level !== 'detail') {
-        toExpand.add(acc.code);
-      }
+    
+    setExpandedCodes(prev => {
+      const newExpanded = new Set(prev);
+      loadedAccounts.forEach((acc: Account) => {
+        if (acc.level !== 'detail' && prev.size === 0) {
+          newExpanded.add(acc.code);
+        }
+      });
+      return newExpanded;
     });
-    setExpandedCodes(toExpand);
   };
 
   useEffect(() => {
@@ -278,6 +281,13 @@ export function ChartOfAccountsPage() {
                   }
                   
                   await loadAccounts();
+                  if (payload.parent_code) {
+                    setExpandedCodes(prev => {
+                      const newSet = new Set(prev);
+                      newSet.add(payload.parent_code as string);
+                      return newSet;
+                    });
+                  }
                   setIsModalOpen(false);
                   setNewAccount({
                     code: '', name: '', type: 'asset', level: 'detail', parent_code: '', company_id: 'ALL', is_active: true
