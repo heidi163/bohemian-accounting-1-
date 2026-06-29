@@ -1,0 +1,98 @@
+import React, { useState, useRef, useEffect } from 'react';
+import { ChevronDown, Search, Check } from 'lucide-react';
+import { clsx } from 'clsx';
+
+export interface SelectOption {
+  value: string;
+  label: string;
+}
+
+interface SearchableSelectProps {
+  value: string;
+  onChange: (value: string) => void;
+  options: SelectOption[];
+  placeholder?: string;
+  className?: string;
+  disabled?: boolean;
+}
+
+export function SearchableSelect({ value, onChange, options, placeholder = "اختر...", className, disabled = false }: SearchableSelectProps) {
+  const [isOpen, setIsOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+  const wrapperRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (wrapperRef.current && !wrapperRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const filteredOptions = options.filter(option => 
+    option.label.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const selectedOption = options.find(opt => opt.value === value);
+
+  return (
+    <div ref={wrapperRef} className={clsx("relative", className)}>
+      <button
+        type="button"
+        disabled={disabled}
+        onClick={() => setIsOpen(!isOpen)}
+        className={clsx(
+          "w-full bg-white border border-slate-200 text-slate-900 text-sm rounded-xl px-4 py-2.5 outline-none transition-all flex items-center justify-between",
+          disabled ? "opacity-60 cursor-not-allowed bg-slate-50" : "focus:ring-2 focus:ring-primary/20 hover:border-slate-300"
+        )}
+      >
+        <span className={clsx("truncate", selectedOption ? "text-slate-900 font-medium" : "text-slate-400")}>
+          {selectedOption ? selectedOption.label : placeholder}
+        </span>
+        <ChevronDown className="w-4 h-4 text-slate-400 shrink-0" />
+      </button>
+
+      {isOpen && (
+        <div className="absolute z-50 w-full mt-1 bg-white border border-slate-200 rounded-xl shadow-lg overflow-hidden">
+          <div className="p-2 border-b border-slate-100 flex items-center gap-2 px-3 bg-slate-50/50">
+            <Search className="w-4 h-4 text-slate-400 shrink-0" />
+            <input
+              type="text"
+              autoFocus
+              className="w-full text-sm outline-none bg-transparent py-1.5"
+              placeholder="ابحث..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
+          <div className="max-h-60 overflow-y-auto p-1">
+            {filteredOptions.length === 0 ? (
+              <div className="p-3 text-sm text-center text-slate-500">لا توجد نتائج</div>
+            ) : (
+              filteredOptions.map((option) => (
+                <button
+                  key={option.value}
+                  type="button"
+                  onClick={() => {
+                    onChange(option.value);
+                    setIsOpen(false);
+                    setSearchTerm('');
+                  }}
+                  className={clsx(
+                    "w-full text-start px-3 py-2 text-sm rounded-lg flex items-center justify-between transition-colors",
+                    value === option.value ? "bg-primary/10 text-primary font-bold" : "hover:bg-slate-50 text-slate-700"
+                  )}
+                >
+                  {option.label}
+                  {value === option.value && <Check className="w-4 h-4 text-primary" />}
+                </button>
+              ))
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}

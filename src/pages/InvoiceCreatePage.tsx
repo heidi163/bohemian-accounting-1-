@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router";
 import { ArrowRight, Plus, Trash2, Save, Send } from "lucide-react";
 import { getCompanyKey } from '../utils/storage';
+import { SearchableSelect } from "../components/ui/SearchableSelect";
 
 export function InvoiceCreatePage() {
   const navigate = useNavigate();
@@ -9,10 +10,44 @@ export function InvoiceCreatePage() {
   const [type, setType] = useState('invoice');
   const [currency, setCurrency] = useState('EGP');
   const [discountPercent, setDiscountPercent] = useState(0);
+  const [companyId, setCompanyId] = useState('BGK');
+  const [costCenter, setCostCenter] = useState('');
   const [customerId, setCustomerId] = useState('');
   const [invoiceDate, setInvoiceDate] = useState('');
   const [dueDate, setDueDate] = useState('');
   const [projectId, setProjectId] = useState('');
+
+  const companyOptions = [
+    { value: 'BGK', label: 'Bohemian Geeks (BGK)' },
+    { value: 'O2N', label: 'O2Nation (O2N)' },
+  ];
+  const typeOptions = [
+    { value: 'invoice', label: 'فاتورة ضريبية (Invoice)' },
+    { value: 'quotation', label: 'عرض سعر (Quotation)' },
+    { value: 'proforma', label: 'فاتورة مبدئية (Proforma)' },
+    { value: 'advance', label: 'دفعة مقدمة (Advance)' },
+    { value: 'credit_note', label: 'إشعار دائن (Credit Note)' },
+  ];
+  const customerOptions = [
+    { value: '1', label: 'بوهيميان جيكس (Bohemian Geeks)' },
+    { value: '2', label: 'Sealy KSA' },
+    { value: '3', label: 'TechFlow Inc' },
+  ];
+  const currencyOptions = [
+    { value: 'EGP', label: 'جنيه مصري (EGP)' },
+    { value: 'USD', label: 'دولار أمريكي (USD)' },
+    { value: 'SAR', label: 'ريال سعودي (SAR)' },
+  ];
+  const costCenterOptions = [
+    { value: '', label: 'بدون مركز تكلفة' },
+    { value: 'FR', label: 'فرع الرياض (FR)' },
+    { value: 'HQ', label: 'المركز الرئيسي (HQ)' },
+  ];
+  const projectOptions = [
+    { value: '', label: 'لا يوجد ارتباط' },
+    { value: 'PRJ-001', label: 'مشروع تطوير المنصة (PRJ-001)' },
+    { value: 'PRJ-002', label: 'حملة تسويق 2026 (PRJ-002)' },
+  ];
 
   const addLine = () => {
     setLines([...lines, { id: Date.now(), description: "", quantity: 1, price: 0 }]);
@@ -114,20 +149,11 @@ export function InvoiceCreatePage() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
           <div>
             <label className="block text-sm font-medium text-slate-700 mb-2">الشركة (Company)</label>
-            <select defaultValue="BGK" className="w-full bg-primary-50 border border-primary-200 text-primary-900 font-bold text-sm rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-primary-500/20 outline-none transition-all">
-              <option value="BGK">Bohemian Geeks (BGK)</option>
-              <option value="O2N">O2Nation (O2N)</option>
-            </select>
+            <SearchableSelect value={companyId} onChange={setCompanyId} options={companyOptions} />
           </div>
           <div>
             <label className="block text-sm font-medium text-slate-700 mb-2">نوع المستند (Type)</label>
-            <select value={type} onChange={(e) => setType(e.target.value)} className="w-full bg-primary-50 border border-primary-100 text-primary-900 font-bold text-sm rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-primary-500/20 outline-none transition-all">
-              <option value="invoice">فاتورة ضريبية (Invoice)</option>
-              <option value="quotation">عرض سعر (Quotation)</option>
-              <option value="proforma">فاتورة مبدئية (Proforma)</option>
-              <option value="advance">دفعة مقدمة (Advance)</option>
-              <option value="credit_note">إشعار دائن (Credit Note)</option>
-            </select>
+            <SearchableSelect value={type} onChange={setType} options={typeOptions} />
           </div>
           <div>
             <label className="block text-sm font-medium text-slate-700 mb-2">رقم المستند</label>
@@ -135,12 +161,7 @@ export function InvoiceCreatePage() {
           </div>
           <div className="md:col-span-2">
             <label className="block text-sm font-medium text-slate-700 mb-2">العميل</label>
-            <select value={customerId} onChange={(e) => setCustomerId(e.target.value)} className="w-full bg-white border border-slate-200 text-slate-900 text-sm rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-primary-500/20 outline-none transition-all">
-              <option value="" disabled>اختر العميل...</option>
-              <option value="1">بوهيميان جيكس (Bohemian Geeks)</option>
-              <option value="2">Sealy KSA</option>
-              <option value="3">TechFlow Inc</option>
-            </select>
+            <SearchableSelect value={customerId} onChange={setCustomerId} options={customerOptions} placeholder="اختر العميل..." />
           </div>
           <div>
             <label className="block text-sm font-medium text-slate-700 mb-2">تاريخ الإصدار</label>
@@ -152,11 +173,7 @@ export function InvoiceCreatePage() {
           </div>
           <div>
             <label className="block text-sm font-medium text-slate-700 mb-2">العملة (Currency)</label>
-            <select value={currency} onChange={(e) => setCurrency(e.target.value)} className="w-full bg-white border border-slate-200 text-slate-900 text-sm rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-primary-500/20 outline-none transition-all">
-              <option value="EGP">جنيه مصري (EGP)</option>
-              <option value="USD">دولار أمريكي (USD)</option>
-              <option value="SAR">ريال سعودي (SAR)</option>
-            </select>
+            <SearchableSelect value={currency} onChange={setCurrency} options={currencyOptions} />
           </div>
           <div>
              <label className="block text-sm font-medium text-slate-700 mb-2">سعر الصرف (إذا لزم)</label>
@@ -167,19 +184,11 @@ export function InvoiceCreatePage() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8 bg-slate-50 p-6 rounded-xl border border-slate-200">
            <div>
               <label className="block text-sm font-medium text-slate-700 mb-2">مركز التكلفة (Cost Center)</label>
-              <select defaultValue="" className="w-full bg-white border border-slate-200 text-slate-900 text-sm rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-primary-500/20 outline-none transition-all">
-                <option value="">بدون مركز تكلفة</option>
-                <option value="FR">فرع الرياض (FR)</option>
-                <option value="HQ">المركز الرئيسي (HQ)</option>
-              </select>
+              <SearchableSelect value={costCenter} onChange={setCostCenter} options={costCenterOptions} />
            </div>
            <div>
               <label className="block text-sm font-medium text-slate-700 mb-2">ارتباط بمشروع (Project Tracking)</label>
-              <select value={projectId} onChange={(e) => setProjectId(e.target.value)} className="w-full bg-white border border-slate-200 text-slate-900 text-sm rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-primary-500/20 outline-none transition-all">
-                <option value="">لا يوجد ارتباط</option>
-                <option value="PRJ-001">مشروع تطوير المنصة (PRJ-001)</option>
-                <option value="PRJ-002">حملة تسويق 2026 (PRJ-002)</option>
-              </select>
+              <SearchableSelect value={projectId} onChange={setProjectId} options={projectOptions} />
            </div>
         </div>
 
