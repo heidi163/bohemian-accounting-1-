@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { ArrowUpRight, ArrowDownRight, Users, Receipt, DollarSign, Percent, Clock, Wallet } from "lucide-react";
+import { ArrowUpRight, ArrowDownRight, Users, Receipt, DollarSign, Percent, Clock, Wallet, Plus, FileText, Landmark, AlertCircle, Building2, CheckCircle2 } from "lucide-react";
 import { type DashboardData } from "../types";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from "recharts";
 import { getActiveCompany } from "../utils/storage";
@@ -57,12 +57,6 @@ export function DashboardPage() {
     dpo: 45,
   };
 
-  const topClients = [
-    { name: 'شركة الأفق للتجارة', amount: 350000, percentage: 22 },
-    { name: 'مؤسسة الرواد', amount: 280000, percentage: 17 },
-    { name: 'جلوبال تيك', amount: 150000, percentage: 9 },
-  ];
-
   const topExpenses = [
     { name: 'رواتب وأجور', amount: 450000, percentage: 47 },
     { name: 'إيجارات', amount: 120000, percentage: 12 },
@@ -71,67 +65,112 @@ export function DashboardPage() {
 
   const pieData = topExpenses.map(exp => ({ name: exp.name, value: exp.amount }));
 
+  // New Mocks
+  const recentInvoices = [
+    { id: 'INV-2026-089', client: 'شركة الأفق للتجارة', amount: 350000, date: 'اليوم', status: 'غير مسددة' },
+    { id: 'INV-2026-088', client: 'مؤسسة الرواد', amount: 280000, date: 'منذ يومين', status: 'مسددة جزئياً' },
+    { id: 'INV-2026-087', client: 'جلوبال تيك', amount: 150000, date: '22 أغسطس', status: 'مسددة' },
+    { id: 'INV-2026-086', client: 'المتحدة للبرمجيات', amount: 85000, date: '20 أغسطس', status: 'متأخرة' },
+  ];
+
+  const bankBalances = [
+    { id: 1, bank: 'البنك الأهلي المصري', account: '...4567', balance: 850000 },
+    { id: 2, bank: 'بنك مصر (دولار)', account: '...8901', balance: 350000 },
+    { id: 3, bank: 'الخزينة الرئيسية', account: 'نقدي', balance: 50000 },
+  ];
+
+  const upcomingChecks = [
+    { id: 1, to: 'شركة الأفق', date: 'غداً', amount: 45000, type: 'صادر' },
+    { id: 2, to: 'مؤسسة الرواد', date: 'خلال 3 أيام', amount: 120000, type: 'وارد' },
+  ];
+
+  const getStatusStyle = (status: string) => {
+    switch(status) {
+      case 'مسددة': return 'bg-emerald-50 text-emerald-600 border border-emerald-100';
+      case 'غير مسددة': return 'bg-slate-50 text-slate-600 border border-slate-200';
+      case 'مسددة جزئياً': return 'bg-amber-50 text-amber-600 border border-amber-100';
+      case 'متأخرة': return 'bg-rose-50 text-rose-600 border border-rose-100';
+      default: return 'bg-slate-50 text-slate-600';
+    }
+  };
+
   return (
     <div className="space-y-6">
+      
+      {/* Quick Actions */}
+      <div className="flex flex-wrap items-center gap-3">
+        <button className="bg-primary text-white px-4 py-2.5 rounded-2xl text-sm font-bold flex items-center gap-2 hover:bg-primary/90 transition shadow-sm hover:shadow-md hover:-translate-y-0.5">
+          <Plus className="w-4 h-4" /> فاتورة جديدة
+        </button>
+        <button className="bg-white text-slate-700 border border-slate-200 px-4 py-2.5 rounded-2xl text-sm font-bold flex items-center gap-2 hover:bg-slate-50 transition shadow-sm hover:shadow-md hover:-translate-y-0.5">
+          <Receipt className="w-4 h-4" /> تسجيل مصروف
+        </button>
+        <button className="bg-white text-slate-700 border border-slate-200 px-4 py-2.5 rounded-2xl text-sm font-bold flex items-center gap-2 hover:bg-slate-50 transition shadow-sm hover:shadow-md hover:-translate-y-0.5">
+          <FileText className="w-4 h-4" /> قيد يومية
+        </button>
+      </div>
+
+      {/* KPIs */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
-        <div className="bg-white p-6 rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] border-0 flex flex-col justify-between min-h-[140px] hover:-translate-y-1 transition-transform duration-300">
+        <div className="bg-white p-6 rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] border-0 flex flex-col justify-between min-h-[140px] hover:-translate-y-1 transition-transform duration-300 group">
           <div className="text-sm font-semibold text-slate-500 mb-2 flex justify-between items-center">
             <span>إجمالي النقد</span>
-            <div className="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center text-slate-400"><Wallet className="w-4 h-4"/></div>
+            <div className="w-10 h-10 rounded-2xl bg-slate-50 flex items-center justify-center text-slate-400 group-hover:bg-primary/10 group-hover:text-primary transition-colors"><Wallet className="w-5 h-5"/></div>
           </div>
           <div>
             <div className="text-3xl font-bold text-slate-900 tracking-tight" dir="ltr">
                {new Intl.NumberFormat('ar-EG', { style: 'currency', currency: 'EGP', maximumSignificantDigits: 4 }).format(stats.totalCash)}
             </div>
-            <div className="text-sm text-emerald-500 font-medium mt-1">الرصيد المتاح حالياً</div>
+            <div className="text-sm text-emerald-500 font-medium mt-1 flex items-center gap-1">الرصيد المتاح حالياً</div>
           </div>
         </div>
         
-        <div className="bg-white p-6 rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] border-0 flex flex-col justify-between min-h-[140px] hover:-translate-y-1 transition-transform duration-300">
+        <div className="bg-white p-6 rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] border-0 flex flex-col justify-between min-h-[140px] hover:-translate-y-1 transition-transform duration-300 group">
           <div className="text-sm font-semibold text-slate-500 mb-2 flex justify-between items-center">
             <span>الإيرادات</span>
-            <div className="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center text-slate-400"><DollarSign className="w-4 h-4"/></div>
+            <div className="w-10 h-10 rounded-2xl bg-slate-50 flex items-center justify-center text-slate-400 group-hover:bg-primary/10 group-hover:text-primary transition-colors"><DollarSign className="w-5 h-5"/></div>
           </div>
           <div>
             <div className="text-3xl font-bold text-slate-900 tracking-tight" dir="ltr">
                {new Intl.NumberFormat('ar-EG', { style: 'currency', currency: 'EGP', maximumSignificantDigits: 4 }).format(kpis.revenue)}
             </div>
-            <div className="text-sm text-emerald-500 font-medium mt-1">↑ 8.2% عن العام الماضي</div>
+            <div className="text-sm text-emerald-500 font-medium mt-1 flex items-center gap-1"><ArrowUpRight className="w-3 h-3"/> 8.2% عن العام الماضي</div>
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] border-0 flex flex-col justify-between min-h-[140px] hover:-translate-y-1 transition-transform duration-300">
+        <div className="bg-white p-6 rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] border-0 flex flex-col justify-between min-h-[140px] hover:-translate-y-1 transition-transform duration-300 group">
           <div className="text-sm font-semibold text-slate-500 mb-2 flex justify-between items-center">
             <span>المصروفات</span>
-            <div className="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center text-slate-400"><Receipt className="w-4 h-4"/></div>
+            <div className="w-10 h-10 rounded-2xl bg-slate-50 flex items-center justify-center text-slate-400 group-hover:bg-rose-50 group-hover:text-rose-500 transition-colors"><Receipt className="w-5 h-5"/></div>
           </div>
           <div>
             <div className="text-3xl font-bold text-slate-900 tracking-tight" dir="ltr">
                {new Intl.NumberFormat('ar-EG', { style: 'currency', currency: 'EGP', maximumSignificantDigits: 4 }).format(kpis.expenses)}
             </div>
-            <div className="text-sm text-rose-500 font-medium mt-1">↑ 3.4% عن العام الماضي</div>
+            <div className="text-sm text-rose-500 font-medium mt-1 flex items-center gap-1"><ArrowUpRight className="w-3 h-3"/> 3.4% عن العام الماضي</div>
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] border-0 flex flex-col justify-between min-h-[140px] hover:-translate-y-1 transition-transform duration-300">
+        <div className="bg-white p-6 rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] border-0 flex flex-col justify-between min-h-[140px] hover:-translate-y-1 transition-transform duration-300 group">
           <div className="text-sm font-semibold text-slate-500 mb-2 flex justify-between items-center">
             <span>صافي الربح</span>
-            <div className="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center text-slate-400"><ArrowUpRight className="w-4 h-4"/></div>
+            <div className="w-10 h-10 rounded-2xl bg-slate-50 flex items-center justify-center text-slate-400 group-hover:bg-primary/10 group-hover:text-primary transition-colors"><Percent className="w-5 h-5"/></div>
           </div>
           <div>
             <div className="text-3xl font-bold text-slate-900 tracking-tight" dir="ltr">
                {new Intl.NumberFormat('ar-EG', { style: 'currency', currency: 'EGP', maximumSignificantDigits: 4 }).format(stats.netProfit)}
             </div>
-            <div className="text-sm text-emerald-500 font-medium mt-1">↑ 12% عن الشهر الماضي</div>
+            <div className="text-sm text-emerald-500 font-medium mt-1 flex items-center gap-1"><ArrowUpRight className="w-3 h-3"/> 12% عن الشهر الماضي</div>
           </div>
         </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        {/* Sales Chart */}
         <div className="lg:col-span-8 bg-white rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] border-0 flex flex-col min-h-[400px]">
           <div className="p-6 md:p-8 flex items-center justify-between">
-            <h2 className="text-lg font-bold text-slate-900 tracking-tight">حركة المبيعات (Sales dynamics)</h2>
-            <select className="bg-slate-50 border-0 text-sm font-medium rounded-full px-4 py-1.5 text-slate-600 outline-none cursor-pointer focus:ring-2 focus:ring-primary/20">
+            <h2 className="text-lg font-bold text-slate-900 tracking-tight">حركة المبيعات والتدفقات</h2>
+            <select className="bg-slate-50 border-0 text-sm font-medium rounded-full px-4 py-1.5 text-slate-600 outline-none cursor-pointer focus:ring-2 focus:ring-primary/20 transition-all hover:bg-slate-100">
               <option>2026</option>
               <option>2025</option>
             </select>
@@ -148,6 +187,7 @@ export function DashboardPage() {
           </div>
         </div>
 
+        {/* Expenses Doughnut */}
         <div className="lg:col-span-4 bg-white rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] border-0 flex flex-col">
           <div className="p-6 pb-2 border-b border-slate-50 flex flex-col">
              <h2 className="text-lg font-bold text-slate-900 tracking-tight">هيكل المصروفات</h2>
@@ -177,53 +217,119 @@ export function DashboardPage() {
              </ResponsiveContainer>
              <div className="w-full mt-4 space-y-3" dir="rtl">
                 {topExpenses.map((exp, idx) => (
-                   <div key={idx} className="flex items-center justify-between text-sm">
+                   <div key={idx} className="flex items-center justify-between text-sm p-2 rounded-xl hover:bg-slate-50 transition-colors">
                       <div className="flex items-center gap-2">
-                         <div className="w-3 h-3 rounded-full" style={{ backgroundColor: COLORS[idx % COLORS.length] }}></div>
-                         <span className="font-medium text-slate-700">{exp.name}</span>
+                         <div className="w-3 h-3 rounded-full shadow-sm" style={{ backgroundColor: COLORS[idx % COLORS.length] }}></div>
+                         <span className="font-semibold text-slate-700">{exp.name}</span>
                       </div>
-                      <span className="font-bold text-slate-900">{exp.percentage}%</span>
+                      <span className="font-bold text-slate-900 bg-slate-100 px-2 py-0.5 rounded-lg">{exp.percentage}%</span>
                    </div>
                 ))}
              </div>
           </div>
         </div>
         
-        <div className="lg:col-span-12 bg-white rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] border-0 p-6 md:p-8 overflow-x-auto">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-lg font-bold text-slate-900 tracking-tight">طلبات العملاء (Customer orders)</h2>
+        {/* Bottom Section: Recent Invoices & Financial Health */}
+        <div className="lg:col-span-8 bg-white rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] border-0 flex flex-col">
+          <div className="p-6 border-b border-slate-50 flex items-center justify-between">
+            <div>
+              <h2 className="text-lg font-bold text-slate-900 tracking-tight">أحدث الفواتير</h2>
+              <p className="text-sm text-slate-500 mt-1">حالة الفواتير الصادرة مؤخراً للعملاء</p>
+            </div>
+            <button className="text-sm font-bold text-primary hover:bg-primary/5 px-4 py-2 rounded-xl transition-colors">عرض الكل</button>
           </div>
-          <table className="w-full text-right border-collapse">
-            <thead>
-              <tr className="text-slate-400 text-sm border-b border-slate-50">
-                <th className="pb-4 font-medium px-2">العميل</th>
-                <th className="pb-4 font-medium px-2">التاريخ</th>
-                <th className="pb-4 font-medium px-2">الحالة</th>
-                <th className="pb-4 font-medium px-2">القيمة</th>
-              </tr>
-            </thead>
-            <tbody>
-              {topClients.map((client, idx) => (
-                <tr key={idx} className="border-b border-slate-50/50 last:border-0 hover:bg-slate-50/50 transition-colors">
-                  <td className="py-4 px-2">
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center font-bold text-slate-600 text-xs shrink-0">
-                         {client.name.charAt(0)}
-                      </div>
-                      <span className="font-bold text-slate-800">{client.name}</span>
-                    </div>
-                  </td>
-                  <td className="py-4 px-2 text-slate-500 font-medium">22.08.2026</td>
-                  <td className="py-4 px-2">
-                    <span className="bg-emerald-50 text-emerald-600 px-3 py-1 rounded-full text-xs font-bold">مكتمل</span>
-                  </td>
-                  <td className="py-4 px-2 font-bold text-slate-900" dir="ltr">
-                    {new Intl.NumberFormat('ar-EG', { style: 'currency', currency: 'EGP', maximumSignificantDigits: 4 }).format(client.amount)}
-                  </td>
+          <div className="p-0 overflow-x-auto">
+            <table className="w-full text-right border-collapse">
+              <thead>
+                <tr className="bg-slate-50/50 text-slate-500 text-xs uppercase font-bold tracking-wider">
+                  <th className="py-4 px-6 font-bold text-start">رقم الفاتورة / العميل</th>
+                  <th className="py-4 px-6 font-bold">التاريخ</th>
+                  <th className="py-4 px-6 font-bold">القيمة</th>
+                  <th className="py-4 px-6 font-bold text-end">الحالة</th>
                 </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-50">
+                {recentInvoices.map((inv, idx) => (
+                  <tr key={idx} className="hover:bg-slate-50/50 transition-colors group">
+                    <td className="py-4 px-6">
+                      <div className="flex flex-col">
+                        <span className="font-bold text-slate-900 group-hover:text-primary transition-colors cursor-pointer">{inv.client}</span>
+                        <span className="text-xs font-semibold text-slate-500 mt-0.5">{inv.id}</span>
+                      </div>
+                    </td>
+                    <td className="py-4 px-6 text-sm font-medium text-slate-600">{inv.date}</td>
+                    <td className="py-4 px-6 font-bold text-slate-900" dir="ltr">
+                      {new Intl.NumberFormat('ar-EG', { style: 'currency', currency: 'EGP', maximumSignificantDigits: 4 }).format(inv.amount)}
+                    </td>
+                    <td className="py-4 px-6 text-end">
+                      <span className={`px-3 py-1.5 rounded-xl text-xs font-bold inline-block ${getStatusStyle(inv.status)}`}>
+                        {inv.status}
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        {/* Bottom Section: Banks & Checks */}
+        <div className="lg:col-span-4 flex flex-col gap-6">
+          
+          {/* Bank Balances */}
+          <div className="bg-white rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] border-0 flex flex-col">
+            <div className="p-6 pb-4 border-b border-slate-50">
+              <h2 className="text-lg font-bold text-slate-900 tracking-tight flex items-center gap-2">
+                <Landmark className="w-5 h-5 text-slate-400" /> البنوك والخزائن
+              </h2>
+            </div>
+            <div className="p-4 space-y-3">
+              {bankBalances.map((bank) => (
+                <div key={bank.id} className="flex items-center justify-between p-3 rounded-2xl hover:bg-slate-50 transition-colors border border-transparent hover:border-slate-100">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-slate-600 shrink-0">
+                      <Building2 className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <h3 className="font-bold text-slate-800 text-sm">{bank.bank}</h3>
+                      <p className="text-xs text-slate-500 font-medium mt-0.5">{bank.account}</p>
+                    </div>
+                  </div>
+                  <div className="font-bold text-slate-900" dir="ltr">
+                    {new Intl.NumberFormat('ar-EG', { notation: 'compact', compactDisplay: 'short', maximumFractionDigits: 1 }).format(bank.balance)}
+                  </div>
+                </div>
               ))}
-            </tbody>
-          </table>
+            </div>
+          </div>
+
+          {/* Upcoming Checks */}
+          <div className="bg-white rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] border-0 flex flex-col">
+            <div className="p-6 pb-4 border-b border-slate-50">
+              <h2 className="text-lg font-bold text-slate-900 tracking-tight flex items-center gap-2">
+                <AlertCircle className="w-5 h-5 text-amber-500" /> شيكات مستحقة قريباً
+              </h2>
+            </div>
+            <div className="p-4 space-y-3">
+              {upcomingChecks.map((check) => (
+                <div key={check.id} className="flex items-center justify-between p-3 rounded-2xl bg-amber-50/30 border border-amber-100/50">
+                  <div>
+                    <h3 className="font-bold text-slate-800 text-sm">{check.to}</h3>
+                    <div className="flex items-center gap-2 mt-1">
+                      <span className={`text-[10px] font-bold px-2 py-0.5 rounded-md ${check.type === 'صادر' ? 'bg-rose-100 text-rose-700' : 'bg-emerald-100 text-emerald-700'}`}>
+                        {check.type}
+                      </span>
+                      <span className="text-xs text-amber-600 font-bold">{check.date}</span>
+                    </div>
+                  </div>
+                  <div className="font-bold text-slate-900" dir="ltr">
+                    {new Intl.NumberFormat('ar-EG', { style: 'currency', currency: 'EGP', maximumSignificantDigits: 4 }).format(check.amount)}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
         </div>
       </div>
     </div>
