@@ -76,7 +76,7 @@ export function SettingsPage() {
 
   return (
     <div className="space-y-6 max-w-6xl mx-auto">
-      <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div className="flex-1 min-h-[2rem]"></div><div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
           <h2 className="font-bold text-slate-800 text-lg">الإعدادات العامة</h2>
           <p className="text-sm text-slate-500 mt-1">قم بضبط تفضيلات النظام وبيانات الشركة الأساسية.</p>
@@ -99,7 +99,7 @@ export function SettingsPage() {
         </button>
       </div>
 
-      <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden flex flex-col md:flex-row">
+      <div className="flex-1 min-h-[2rem]"></div><div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden flex flex-col md:flex-row">
         {/* Sidebar navigation for settings */}
         <div className="w-full md:w-64 bg-slate-50 border-b md:border-b-0 md:border-e border-slate-200 p-4 shrink-0">
           <nav className="space-y-2">
@@ -518,8 +518,8 @@ export function SettingsPage() {
 
       {/* Modal */}
       {isUserModalOpen && (
-        <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 p-4 overflow-y-auto overscroll-none flex justify-center">
-          <div className="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden">
+        <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 p-4 overflow-y-auto overscroll-none flex flex-col items-center justify-start">
+          <div className="flex-1 min-h-[2rem]"></div><div className="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden">
             <div className="flex items-center justify-between p-6 border-b border-slate-100">
               <h3 className="text-lg font-bold text-slate-800">إضافة مستخدم جديد</h3>
               <button 

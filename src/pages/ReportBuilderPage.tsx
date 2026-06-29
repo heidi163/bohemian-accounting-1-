@@ -119,7 +119,7 @@ export function ReportBuilderPage() {
 
   return (
     <div className="space-y-6">
-      <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+      <div className="flex-1 min-h-[2rem]"></div><div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
           <h2 className="font-bold text-slate-800 text-2xl flex items-center gap-2"><Wrench className="w-7 h-7 text-primary-600"/> باني التقارير المخصصة (Custom BI Builder)</h2>
           <p className="text-slate-500 mt-1">صمم تقاريرك الخاصة وتحليلاتك بدون كتابة أي كود.</p>
@@ -340,8 +340,8 @@ export function ReportBuilderPage() {
       </div>
 
       {actionModal && (
-        <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 p-4 overflow-y-auto overscroll-none flex justify-center">
-          <div className="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden">
+        <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 p-4 overflow-y-auto overscroll-none flex flex-col items-center justify-start">
+          <div className="flex-1 min-h-[2rem]"></div><div className="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden">
             <div className="flex items-center justify-between p-6 border-b border-slate-100">
               <h3 className="text-lg font-bold text-slate-800">
                 {actionModal === 'save' && 'حفظ التقرير'}

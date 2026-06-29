@@ -145,7 +145,7 @@ export function UserManagementPage() {
 
   return (
     <div className="space-y-6">
-      <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+      <div className="flex-1 min-h-[2rem]"></div><div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
           <h2 className="font-bold text-slate-800 text-2xl flex items-center gap-2"><ShieldCheck className="w-7 h-7 text-primary-600"/> إدارة المستخدمين والصلاحيات</h2>
           <p className="text-slate-500 mt-1">التحكم في الوصول، وتحديد الأدوار والصلاحيات (RBAC)، وسياسات الأمان.</p>
@@ -179,7 +179,7 @@ export function UserManagementPage() {
                   <UserPlus className="w-4 h-4" /> إضافة مستخدم جديد
                </button>
             </div>
-            <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+            <div className="flex-1 min-h-[2rem]"></div><div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
                <table className="w-full text-start text-sm">
                   <thead className="bg-slate-50 text-slate-400 font-bold uppercase text-xs border-b border-slate-100">
                      <tr>
@@ -245,7 +245,7 @@ export function UserManagementPage() {
             </div>
             
             <div className="lg:col-span-3">
-               <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+               <div className="flex-1 min-h-[2rem]"></div><div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
                   <div className="p-6 border-b border-slate-100 bg-slate-50/50">
                      <h3 className="font-bold text-xl text-slate-800">مصفوفة الصلاحيات (Permission Matrix)</h3>
                      <p className="text-sm text-slate-500 mt-1">تحديد الصلاحيات الدقيقة לדور: <span className="font-bold text-primary-600">{getRoleName(activeRoleId)}</span></p>
@@ -296,8 +296,8 @@ export function UserManagementPage() {
       )}
 
       {showAddModal && (
-        <div className="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-sm p-4 overflow-y-auto overscroll-none flex justify-center">
-          <div className="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden">
+        <div className="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-sm p-4 overflow-y-auto overscroll-none flex flex-col items-center justify-start">
+          <div className="flex-1 min-h-[2rem]"></div><div className="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden">
             <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50">
               <h3 className="font-bold text-xl text-slate-800">إضافة مستخدم جديد</h3>
               <button onClick={() => setShowAddModal(false)} className="text-slate-400 hover:text-slate-600 transition">
@@ -332,8 +332,8 @@ export function UserManagementPage() {
         </div>
       )}
       {showEditModal && (
-        <div className="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-sm p-4 overflow-y-auto overscroll-none flex justify-center">
-          <div className="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden">
+        <div className="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-sm p-4 overflow-y-auto overscroll-none flex flex-col items-center justify-start">
+          <div className="flex-1 min-h-[2rem]"></div><div className="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden">
             <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50">
               <h3 className="font-boldcel text-xl text-slate-800">تعديل بيانات المستخدم</h3>
               <button onClick={() => setShowEditModal(false)} className="text-slate-400 hover:text-slate-600 transition">
@@ -378,8 +378,8 @@ export function UserManagementPage() {
       )}
 
       {showAddRoleModal && (
-        <div className="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-sm p-4 overflow-y-auto overscroll-none flex justify-center">
-          <div className="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden">
+        <div className="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-sm p-4 overflow-y-auto overscroll-none flex flex-col items-center justify-start">
+          <div className="flex-1 min-h-[2rem]"></div><div className="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden">
             <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50">
               <h3 className="font-bold text-xl text-slate-800">إنشاء دور مخصص</h3>
               <button onClick={() => setShowAddRoleModal(false)} className="text-slate-400 hover:text-slate-600 transition">

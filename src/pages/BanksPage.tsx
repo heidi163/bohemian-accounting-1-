@@ -129,7 +129,7 @@ export function BanksPage() {
   return (
     <div className="space-y-6">
       {/* Header & Quick Actions */}
-      <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+      <div className="flex-1 min-h-[2rem]"></div><div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
           <h1 className="text-2xl font-bold text-slate-800">البنوك والنقد (Banking & Cash)</h1>
           <p className="text-slate-500 mt-1">إدارة الحسابات البنكية، الخزينة، الحركات البنكية والمطابقات.</p>
@@ -201,8 +201,8 @@ export function BanksPage() {
       </div>
 
       {activeModal === 'transfer' && (
-        <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 p-4 overflow-y-auto overscroll-none flex justify-center">
-          <div className="bg-white rounded-2xl shadow-xl w-full max-w-lg overflow-hidden">
+        <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 p-4 overflow-y-auto overscroll-none flex flex-col items-center justify-start">
+          <div className="flex-1 min-h-[2rem]"></div><div className="bg-white rounded-2xl shadow-xl w-full max-w-lg overflow-hidden">
             <div className="flex items-center justify-between p-6 border-b border-slate-100">
               <h3 className="text-lg font-bold text-slate-800">تحويل بين الحسابات / البنوك (Transfer)</h3>
               <button onClick={() => setActiveModal(null)} className="text-slate-400 hover:text-slate-500 transition"></button>
@@ -253,8 +253,8 @@ export function BanksPage() {
       )}
 
       {(activeModal === 'deposit' || activeModal === 'withdraw') && (
-         <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 p-4 overflow-y-auto overscroll-none flex justify-center">
-          <div className="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden">
+         <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 p-4 overflow-y-auto overscroll-none flex flex-col items-center justify-start">
+          <div className="flex-1 min-h-[2rem]"></div><div className="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden">
             <div className="flex items-center justify-between p-6 border-b border-slate-100">
               <h3 className="text-lg font-bold text-slate-800">
                 {activeModal === 'deposit' ? 'إيداع بنكي / نقدي (Deposit)' : 'سحب بنكي / نقدي (Withdrawal)'}
@@ -295,8 +295,8 @@ export function BanksPage() {
       )}
 
       {activeModal === 'reconcile' && (
-         <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 p-4 overflow-y-auto overscroll-none flex justify-center">
-          <div className="bg-white rounded-2xl shadow-xl w-full max-w-2xl overflow-hidden flex flex-col max-h-[90vh]">
+         <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 p-4 overflow-y-auto overscroll-none flex flex-col items-center justify-start">
+          <div className="flex-1 min-h-[2rem]"></div><div className="bg-white rounded-2xl shadow-xl w-full max-w-2xl overflow-hidden flex flex-col max-h-[90vh]">
             <div className="flex items-center justify-between p-6 border-b border-slate-100 bg-slate-50">
               <div>
                 <h3 className="text-lg font-bold text-slate-800">مطابقة كشف الحساب (Bank Reconciliation)</h3>

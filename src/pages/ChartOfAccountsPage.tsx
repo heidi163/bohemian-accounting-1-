@@ -180,7 +180,7 @@ export function ChartOfAccountsPage() {
 
   return (
     <div className="space-y-6">
-      <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+      <div className="flex-1 min-h-[2rem]"></div><div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
         <div className="flex flex-col sm:flex-row justify-between gap-4 mb-6">
           <div>
             <h1 className="text-2xl font-bold text-slate-800">شجرة الحسابات</h1>
@@ -223,8 +223,8 @@ export function ChartOfAccountsPage() {
       </div>
 
       {isModalOpen && (
-        <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 p-4 overflow-y-auto overscroll-none flex justify-center">
-          <div className="bg-white rounded-2xl shadow-xl w-full max-w-2xl overflow-hidden">
+        <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 p-4 overflow-y-auto overscroll-none flex flex-col items-center justify-start">
+          <div className="flex-1 min-h-[2rem]"></div><div className="bg-white rounded-2xl shadow-xl w-full max-w-2xl overflow-hidden">
             <div className="flex items-center justify-between p-6 border-b border-slate-100">
               <h3 className="text-lg font-bold text-slate-800">إضافة حساب جديد</h3>
               <button 

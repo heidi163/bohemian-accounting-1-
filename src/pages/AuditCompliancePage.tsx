@@ -96,7 +96,7 @@ export function AuditCompliancePage() {
 
   return (
     <div className="space-y-6">
-      <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+      <div className="flex-1 min-h-[2rem]"></div><div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
           <h2 className="font-bold text-slate-800 text-2xl flex items-center gap-2"><ShieldCheck className="w-7 h-7 text-primary-600"/> التدقيق والامتثال (Audit & Compliance)</h2>
           <p className="text-slate-500 mt-1">تتبع النشاطات (Activity History)، الامتثال لمعايير OWASP، والاحتفاظ بالسجلات لمدة 10 سنوات.</p>
@@ -158,7 +158,7 @@ export function AuditCompliancePage() {
             </button>
           </div>
 
-          <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+          <div className="flex-1 min-h-[2rem]"></div><div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
             <table className="w-full text-start text-sm">
               <thead className="bg-slate-50 text-slate-400 font-bold uppercase text-xs border-b border-slate-100">
                 <tr>
@@ -238,8 +238,8 @@ export function AuditCompliancePage() {
       )}
 
       {showRetentionModal && (
-         <div className="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-sm p-4 overflow-y-auto overscroll-none flex justify-center">
-            <div className="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden">
+         <div className="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-sm p-4 overflow-y-auto overscroll-none flex flex-col items-center justify-start">
+            <div className="flex-1 min-h-[2rem]"></div><div className="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden">
                <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50">
                   <h3 className="font-bold text-xl text-slate-800 flex items-center gap-2"><Server className="w-5 h-5 text-primary-600" /> سياسة الاحتفاظ (Retention)</h3>
                </div>

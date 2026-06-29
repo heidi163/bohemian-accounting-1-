@@ -100,7 +100,7 @@ export function AssetsPage() {
 
   return (
     <div className="space-y-6">
-      <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+      <div className="flex-1 min-h-[2rem]"></div><div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
           <h2 className="font-bold text-slate-800 text-2xl">الأصول الثابتة (Fixed Assets)</h2>
           <p className="text-slate-500 mt-1">سجل الأصول، الإهلاك، والاستبعادات.</p>
@@ -136,7 +136,7 @@ export function AssetsPage() {
         </div>
       </div>
 
-      <div className="bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col overflow-hidden">
+      <div className="flex-1 min-h-[2rem]"></div><div className="bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col overflow-hidden">
         <div className="flex-1 overflow-x-auto">
           <table className="w-full text-start border-collapse">
             <thead className="bg-slate-50 text-slate-400 text-xs uppercase font-bold tracking-widest">
@@ -199,8 +199,8 @@ export function AssetsPage() {
       </div>
 
       {activeModal === 'dispose' && focusedAsset && (
-        <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 p-4 overflow-y-auto overscroll-none flex justify-center">
-          <div className="bg-white rounded-2xl shadow-xl w-full max-w-lg overflow-hidden">
+        <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 p-4 overflow-y-auto overscroll-none flex flex-col items-center justify-start">
+          <div className="flex-1 min-h-[2rem]"></div><div className="bg-white rounded-2xl shadow-xl w-full max-w-lg overflow-hidden">
             <div className="flex items-center justify-between p-6 border-b border-slate-100">
               <h3 className="text-lg font-bold text-slate-800">استبعاد الأصل (Asset Disposal)</h3>
               <button onClick={() => setActiveModal(null)} className="text-slate-400 hover:text-slate-500"><X className="w-5 h-5"/></button>
