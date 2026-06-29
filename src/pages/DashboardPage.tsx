@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router";
 import { ArrowUpRight, ArrowDownRight, Users, Receipt, DollarSign, Percent, Clock, Wallet, Plus, FileText, Landmark, AlertCircle, Building2, TrendingDown, TrendingUp } from "lucide-react";
 import { type DashboardData } from "../types";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from "recharts";
@@ -24,6 +25,7 @@ const COLORS = [
 ];
 
 export function DashboardPage() {
+  const navigate = useNavigate();
   const [stats, setStats] = useState<DashboardData | null>(null);
 
   useEffect(() => {
@@ -97,13 +99,13 @@ export function DashboardPage() {
       
       {/* Quick Actions */}
       <div className="flex flex-wrap items-center gap-3">
-        <button className="bg-primary text-white px-4 py-2.5 rounded-2xl text-sm font-bold flex items-center gap-2 hover:bg-primary/90 transition shadow-sm hover:shadow-md hover:-translate-y-0.5">
+        <button onClick={() => navigate('/invoices/new')} className="bg-primary text-white px-4 py-2.5 rounded-2xl text-sm font-bold flex items-center gap-2 hover:bg-primary/90 transition shadow-sm hover:shadow-md hover:-translate-y-0.5">
           <Plus className="w-4 h-4" /> فاتورة جديدة
         </button>
-        <button className="bg-white text-slate-700 border border-slate-200 px-4 py-2.5 rounded-2xl text-sm font-bold flex items-center gap-2 hover:bg-slate-50 transition shadow-sm hover:shadow-md hover:-translate-y-0.5">
+        <button onClick={() => navigate('/purchases/new')} className="bg-white text-slate-700 border border-slate-200 px-4 py-2.5 rounded-2xl text-sm font-bold flex items-center gap-2 hover:bg-slate-50 transition shadow-sm hover:shadow-md hover:-translate-y-0.5">
           <Receipt className="w-4 h-4" /> تسجيل مصروف
         </button>
-        <button className="bg-white text-slate-700 border border-slate-200 px-4 py-2.5 rounded-2xl text-sm font-bold flex items-center gap-2 hover:bg-slate-50 transition shadow-sm hover:shadow-md hover:-translate-y-0.5">
+        <button onClick={() => navigate('/journal/new')} className="bg-white text-slate-700 border border-slate-200 px-4 py-2.5 rounded-2xl text-sm font-bold flex items-center gap-2 hover:bg-slate-50 transition shadow-sm hover:shadow-md hover:-translate-y-0.5">
           <FileText className="w-4 h-4" /> قيد يومية
         </button>
       </div>
