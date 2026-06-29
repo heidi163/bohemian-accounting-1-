@@ -78,7 +78,7 @@ export function AppLayout() {
   ];
 
   return (
-    <div className="flex h-screen w-full bg-slate-50 text-slate-900 overflow-hidden font-sans relative">
+    <div className="flex h-screen w-full bg-slate-100 text-slate-900 overflow-hidden font-sans relative">
       {/* Mobile Sidebar Overlay */}
       {isMobileMenuOpen && (
         <div
@@ -160,10 +160,10 @@ export function AppLayout() {
                         isActive
                           ? 'bg-primary/20 text-primary border border-primary/30'
                           : 'text-slate-400 hover:bg-slate-800 hover:text-white border border-transparent',
-                        'flex items-center gap-2.5 px-3 py-2 rounded-lg transition-all text-sm font-medium'
+                        'flex items-center gap-2.5 px-3 py-2 rounded-lg transition-all duration-300 hover:scale-[1.02] text-sm font-medium'
                       )}
                     >
-                      <item.icon className="w-4 h-4 shrink-0" aria-hidden="true" />
+                      <item.icon className="w-4 h-4 shrink-0 transition-transform duration-300" aria-hidden="true" />
                       <span className="truncate">{item.name}</span>
                     </Link>
                   );
@@ -193,32 +193,35 @@ export function AppLayout() {
         </div>
       </aside>
 
-      {/* Main Content */}
-      <main className="flex-1 flex flex-col min-w-0 overflow-hidden">
-        {/* Topbar */}
-        <header className="h-14 bg-white border-b border-slate-200 flex items-center justify-between px-4 md:px-6 shadow-sm z-10 shrink-0">
-          <div className="flex items-center gap-3 text-sm text-slate-500">
-            <button
-              onClick={() => setIsMobileMenuOpen(true)}
-              className="p-1.5 -ms-1.5 rounded-lg text-slate-500 hover:bg-slate-100 md:hidden"
-            >
-              <Menu className="w-5 h-5" />
-            </button>
-            <div className="flex items-center gap-2">
-              <span className="font-bold text-slate-700 hidden sm:inline">{activeCompany === "BGK" ? "Bohemian Geeks" : "O2Nation"}</span>
-              <span className="text-slate-300 hidden sm:inline">/</span>
-              <span className="truncate">النظام المحاسبي</span>
+      {/* Main Content Area */}
+      <main className="flex-1 flex flex-col min-w-0 overflow-hidden md:p-3 md:ps-0 transition-all duration-500">
+        <div className="flex-1 flex flex-col bg-slate-50 md:rounded-3xl shadow-sm border border-slate-200 overflow-hidden relative">
+          
+          {/* Topbar (Glassmorphism) */}
+          <header className="sticky top-0 z-20 h-14 backdrop-blur-md bg-white/70 flex items-center justify-between px-4 md:px-6 shrink-0 transition-all">
+            <div className="flex items-center gap-3 text-sm text-slate-500">
+              <button
+                onClick={() => setIsMobileMenuOpen(true)}
+                className="p-1.5 -ms-1.5 rounded-lg text-slate-500 hover:bg-slate-100 md:hidden transition-colors"
+              >
+                <Menu className="w-5 h-5" />
+              </button>
+              <div className="flex items-center gap-2">
+                <span className="font-bold text-slate-700 hidden sm:inline">{activeCompany === "BGK" ? "Bohemian Geeks" : "O2Nation"}</span>
+                <span className="text-slate-300 hidden sm:inline">/</span>
+                <span className="truncate font-medium">النظام المحاسبي</span>
+              </div>
             </div>
-          </div>
-          <div className="flex items-center gap-3">
-            <span className="text-[10px] sm:text-xs bg-emerald-50 text-emerald-700 border border-emerald-200 px-2 py-1 rounded-lg font-bold hidden sm:inline-block">● متصل</span>
-            <div className="w-8 h-8 rounded-full flex items-center justify-center font-bold text-white text-sm shrink-0" style={{ backgroundColor: primaryColor }}>أ</div>
-          </div>
-        </header>
+            <div className="flex items-center gap-3">
+              <span className="text-[10px] sm:text-xs bg-emerald-50 text-emerald-700 border border-emerald-200 px-2 py-1 rounded-lg font-bold hidden sm:inline-block shadow-sm">● متصل</span>
+              <div className="w-8 h-8 rounded-full flex items-center justify-center font-bold text-white text-sm shrink-0 shadow-md transition-transform hover:scale-105 cursor-pointer" style={{ backgroundColor: primaryColor }}>أ</div>
+            </div>
+          </header>
 
-        {/* Page Content */}
-        <div key={`${location.pathname}-${activeCompany}`} className="flex-1 p-6 space-y-6 overflow-y-auto animate-fade-in">
-          <Outlet />
+          {/* Page Content */}
+          <div key={`${location.pathname}-${activeCompany}`} className="flex-1 p-4 md:p-6 space-y-6 overflow-y-auto animate-smooth-up relative z-10">
+            <Outlet />
+          </div>
         </div>
       </main>
     </div>
