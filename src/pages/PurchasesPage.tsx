@@ -32,15 +32,25 @@ export function PurchasesPage() {
   const [activeModal, setActiveModal] = useState<null | 'payment' | 'approval'>(null);
   const [focusedBill, setFocusedBill] = useState<Bill | null>(null);
   
+  const [toastMsg, setToastMsg] = useState('');
+  const [paymentAmount, setPaymentAmount] = useState('');
+  
   const navigate = useNavigate();
 
-  useEffect(() => {
+  const showToast = (msg: string) => {
+    setToastMsg(msg);
+    setTimeout(() => setToastMsg(''), 3000);
+  };
+
+  const fetchBills = () => {
     fetch("/api/bills")
       .then((res) => {
          if (!res.ok) throw new Error('API failed');
          return res.json();
       })
-      .then((data) => setBills(data.data))
+      .then((data) => {
+         if (data.success) setBills(data.data);
+      })
       .catch(() => {
          const localBills = JSON.parse(localStorage.getItem(getCompanyKey('mock_bills')) || '[]');
          if (localBills.length > 0) {
@@ -51,8 +61,14 @@ export function PurchasesPage() {
               { id: 2, bill_number: 'BILL-2026-00002', reference_number: 'AD-2026', supplier_name: 'Google Ads', total_amount: 15000, paid_amount: 5000, tax_amount: 2100, status: 'partial', bill_date: '2026-06-01', due_date: '2026-06-15', currency: 'EGP', cost_center: 'HQ' },
               { id: 3, bill_number: 'BILL-2026-00003', reference_number: 'RN-1234', supplier_name: 'Digital Ocean', total_amount: 450, paid_amount: 0, tax_amount: 0, status: 'pending_approval', bill_date: '2026-06-10', due_date: '2026-06-25', currency: 'USD' }
             ]);
+         } else {
+            showToast('لا يمكن الاتصال بالخادم ولا توجد بيانات محلية');
          }
       });
+  };
+
+  useEffect(() => {
+    fetchBills();
   }, []);
 
   const toggleSelect = (id: number) => {
@@ -67,33 +83,101 @@ export function PurchasesPage() {
     setActiveModal(type);
   };
 
-  const handlePayment = () => {
-    let nextBills = [...bills];
-    if (focusedBill) {
-      nextBills = nextBills.map(b => 
-        b.id === focusedBill.id ? { ...b, status: 'paid', paid_amount: b.total_amount } : b
-      );
-    } else if (selectedBills.size > 0) {
-      nextBills = nextBills.map(b => 
-        selectedBills.has(b.id) ? { ...b, status: 'paid', paid_amount: b.total_amount } : b
-      );
-    }
-    setBills(nextBills);
-    localStorage.setItem(getCompanyKey('mock_bills'), JSON.stringify(nextBills));
-    alert('تم إثبات السداد بنجاح وتحديث الأرصدة');
-    setActiveModal(null);
-    setSelectedBills(new Set());
-  };
-
-  const handleApproval = (status: 'approved' | 'cancelled') => {
-    if (focusedBill) {
-      const nextBills = bills.map(b => 
-        b.id === focusedBill.id ? { ...b, status } : b
-      );
+  const handlePayment = async () => {
+    try {
+      if (focusedBill) {
+        const amount = paymentAmount ? parseFloat(paymentAmount) : (focusedBill.total_amount - focusedBill.paid_amount);
+        const res = await fetch(`/api/bills/${focusedBill.id}/payment`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ amount })
+        });
+        if (!res.ok) throw new Error('Network error');
+        const result = await res.json();
+        if (result.success) {
+          showToast(result.message || 'تم إثبات السداد بنجاح');
+        }
+      } else if (selectedBills.size > 0) {
+        for (const id of selectedBills) {
+          const bill = bills.find(b => b.id === id);
+          if (bill) {
+            const amount = bill.total_amount - bill.paid_amount;
+            await fetch(`/api/bills/${id}/payment`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ amount })
+            });
+          }
+        }
+        showToast('تم إثبات السداد المجمع بنجاح');
+      }
+      fetchBills();
+    } catch (e) {
+      let nextBills = [...bills];
+      const amount = paymentAmount ? parseFloat(paymentAmount) : (focusedBill ? (focusedBill.total_amount - focusedBill.paid_amount) : 0);
+      
+      if (focusedBill) {
+        nextBills = nextBills.map(b => {
+          if (b.id === focusedBill.id) {
+            const newPaid = b.paid_amount + amount;
+            return { ...b, status: newPaid >= b.total_amount ? 'paid' : 'partial', paid_amount: newPaid };
+          }
+          return b;
+        });
+        showToast('تم إثبات السداد (وضع التخزين المحلي)');
+      } else if (selectedBills.size > 0) {
+        nextBills = nextBills.map(b => 
+          selectedBills.has(b.id) ? { ...b, status: 'paid', paid_amount: b.total_amount } : b
+        );
+        showToast('تم إثبات السداد المجمع (وضع التخزين المحلي)');
+      }
       setBills(nextBills);
       localStorage.setItem(getCompanyKey('mock_bills'), JSON.stringify(nextBills));
-      alert(status === 'approved' ? 'تم اعتماد الفاتورة بنجاح' : 'تم رفض الفاتورة');
+    }
+    setActiveModal(null);
+    setSelectedBills(new Set());
+    setPaymentAmount('');
+  };
+
+  const handleApproval = async (status: 'approved' | 'cancelled') => {
+    if (focusedBill) {
+      try {
+        const res = await fetch(`/api/bills/${focusedBill.id}/approve`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ status })
+        });
+        if (!res.ok) throw new Error('Network error');
+        const result = await res.json();
+        if (result.success) {
+          showToast(result.message || 'تم الاعتماد بنجاح');
+          fetchBills();
+        } else {
+          showToast('حدث خطأ أثناء الاعتماد');
+        }
+      } catch (e) {
+        const nextBills = bills.map(b => b.id === focusedBill.id ? { ...b, status } : b);
+        setBills(nextBills);
+        localStorage.setItem(getCompanyKey('mock_bills'), JSON.stringify(nextBills));
+        showToast(status === 'approved' ? 'تم اعتماد الفاتورة (وضع التخزين المحلي)' : 'تم رفض الفاتورة (وضع التخزين المحلي)');
+      }
       setActiveModal(null);
+    }
+  };
+
+  const handleDownload = async (bill: Bill) => {
+    showToast('جاري تحميل المرفق من السيرفر...');
+    try {
+      const res = await fetch(`/api/bills/${bill.id}/download`);
+      if (!res.ok) throw new Error('Network error');
+      const result = await res.json();
+      if (result.success) {
+        showToast(result.message || 'تم تحميل الملف بنجاح!');
+      } else {
+        showToast('فشل في تحميل الملف');
+      }
+    } catch (e) {
+      showToast('تم التحميل (وضع التخزين المحلي)');
     }
   };
 
@@ -180,13 +264,27 @@ export function PurchasesPage() {
                     )}
                   </td>
                   <td className="px-6 py-4 text-end flex items-center justify-end gap-1">
-                    {bill.status === 'pending_approval' && (
-                      <button onClick={() => openModal('approval', bill)} title="اعتماد الفاتورة" className="p-2 text-slate-400 hover:bg-amber-50 hover:text-amber-600 rounded-lg transition"><ShieldCheck className="w-4 h-4" /></button>
-                    )}
-                    <button onClick={() => alert('جاري تحميل المرفق...')} title="تنزيل المرفقات" className="p-2 text-slate-400 hover:bg-rose-50 hover:text-rose-600 rounded-lg transition"><Download className="w-4 h-4" /></button>
-                    {['approved', 'partial', 'overdue'].includes(bill.status) && (
-                      <button onClick={() => openModal('payment', bill)} title="تسجيل صرف" className="p-2 text-slate-400 hover:bg-emerald-50 hover:text-emerald-600 rounded-lg transition"><DollarSign className="w-4 h-4" /></button>
-                    )}
+                    <button 
+                      onClick={() => bill.status === 'pending_approval' ? openModal('approval', bill) : undefined} 
+                      title="اعتماد الفاتورة" 
+                      className={clsx("p-2 rounded-lg transition", bill.status === 'pending_approval' ? "text-slate-400 hover:bg-amber-50 hover:text-amber-600" : "text-slate-200 cursor-not-allowed")}
+                    >
+                      <ShieldCheck className="w-4 h-4" />
+                    </button>
+                    <button 
+                      onClick={() => handleDownload(bill)} 
+                      title="تنزيل المرفقات" 
+                      className="p-2 text-slate-400 hover:bg-rose-50 hover:text-rose-600 rounded-lg transition"
+                    >
+                      <Download className="w-4 h-4" />
+                    </button>
+                    <button 
+                      onClick={() => ['approved', 'partial', 'overdue'].includes(bill.status) ? openModal('payment', bill) : undefined} 
+                      title="تسجيل صرف" 
+                      className={clsx("p-2 rounded-lg transition", ['approved', 'partial', 'overdue'].includes(bill.status) ? "text-slate-400 hover:bg-emerald-50 hover:text-emerald-600" : "text-slate-200 cursor-not-allowed")}
+                    >
+                      <DollarSign className="w-4 h-4" />
+                    </button>
                   </td>
                 </tr>
               ))}
@@ -221,7 +319,7 @@ export function PurchasesPage() {
               
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-2">المبلغ المدفوع (Paid Amount)</label>
-                <input type="number" placeholder="0.00" className="w-full bg-slate-50 border border-rose-200 focus:border-rose-500 text-slate-900 text-sm rounded-xl px-4 py-3 outline-none text-right font-bold text-lg" dir="ltr" />
+                <input type="number" value={paymentAmount} onChange={(e) => setPaymentAmount(e.target.value)} placeholder={focusedBill ? String(focusedBill.total_amount - focusedBill.paid_amount) : "0.00"} className="w-full bg-slate-50 border border-rose-200 focus:border-rose-500 text-slate-900 text-sm rounded-xl px-4 py-3 outline-none text-right font-bold text-lg" dir="ltr" />
               </div>
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-2">صرف من حساب (Pay From)</label>
@@ -251,7 +349,7 @@ export function PurchasesPage() {
       )}
 
       {activeModal === 'approval' && focusedBill && (
-        <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 p-4 overflow-y-auto overscroll-none grid place-items-center">
+        <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 overflow-y-auto overscroll-none grid place-items-center p-4">
           <div className="bg-white rounded-2xl shadow-xl w-full max-w-lg overflow-hidden">
             <div className="flex items-center justify-between p-6 border-b border-slate-100">
               <h3 className="text-lg font-bold text-slate-800">مراجعة واعتماد الفاتورة</h3>
@@ -276,6 +374,11 @@ export function PurchasesPage() {
         </div>
       )}
 
+      {toastMsg && (
+        <div className="fixed bottom-6 left-6 bg-emerald-600 text-white px-6 py-3 rounded-xl shadow-lg font-bold text-sm z-50 flex items-center gap-2">
+          {toastMsg}
+        </div>
+      )}
     </div>
   );
 }

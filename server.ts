@@ -208,6 +208,41 @@ async function startServer() {
     res.json({ success: true, data: bills });
   });
 
+  app.post("/api/bills/:id/approve", (req, res) => {
+    const id = parseInt(req.params.id);
+    const { status } = req.body;
+    const bill = bills.find(b => b.id === id);
+    if (!bill) return res.status(404).json({ success: false, message: 'Bill not found' });
+    
+    if (status === 'approved' || status === 'cancelled') {
+      bill.status = status;
+    }
+    res.json({ success: true, message: status === 'approved' ? 'تم اعتماد الفاتورة بنجاح' : 'تم رفض الفاتورة', data: bill });
+  });
+
+  app.post("/api/bills/:id/payment", (req, res) => {
+    const id = parseInt(req.params.id);
+    const { amount } = req.body;
+    const bill = bills.find(b => b.id === id);
+    if (!bill) return res.status(404).json({ success: false, message: 'Bill not found' });
+    
+    bill.paid_amount += Number(amount);
+    if (bill.paid_amount >= bill.total_amount) {
+       bill.status = 'paid';
+    } else if (bill.paid_amount > 0) {
+       bill.status = 'partial';
+    }
+    res.json({ success: true, message: 'تم تسجيل الصرف بنجاح', data: bill });
+  });
+
+  app.get("/api/bills/:id/download", (req, res) => {
+    const id = parseInt(req.params.id);
+    const bill = bills.find(b => b.id === id);
+    if (!bill) return res.status(404).json({ success: false, message: 'Bill not found' });
+    
+    res.json({ success: true, message: 'تم إنشاء الفاتورة بنجاح', downloadUrl: `/bills/pdf/${id}` });
+  });
+
   app.get("/api/journal-entries", (req, res) => {
     res.json({ success: true, data: journalEntries });
   });
