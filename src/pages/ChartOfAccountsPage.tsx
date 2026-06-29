@@ -32,7 +32,6 @@ export function ChartOfAccountsPage() {
   const [accounts, setAccounts] = useState<Account[]>([]);
   const [accountTypes, setAccountTypes] = useState<any[]>([]);
   const [search, setSearch] = useState("");
-  const [companyFilter, setCompanyFilter] = useState("ALL");
   const [expandedCodes, setExpandedCodes] = useState<Set<string>>(new Set());
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newAccount, setNewAccount] = useState<Partial<Account>>({
@@ -111,9 +110,7 @@ export function ChartOfAccountsPage() {
   };
 
   const filteredAccounts = accounts.filter(acc => {
-    const matchSearch = acc.code.includes(search) || acc.name.includes(search);
-    const matchCompany = companyFilter === 'ALL' || acc.company_id === 'ALL' || acc.company_id === companyFilter;
-    return matchSearch && matchCompany;
+    return acc.code.includes(search) || acc.name.includes(search);
   });
 
   // Build tree
@@ -208,17 +205,6 @@ export function ChartOfAccountsPage() {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
-          </div>
-          <div className="flex gap-2">
-            <select 
-              className="bg-white border border-slate-200 text-slate-700 text-sm rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 outline-none transition-all"
-              value={companyFilter}
-              onChange={(e) => setCompanyFilter(e.target.value)}
-            >
-              <option value="ALL">جميع الشركات</option>
-              <option value="BGK">بوهيميان جيكس (BGK)</option>
-              <option value="O2N">شركة O2N</option>
-            </select>
           </div>
         </div>
 
