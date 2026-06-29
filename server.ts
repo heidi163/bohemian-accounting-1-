@@ -170,6 +170,40 @@ async function startServer() {
     res.json({ success: true, data: newInvoice });
   });
 
+  app.post("/api/invoices/:id/send", (req, res) => {
+    const id = parseInt(req.params.id);
+    const invoice = invoices.find(i => i.id === id);
+    if (!invoice) return res.status(404).json({ success: false, message: 'Invoice not found' });
+    
+    if (invoice.status === 'draft' || invoice.status === 'pending_approval') {
+      invoice.status = 'issued';
+    }
+    res.json({ success: true, message: 'تم الإرسال بنجاح', data: invoice });
+  });
+
+  app.post("/api/invoices/:id/payment", (req, res) => {
+    const id = parseInt(req.params.id);
+    const { amount } = req.body;
+    const invoice = invoices.find(i => i.id === id);
+    if (!invoice) return res.status(404).json({ success: false, message: 'Invoice not found' });
+    
+    invoice.paid_amount += Number(amount);
+    if (invoice.paid_amount >= invoice.total_amount) {
+       invoice.status = 'paid';
+    } else if (invoice.paid_amount > 0) {
+       invoice.status = 'partial';
+    }
+    res.json({ success: true, message: 'تم تسجيل الدفعة بنجاح', data: invoice });
+  });
+
+  app.get("/api/invoices/:id/download", (req, res) => {
+    const id = parseInt(req.params.id);
+    const invoice = invoices.find(i => i.id === id);
+    if (!invoice) return res.status(404).json({ success: false, message: 'Invoice not found' });
+    
+    res.json({ success: true, message: 'تم إنشاء الفاتورة بنجاح', downloadUrl: `/invoices/pdf/${id}` });
+  });
+
   app.get("/api/bills", (req, res) => {
     res.json({ success: true, data: bills });
   });

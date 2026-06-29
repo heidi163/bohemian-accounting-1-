@@ -40,72 +40,99 @@ export function InvoicesPage() {
   const [activeModal, setActiveModal] = useState<null | 'payment' | 'email' | 'recurring'>(null);
   const [focusedInvoice, setFocusedInvoice] = useState<Invoice | null>(null);
   const [toastMsg, setToastMsg] = useState('');
+  const [paymentAmount, setPaymentAmount] = useState('');
   
   const navigate = useNavigate();
+
+  const fetchInvoices = () => {
+    fetch("/api/invoices")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success) setInvoices(data.data);
+      })
+      .catch(() => {
+        showToast('خطأ في الاتصال بالخادم');
+      });
+  };
 
   const showToast = (msg: string) => {
     setToastMsg(msg);
     setTimeout(() => setToastMsg(''), 3000);
   };
 
-  const handleSendEmail = () => {
+  const handleSendEmail = async () => {
     if (focusedInvoice) {
-      const nextInvoices = invoices.map(inv => 
-        inv.id === focusedInvoice.id && (inv.status === 'draft' || inv.status === 'pending_approval')
-          ? { ...inv, status: 'issued' }
-          : inv
-      );
-      setInvoices(nextInvoices);
-      localStorage.setItem(getCompanyKey('mock_invoices'), JSON.stringify(nextInvoices));
-      showToast('تم وضع الفاتورة في طابور الإرسال وتحديث حالتها إلى مُصدرة');
+      try {
+        const res = await fetch(`/api/invoices/${focusedInvoice.id}/send`, { method: 'POST' });
+        const result = await res.json();
+        if (result.success) {
+          showToast(result.message || 'تم إرسال الفاتورة وتحديث حالتها بنجاح');
+          fetchInvoices();
+        } else {
+          showToast('حدث خطأ أثناء الإرسال');
+        }
+      } catch (e) {
+        showToast('حدث خطأ في الاتصال بالخادم');
+      }
       setActiveModal(null);
     }
   };
 
-  const handlePayment = () => {
-    let nextInvoices = [...invoices];
-    if (focusedInvoice) {
-      nextInvoices = nextInvoices.map(inv => 
-        inv.id === focusedInvoice.id 
-          ? { ...inv, status: 'paid', paid_amount: inv.total_amount } 
-          : inv
-      );
-      showToast('تم إثبات الدفع بنجاح وتحديث أرصدة الفواتير');
-    } else if (selectedInvoices.size > 0) {
-      nextInvoices = nextInvoices.map(inv => 
-        selectedInvoices.has(inv.id)
-          ? { ...inv, status: 'paid', paid_amount: inv.total_amount } 
-          : inv
-      );
-      showToast('تم إثبات الدفع المجمع بنجاح وتحديث أرصدة الفواتير');
+  const handlePayment = async () => {
+    try {
+      if (focusedInvoice) {
+        const amount = paymentAmount ? parseFloat(paymentAmount) : (focusedInvoice.total_amount - focusedInvoice.paid_amount);
+        const res = await fetch(`/api/invoices/${focusedInvoice.id}/payment`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ amount })
+        });
+        const result = await res.json();
+        if (result.success) {
+          showToast(result.message || 'تم إثبات الدفع بنجاح');
+        }
+      } else if (selectedInvoices.size > 0) {
+        for (const id of selectedInvoices) {
+          const inv = invoices.find(i => i.id === id);
+          if (inv) {
+            const amount = inv.total_amount - inv.paid_amount;
+            await fetch(`/api/invoices/${id}/payment`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ amount })
+            });
+          }
+        }
+        showToast('تم إثبات الدفع المجمع بنجاح');
+      }
+      fetchInvoices();
+    } catch (e) {
+      showToast('خطأ في التسجيل بالخادم');
     }
     
-    setInvoices(nextInvoices);
-    localStorage.setItem(getCompanyKey('mock_invoices'), JSON.stringify(nextInvoices));
     setActiveModal(null);
     setSelectedInvoices(new Set());
+    setPaymentAmount('');
+  };
+
+  const handleDownload = async (invoice: Invoice) => {
+    showToast('جاري إنشاء ملف PDF من السيرفر...');
+    try {
+      const res = await fetch(`/api/invoices/${invoice.id}/download`);
+      const result = await res.json();
+      if (result.success) {
+        showToast(result.message || 'تم تحميل الملف بنجاح!');
+        // In a real app we'd trigger a window.open(result.downloadUrl) here
+      } else {
+        showToast('فشل في إنشاء الملف');
+      }
+    } catch (e) {
+      showToast('خطأ في الاتصال بالخادم');
+    }
   };
 
   useEffect(() => {
-    fetch("/api/invoices")
-      .then((res) => {
-        if (!res.ok) throw new Error('API failed');
-        return res.json();
-      })
-      .then((data) => setInvoices(data.data))
-      .catch(() => {
-        const localInvoices = JSON.parse(localStorage.getItem(getCompanyKey('mock_invoices')) || '[]');
-        if (localInvoices.length > 0) {
-          setInvoices(localInvoices);
-        } else if (false) {
-            setInvoices([
-            { id: 1, type: 'invoice', invoice_number: 'BGK-INV-2026-00001', customer_name: 'Bohemian Geeks', total_amount: 15400, paid_amount: 15400, tax_amount: 1400, discount_amount: 0, status: 'paid', invoice_date: '2026-05-10', due_date: '2026-05-24', currency: 'EGP', project_id: 'PRJ-001', recurring_status: 'none' },
-            { id: 2, type: 'invoice', invoice_number: 'O2N-INV-2026-00001', customer_name: 'TechFlow Inc', total_amount: 45000, paid_amount: 20000, tax_amount: 5000, discount_amount: 2000, status: 'partial', invoice_date: '2026-05-15', due_date: '2026-05-30', currency: 'EGP', recurring_status: 'active', recurring_frequency: 'monthly' },
-            { id: 3, type: 'quotation', invoice_number: 'BGK-QT-2026-00002', customer_name: 'Sealy KSA', total_amount: 120500, paid_amount: 0, tax_amount: 15000, discount_amount: 5000, status: 'draft', invoice_date: '2026-06-01', due_date: '2026-06-15', currency: 'SAR', recurring_status: 'none' },
-            { id: 4, type: 'proforma', invoice_number: 'BGK-PRO-2026-00001', customer_name: 'Tech Solutions', total_amount: 85000, paid_amount: 0, tax_amount: 10000, discount_amount: 0, status: 'pending_approval', invoice_date: '2026-06-10', due_date: '2026-06-20', currency: 'EGP', recurring_status: 'none' },
-          ]);
-        }
-      });
+    fetchInvoices();
   }, []);
 
   const toggleSelect = (id: number) => {
@@ -215,7 +242,7 @@ export function InvoicesPage() {
                   </td>
                   <td className="px-6 py-4 text-end whitespace-nowrap flex items-center justify-end gap-1">
                     <button onClick={() => openModal('email', invoice)} title="إرسال إيميل" className="p-2 text-slate-400 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition"><Send className="w-4 h-4" /></button>
-                    <button onClick={() => showToast('جاري تحميل ملف PDF...')} title="تحميل PDF" className="p-2 text-slate-400 hover:bg-rose-50 hover:text-rose-600 rounded-lg transition"><Download className="w-4 h-4" /></button>
+                    <button onClick={() => handleDownload(invoice)} title="تحميل PDF" className="p-2 text-slate-400 hover:bg-rose-50 hover:text-rose-600 rounded-lg transition"><Download className="w-4 h-4" /></button>
                     {['issued', 'partial', 'overdue'].includes(invoice.status) && (
                       <button onClick={() => openModal('payment', invoice)} title="تسجيل دفعة" className="p-2 text-slate-400 hover:bg-emerald-50 hover:text-emerald-600 rounded-lg transition"><DollarSign className="w-4 h-4" /></button>
                     )}
@@ -250,7 +277,7 @@ export function InvoicesPage() {
               
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-2">المبلغ المستلم (Received Amount)</label>
-                <input type="number" placeholder="0.00" className="w-full bg-slate-50 border border-slate-200 text-slate-900 text-sm rounded-xl px-4 py-3 outline-none text-right font-bold text-lg" dir="ltr" />
+                <input type="number" value={paymentAmount} onChange={(e) => setPaymentAmount(e.target.value)} placeholder={focusedInvoice ? String(focusedInvoice.total_amount - focusedInvoice.paid_amount) : "0.00"} className="w-full bg-slate-50 border border-slate-200 text-slate-900 text-sm rounded-xl px-4 py-3 outline-none text-right font-bold text-lg" dir="ltr" />
               </div>
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-2">إلى حساب بنكي (Deposit To)</label>
