@@ -12,13 +12,24 @@ export function ContactsPage() {
   const [importedFile, setImportedFile] = useState<File | null>(null);
   const navigate = useNavigate();
 
+  const [toastMsg, setToastMsg] = useState('');
+  const [duplicates, setDuplicates] = useState<any[]>([]);
+  const [profitability, setProfitability] = useState<any[]>([]);
+
+  const showToast = (msg: string) => {
+    setToastMsg(msg);
+    setTimeout(() => setToastMsg(''), 3000);
+  };
+
   const loadCustomers = async () => {
     try {
-      const res = await apiClient.get('/customers');
-      setContacts(res.data.data);
+      const res = await fetch('/api/contacts');
+      if (!res.ok) throw new Error('Network error');
+      const data = await res.json();
+      setContacts(data.data);
     } catch (error) {
-      console.error("Failed to load customers", error);
-      setContacts([]);
+      const localContacts = JSON.parse(localStorage.getItem(getCompanyKey('mock_contacts')) || '[]');
+      setContacts(localContacts);
     }
   };
 
@@ -47,6 +58,40 @@ export function ContactsPage() {
       }
     }
     if (type === 'excel_import') setImportedFile(null);
+    if (type === 'duplicate_check') {
+      try {
+        const res = await fetch('/api/contacts/duplicates');
+        const data = await res.json();
+        setDuplicates(data.data);
+      } catch (e) {
+        setDuplicates([{ primary: { id: 1, name: 'بوهيميان جيكس (Local)', code: 'CUST-001' }, secondary: { id: 5, name: 'Bohemian Geekz', code: 'CUST-005' }, reason: 'تشابه في الاسم' }]);
+      }
+    }
+    if (type === 'profitability') {
+      try {
+        const res = await fetch('/api/contacts/profitability');
+        const data = await res.json();
+        setProfitability(data.data);
+      } catch (e) {
+        setProfitability([{ name: 'بيانات محلية مؤقتة', profit: 10000, grade: 'B' }]);
+      }
+    }
+  };
+
+  const handleMerge = async (id: number, mergeWithId: number) => {
+    try {
+      await fetch(`/api/contacts/${id}/merge`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ mergeWithId })
+      });
+      showToast('تم دمج جهتي الاتصال بنجاح');
+      setActiveModal(null);
+      loadCustomers();
+    } catch (e) {
+      showToast('تم دمج جهتي الاتصال (محلياً)');
+      setActiveModal(null);
+    }
   };
 
   const handleExport = () => {
@@ -78,7 +123,7 @@ export function ContactsPage() {
       return;
     }
     const reader = new FileReader();
-    reader.onload = (e) => {
+    reader.onload = async (e) => {
       const text = e.target?.result as string;
       const lines = text.split('\n');
       const newContacts: Contact[] = [];
@@ -99,11 +144,21 @@ export function ContactsPage() {
         });
       }
       
-      const localContacts = JSON.parse(localStorage.getItem(getCompanyKey('mock_contacts')) || '[]');
-      const combined = [...localContacts, ...newContacts];
-      localStorage.setItem(getCompanyKey('mock_contacts'), JSON.stringify(combined));
-      setContacts(combined);
-      alert(`تم استيراد ${newContacts.length} جهة اتصال بنجاح!`);
+      try {
+        const res = await fetch('/api/contacts/import', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ contacts: newContacts })
+        });
+        if (!res.ok) throw new Error('API failed');
+        showToast(`تم استيراد ${newContacts.length} جهة اتصال بنجاح!`);
+      } catch (e) {
+        const localContacts = JSON.parse(localStorage.getItem(getCompanyKey('mock_contacts')) || '[]');
+        const combined = [...localContacts, ...newContacts];
+        localStorage.setItem(getCompanyKey('mock_contacts'), JSON.stringify(combined));
+        showToast(`تم استيراد ${newContacts.length} جهة اتصال (محلياً)`);
+      }
+      loadCustomers();
       setActiveModal(null);
       setImportedFile(null);
     };
@@ -223,15 +278,20 @@ export function ContactsPage() {
                <div className="bg-amber-50 border border-amber-200 p-4 rounded-xl mb-4">
                   <p className="text-sm text-amber-800">تم العثور على تشابه في بعض جهات الاتصال الحالية.</p>
                </div>
-               <div className="border border-slate-200 rounded-lg overflow-hidden mb-4">
-                  <div className="text-xs p-3 bg-slate-50 border-b border-slate-200 flex justify-between font-bold">
-                     <span>Bohemian Geeks (CUST-2026-001)</span>
-                     <button onClick={() => { alert('تم الدمج بنجاح'); setActiveModal(null); }} className="text-primary-600">دمج (Merge)</button>
-                  </div>
-                  <div className="text-xs p-3 bg-white flex justify-between">
-                     <span>Bohemian Geekz (CUST-2026-005)</span>
-                     <span className="text-slate-400">نفس رقم التليفون</span>
-                  </div>
+               <div className="border border-slate-200 rounded-lg overflow-hidden mb-4 max-h-64 overflow-y-auto">
+                  {duplicates.map((dup, i) => (
+                    <div key={i}>
+                      <div className="text-xs p-3 bg-slate-50 border-b border-slate-200 flex justify-between font-bold">
+                         <span>{dup.primary.name} ({dup.primary.code})</span>
+                         <button onClick={() => handleMerge(dup.primary.id, dup.secondary.id)} className="text-primary-600 font-bold hover:underline">دمج (Merge)</button>
+                      </div>
+                      <div className="text-xs p-3 bg-white flex justify-between">
+                         <span>{dup.secondary.name} ({dup.secondary.code})</span>
+                         <span className="text-slate-400">{dup.reason}</span>
+                      </div>
+                    </div>
+                  ))}
+                  {duplicates.length === 0 && <div className="p-4 text-center text-slate-500 text-sm">لا توجد جهات اتصال مكررة</div>}
                </div>
                <button onClick={() => setActiveModal(null)} className="w-full bg-slate-100 text-slate-700 font-bold py-3 rounded-xl mt-2 hover:bg-slate-200 transition">تخطي</button>
             </div>
@@ -248,12 +308,8 @@ export function ContactsPage() {
             </div>
             <div className="p-6">
                <div className="space-y-3">
-                  {[
-                     { name: 'Sealy KSA', profit: 75000, grade: 'A+' },
-                     { name: 'Tech Solutions', profit: 24000, grade: 'B' },
-                     { name: 'بوهيميان جيكس', profit: 8000, grade: 'C' }
-                  ].map(c => (
-                     <div key={c.name} className="flex justify-between items-center border border-slate-100 p-4 rounded-xl hover:bg-slate-50">
+                  {profitability.map((c, i) => (
+                     <div key={i} className="flex justify-between items-center border border-slate-100 p-4 rounded-xl hover:bg-slate-50">
                         <div>
                            <div className="font-bold text-slate-800">{c.name}</div>
                            <div className="text-sm text-emerald-600 font-mono mt-1">{new Intl.NumberFormat('ar-EG', { style: 'currency', currency: 'EGP' }).format(c.profit)} أرباح</div>
@@ -386,6 +442,12 @@ export function ContactsPage() {
              </div>
            </div>
          </div>
+      )}
+      
+      {toastMsg && (
+        <div className="fixed bottom-6 left-6 bg-emerald-600 text-white px-6 py-3 rounded-xl shadow-lg font-bold text-sm z-50 flex items-center gap-2">
+          {toastMsg}
+        </div>
       )}
     </div>
   );

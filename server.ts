@@ -258,6 +258,51 @@ async function startServer() {
     res.json({ success: true, data: contacts });
   });
 
+  app.post("/api/contacts", (req, res) => {
+    const newContact = req.body;
+    newContact.id = contacts.length > 0 ? Math.max(...contacts.map(c => c.id)) + 1 : 1;
+    if (!newContact.code) {
+       newContact.code = `${newContact.type === 'customer' ? 'CUST' : 'SUPP'}-2026-${String(newContact.id).padStart(3, '0')}`;
+    }
+    contacts.push(newContact);
+    res.json({ success: true, message: 'تم إضافة جهة الاتصال بنجاح', data: newContact });
+  });
+
+  app.post("/api/contacts/import", (req, res) => {
+    const { contacts: newContacts } = req.body;
+    if (!Array.isArray(newContacts)) return res.status(400).json({ success: false });
+    
+    newContacts.forEach(c => {
+       c.id = contacts.length > 0 ? Math.max(...contacts.map(x => x.id)) + 1 : 1;
+       contacts.push(c);
+    });
+    res.json({ success: true, message: `تم استيراد ${newContacts.length} جهة اتصال بنجاح` });
+  });
+
+  app.get("/api/contacts/duplicates", (req, res) => {
+    // Mock duplicates
+    res.json({ success: true, data: [
+      { primary: { id: 1, name: 'Bohemian Geeks', code: 'CUST-2026-001' }, secondary: { id: 5, name: 'Bohemian Geekz', code: 'CUST-2026-005' }, reason: 'نفس رقم التليفون' }
+    ]});
+  });
+
+  app.post("/api/contacts/:id/merge", (req, res) => {
+    const id = parseInt(req.params.id);
+    const { mergeWithId } = req.body;
+    // Mock merge
+    const index = contacts.findIndex(c => c.id === mergeWithId);
+    if (index > -1) contacts.splice(index, 1);
+    res.json({ success: true, message: 'تم دمج جهتي الاتصال بنجاح' });
+  });
+
+  app.get("/api/contacts/profitability", (req, res) => {
+    res.json({ success: true, data: [
+      { name: 'Sealy KSA', profit: 75000, grade: 'A+' },
+      { name: 'Tech Solutions', profit: 24000, grade: 'B' },
+      { name: 'بوهيميان جيكس', profit: 8000, grade: 'C' }
+    ]});
+  });
+
   app.get("/api/banks", (req, res) => {
     res.json({ success: true, data: banks });
   });

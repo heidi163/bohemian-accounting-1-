@@ -7,6 +7,19 @@ import { getCompanyKey } from '../utils/storage';
 export function ContactCreatePage() {
   const navigate = useNavigate();
   const [subContacts, setSubContacts] = useState<SubContact[]>([]);
+  
+  const [formData, setFormData] = useState({
+    type: 'customer',
+    name: '',
+    email: '',
+    phone: '',
+    tax_number: '',
+    currency: 'EGP',
+    opening_balance: '',
+    credit_limit: '',
+    notes: ''
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const addSubContact = () => {
     setSubContacts([...subContacts, { name: '', email: '', phone: '' }]);
@@ -32,34 +45,46 @@ export function ContactCreatePage() {
           <button className="bg-slate-100 text-slate-700 px-6 py-2 rounded-xl text-sm font-semibold hover:bg-slate-200 transition" onClick={() => navigate('/contacts')}>
              إلغاء
           </button>
-          <button className="bg-primary-600 text-white px-6 py-2 rounded-xl text-sm font-semibold hover:bg-primary-700 transition" onClick={() => {
-             const newContact = {
-               id: Date.now(),
-               code: `CUST-2026-${String(Date.now()).slice(-3)}`,
-               name: 'جهة اتصال جديدة (Mock)',
-               type: 'customer',
-               email: 'new@example.com',
-               phone: '+20 100 000 0000',
-               balance: 0,
-               opening_balance: 0,
-               outstanding_balance: 0,
-               credit_limit: 50000,
-               aging: { '0_30': 0, '31_60': 0, '61_90': 0, '91_plus': 0 },
-               sub_contacts: subContacts
-             };
-             const localContacts = JSON.parse(localStorage.getItem(getCompanyKey('mock_contacts')) || '[]');
-             if (localContacts.length === 0) {
-               localContacts.push(
-                  { id: 1, code: 'CUST-2026-001', name: 'بوهيميان جيكس (Bohemian Geeks)', type: 'customer', email: 'hello@bohemiangeeks.com', phone: '+20 100 123 4567', balance: 15400, opening_balance: 0, outstanding_balance: 15400, credit_limit: 50000, aging: { '0_30': 15400, '31_60': 0, '61_90': 0, '91_plus': 0 }, sub_contacts: [{ name: 'Heidi Medhat', email: 'heidi@bohemiangeeks.com', phone: '+20101111111' }] },
-                  { id: 2, code: 'CUST-2026-002', name: 'Sealy KSA', type: 'customer', email: 'finance@sealy.sa', phone: '+966 50 123 4567', balance: 120500, opening_balance: 20000, outstanding_balance: 100500, credit_limit: 200000, aging: { '0_30': 50000, '31_60': 50500, '61_90': 0, '91_plus': 0 }, sub_contacts: [] },
-                  { id: 3, code: 'SUPP-2026-001', name: 'Amazon Web Services', type: 'supplier', email: 'billing@aws.com', phone: '+1 800 123 4567', balance: -1200, opening_balance: 0, outstanding_balance: 0, credit_limit: 0, aging: { '0_30': 0, '31_60': 0, '61_90': 0, '91_plus': 0 }, sub_contacts: [] }
-               );
-             }
-             localContacts.push(newContact);
-             localStorage.setItem(getCompanyKey('mock_contacts'), JSON.stringify(localContacts));
-             navigate('/contacts');
-          }}>
-            حفظ وإنشاء
+          <button 
+            disabled={isSubmitting || !formData.name}
+            className="bg-primary-600 text-white px-6 py-2 rounded-xl text-sm font-semibold hover:bg-primary-700 transition disabled:opacity-50" 
+            onClick={async () => {
+              setIsSubmitting(true);
+              const newContact = {
+                type: formData.type,
+                name: formData.name,
+                email: formData.email,
+                phone: formData.phone,
+                tax_number: formData.tax_number,
+                currency: formData.currency,
+                opening_balance: Number(formData.opening_balance) || 0,
+                credit_limit: Number(formData.credit_limit) || 0,
+                balance: Number(formData.opening_balance) || 0,
+                outstanding_balance: Number(formData.opening_balance) || 0,
+                notes: formData.notes,
+                sub_contacts: subContacts
+              };
+              
+              try {
+                const res = await fetch('/api/contacts', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify(newContact)
+                });
+                if (!res.ok) throw new Error('API failed');
+              } catch (e) {
+                const localContacts = JSON.parse(localStorage.getItem(getCompanyKey('mock_contacts')) || '[]');
+                const localId = Date.now();
+                localContacts.push({
+                  ...newContact,
+                  id: localId,
+                  code: `${formData.type === 'customer' ? 'CUST' : 'SUPP'}-2026-${String(localId).slice(-3)}`
+                });
+                localStorage.setItem(getCompanyKey('mock_contacts'), JSON.stringify(localContacts));
+              }
+              navigate('/contacts');
+            }}>
+            {isSubmitting ? 'جاري الحفظ...' : 'حفظ وإنشاء'}
           </button>
         </div>
       </div>
@@ -70,30 +95,30 @@ export function ContactCreatePage() {
            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
              <div>
                <label className="block text-sm font-medium text-slate-700 mb-2">النوع</label>
-               <select defaultValue="customer" className="w-full bg-white border border-slate-200 text-slate-900 text-sm rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 outline-none transition-all">
+               <select value={formData.type} onChange={(e) => setFormData({...formData, type: e.target.value})} className="w-full bg-white border border-slate-200 text-slate-900 text-sm rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 outline-none transition-all">
                  <option value="customer">عميل (Customer)</option>
                  <option value="supplier">مورد (Supplier)</option>
                </select>
              </div>
              <div>
                <label className="block text-sm font-medium text-slate-700 mb-2">الشركة أو الجهة الرئيسية</label>
-               <input type="text" placeholder="اسم الشركة أو العميل..." className="w-full bg-white border border-slate-200 text-slate-900 text-sm rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 outline-none transition-all" />
+               <input type="text" value={formData.name} onChange={(e) => setFormData({...formData, name: e.target.value})} placeholder="اسم الشركة أو العميل..." className="w-full bg-white border border-slate-200 text-slate-900 text-sm rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 outline-none transition-all" />
              </div>
              <div>
                <label className="block text-sm font-medium text-slate-700 mb-2">البريد الإلكتروني الرئيسي</label>
-               <input type="email" placeholder="example@domain.com" className="w-full bg-white border border-slate-200 text-slate-900 text-sm rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 outline-none transition-all text-right" dir="ltr" />
+               <input type="email" value={formData.email} onChange={(e) => setFormData({...formData, email: e.target.value})} placeholder="example@domain.com" className="w-full bg-white border border-slate-200 text-slate-900 text-sm rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 outline-none transition-all text-right" dir="ltr" />
              </div>
              <div>
                <label className="block text-sm font-medium text-slate-700 mb-2">رقم الهاتف الرئيسي</label>
-               <input type="tel" placeholder="+20 100 000 0000" className="w-full bg-white border border-slate-200 text-slate-900 text-sm rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 outline-none transition-all text-right" dir="ltr" />
+               <input type="tel" value={formData.phone} onChange={(e) => setFormData({...formData, phone: e.target.value})} placeholder="+20 100 000 0000" className="w-full bg-white border border-slate-200 text-slate-900 text-sm rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 outline-none transition-all text-right" dir="ltr" />
              </div>
              <div>
                <label className="block text-sm font-medium text-slate-700 mb-2">الرقم الضريبي</label>
-               <input type="text" placeholder="123-456-789" className="w-full bg-white border border-slate-200 text-slate-900 text-sm rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 outline-none transition-all text-right" dir="ltr" />
+               <input type="text" value={formData.tax_number} onChange={(e) => setFormData({...formData, tax_number: e.target.value})} placeholder="123-456-789" className="w-full bg-white border border-slate-200 text-slate-900 text-sm rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 outline-none transition-all text-right" dir="ltr" />
              </div>
              <div>
                <label className="block text-sm font-medium text-slate-700 mb-2">العملة الافتراضية</label>
-               <select defaultValue="EGP" className="w-full bg-white border border-slate-200 text-slate-900 text-sm rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 outline-none transition-all">
+               <select value={formData.currency} onChange={(e) => setFormData({...formData, currency: e.target.value})} className="w-full bg-white border border-slate-200 text-slate-900 text-sm rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 outline-none transition-all">
                  <option value="EGP">جنيه مصري (EGP)</option>
                  <option value="USD">دولار أمريكي (USD)</option>
                  <option value="SAR">ريال سعودي (SAR)</option>
@@ -107,12 +132,12 @@ export function ContactCreatePage() {
            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-slate-50 p-6 rounded-xl border border-slate-200">
              <div>
                <label className="block text-sm font-medium text-slate-700 mb-2">الرصيد الافتتاحي (Opening Balance)</label>
-               <input type="number" placeholder="0.00" className="w-full bg-white border border-slate-200 text-slate-900 text-sm rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-primary-500/20 outline-none transition-all text-right" dir="ltr" />
+               <input type="number" value={formData.opening_balance} onChange={(e) => setFormData({...formData, opening_balance: e.target.value})} placeholder="0.00" className="w-full bg-white border border-slate-200 text-slate-900 text-sm rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-primary-500/20 outline-none transition-all text-right" dir="ltr" />
                <p className="text-xs text-slate-500 mt-1">يُسجل في تاريخ بدء التفعيل.</p>
              </div>
              <div>
                <label className="block text-sm font-medium text-slate-700 mb-2">الحد الائتماني (Credit Limit)</label>
-               <input type="number" placeholder="مثال: 50000" className="w-full bg-white border border-slate-200 text-slate-900 text-sm rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-primary-500/20 outline-none transition-all text-right" dir="ltr" />
+               <input type="number" value={formData.credit_limit} onChange={(e) => setFormData({...formData, credit_limit: e.target.value})} placeholder="مثال: 50000" className="w-full bg-white border border-slate-200 text-slate-900 text-sm rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-primary-500/20 outline-none transition-all text-right" dir="ltr" />
                <p className="text-xs text-slate-500 mt-1">أقصى مبلغ مسموح للمديونية.</p>
              </div>
            </div>
@@ -130,12 +155,24 @@ export function ContactCreatePage() {
              </div>
            ) : (
              <div className="space-y-4">
-               {subContacts.map((_, index) => (
+               {subContacts.map((sub, index) => (
                  <div key={index} className="flex gap-4 items-start bg-slate-50 p-4 rounded-xl border border-slate-200">
                    <div className="flex-1 grid grid-cols-1 sm:grid-cols-3 gap-4">
-                     <input type="text" placeholder={`الاسم #${index + 1}`} className="w-full bg-white border border-slate-200 text-slate-900 text-sm rounded-xl px-4 py-2 outline-none" />
-                     <input type="email" placeholder="البريد الإلكتروني" className="w-full bg-white border border-slate-200 text-slate-900 text-sm rounded-xl px-4 py-2 outline-none text-right" dir="ltr" />
-                     <input type="tel" placeholder="رقم الهاتف" className="w-full bg-white border border-slate-200 text-slate-900 text-sm rounded-xl px-4 py-2 outline-none text-right" dir="ltr" />
+                      <input type="text" value={sub.name} onChange={(e) => {
+                          const newSubs = [...subContacts];
+                          newSubs[index].name = e.target.value;
+                          setSubContacts(newSubs);
+                      }} placeholder={`الاسم #${index + 1}`} className="w-full bg-white border border-slate-200 text-slate-900 text-sm rounded-xl px-4 py-2 outline-none" />
+                      <input type="email" value={sub.email} onChange={(e) => {
+                          const newSubs = [...subContacts];
+                          newSubs[index].email = e.target.value;
+                          setSubContacts(newSubs);
+                      }} placeholder="البريد الإلكتروني" className="w-full bg-white border border-slate-200 text-slate-900 text-sm rounded-xl px-4 py-2 outline-none text-right" dir="ltr" />
+                      <input type="tel" value={sub.phone} onChange={(e) => {
+                          const newSubs = [...subContacts];
+                          newSubs[index].phone = e.target.value;
+                          setSubContacts(newSubs);
+                      }} placeholder="رقم الهاتف" className="w-full bg-white border border-slate-200 text-slate-900 text-sm rounded-xl px-4 py-2 outline-none text-right" dir="ltr" />
                    </div>
                    <button onClick={() => removeSubContact(index)} className="text-rose-500 hover:text-rose-700 bg-rose-50 p-2.5 rounded-xl border border-rose-100 transition">
                      <Trash2 className="w-4 h-4" />
@@ -150,7 +187,7 @@ export function ContactCreatePage() {
            <h3 className="text-lg font-bold text-slate-800 mb-4 border-b border-slate-100 pb-2">بيانات إضافية</h3>
            <div className="md:col-span-2">
              <label className="block text-sm font-medium text-slate-700 mb-2">العنوان وملاحظات</label>
-             <textarea rows={3} placeholder="عنوان الشارع، المدينة، أية ملاحظات إضافية..." className="w-full bg-white border border-slate-200 text-slate-900 text-sm rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 outline-none transition-all"></textarea>
+             <textarea rows={3} value={formData.notes} onChange={(e) => setFormData({...formData, notes: e.target.value})} placeholder="عنوان الشارع، المدينة، أية ملاحظات إضافية..." className="w-full bg-white border border-slate-200 text-slate-900 text-sm rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 outline-none transition-all"></textarea>
            </div>
         </div>
       </div>
