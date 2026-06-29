@@ -20,6 +20,7 @@ $router->group(['prefix' => '/api', 'middleware' => [\App\Core\Middleware\AuthMi
     // Accounts
     $router->get('/accounts', [\App\Controllers\AccountController::class, 'index']);
     $router->post('/accounts', [\App\Controllers\AccountController::class, 'store']);
+    $router->get('/account-types', [\App\Controllers\AccountController::class, 'types']);
     
     // Customers
     $router->get('/customers', [\App\Controllers\CustomerController::class, 'index']);
@@ -32,5 +33,6 @@ $router->group(['prefix' => '/api', 'middleware' => [\App\Core\Middleware\AuthMi
     $router->get('/journal-entries/{id}', [\App\Controllers\JournalController::class, 'show']);
     $router->post('/journal-entries', [\App\Controllers\JournalController::class, 'store']);
     $router->post('/journal-entries/{id}/post', [\App\Controllers\JournalController::class, 'post']);
+    $router->post('/journal-entries/{id}/reverse', [\App\Controllers\JournalController::class, 'reverse']);
     
 });

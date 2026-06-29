@@ -30,19 +30,29 @@ const levelTranslations: Record<string, string> = {
 
 export function ChartOfAccountsPage() {
   const [accounts, setAccounts] = useState<Account[]>([]);
+  const [accountTypes, setAccountTypes] = useState<any[]>([]);
   const [search, setSearch] = useState("");
   const [companyFilter, setCompanyFilter] = useState("ALL");
   const [expandedCodes, setExpandedCodes] = useState<Set<string>>(new Set());
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newAccount, setNewAccount] = useState<Partial<Account>>({
-    code: '', name: '', type: 'asset', level: 'detail', parent_code: '', company_id: 'ALL', is_active: true
+    code: '', name: '', type: '', level: 'detail', parent_code: '', company_id: 'ALL', is_active: true
   });
 
   const loadAccounts = async () => {
     try {
-      const res = await apiClient.get('/accounts');
-      const data = res.data.data;
+      const [resAcc, resTypes] = await Promise.all([
+        apiClient.get('/accounts'),
+        apiClient.get('/account-types')
+      ]);
+      const data = resAcc.data.data;
       setAccounts(data);
+      
+      const typesData = resTypes.data.data;
+      setAccountTypes(typesData);
+      if (typesData.length > 0 && !newAccount.type) {
+        setNewAccount(prev => ({...prev, type: typesData[0].id.toString()}));
+      }
       const toExpand = new Set<string>();
       data.forEach((acc: Account) => {
         if (acc.level !== 'detail') {
@@ -218,7 +228,7 @@ export function ChartOfAccountsPage() {
                   const payload = {
                     code: newAccount.code,
                     name_ar: newAccount.name,
-                    account_type_id: 1, // Defaulting to 1 for now, in real app map type to ID
+                    account_type_id: parseInt(newAccount.type || '1'),
                     level: newAccount.level,
                     parent_id: newAccount.parent_code ? parseInt(newAccount.parent_code) : null, // Mapping parent_code to parent_id is complex here without knowing IDs, simplified for now
                     scope: newAccount.company_id === 'ALL' ? 'all' : newAccount.company_id.toLowerCase(),
@@ -269,8 +279,8 @@ export function ChartOfAccountsPage() {
                     onChange={(e) => setNewAccount({...newAccount, type: e.target.value})}
                     className="w-full bg-white border border-slate-200 text-slate-900 text-sm rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 outline-none transition-all"
                   >
-                    {Object.entries(typeTranslations).map(([key, value]) => (
-                      <option key={key} value={key}>{value}</option>
+                    {accountTypes.map((type: any) => (
+                      <option key={type.id} value={type.id}>{type.name_ar}</option>
                     ))}
                   </select>
                 </div>

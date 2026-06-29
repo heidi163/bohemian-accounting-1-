@@ -207,4 +207,59 @@ class AccountingEngine {
             'reference_id' => $transfer['id']
         ], $lines);
     }
+
+    public static function postManualEntry(array $header, array $lines): int {
+        // Manual entry just passes through the standard postEntry logic
+        // which enforces double-entry and period locks.
+        $header['reference_type'] = 'manual';
+        return self::postEntry($header, $lines);
+    }
+
+    public static function reverseEntry(int $entryId, int $userId): int {
+        $original = Database::fetch("SELECT * FROM journal_entries WHERE id = ?", [$entryId]);
+        if (!$original) throw new \Exception("Original journal entry not found.");
+        if ($original['status'] !== 'posted') throw new \Exception("Only posted entries can be reversed.");
+        if ($original['reference_type'] === 'reversal') throw new \Exception("Cannot reverse a reversal entry.");
+
+        $originalLines = Database::fetchAll("SELECT * FROM journal_lines WHERE journal_entry_id = ?", [$entryId]);
+        
+        $newLines = [];
+        foreach ($originalLines as $line) {
+            $newLines[] = [
+                'account_id' => $line['account_id'],
+                'description' => "Reversal of " . $original['entry_number'] . " - " . $line['description'],
+                'debit' => $line['credit'], // Swap debit and credit
+                'credit' => $line['debit'], // Swap debit and credit
+                'currency' => $line['currency'],
+                'exchange_rate' => $line['exchange_rate'],
+                'cost_center_id' => $line['cost_center_id'],
+                'project_id' => $line['project_id'],
+                'customer_id' => $line['customer_id'],
+                'supplier_id' => $line['supplier_id'],
+                'bank_account_id' => $line['bank_account_id']
+            ];
+        }
+
+        $header = [
+            'company_id' => $original['company_id'],
+            'entry_date' => date('Y-m-d'), // Reverse on current date
+            'description' => "Reversal of Journal Entry " . $original['entry_number'],
+            'reference_type' => 'reversal',
+            'reference_id' => $original['id']
+        ];
+
+        Database::beginTransaction();
+        try {
+            $newEntryId = self::postEntry($header, $newLines);
+            
+            // Mark original as reversed
+            Database::query("UPDATE journal_entries SET status = 'reversed' WHERE id = ?", [$entryId]);
+            
+            Database::commit();
+            return $newEntryId;
+        } catch (\Exception $e) {
+            Database::rollBack();
+            throw $e;
+        }
+    }
 }

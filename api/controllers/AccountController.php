@@ -78,4 +78,11 @@ class AccountController {
         
         Response::success(['id' => $accountId], 'Account created successfully');
     }
+
+    public function types(Request $request): void {
+        Permission::check('accounts', 'view');
+        
+        $types = Database::fetchAll("SELECT * FROM account_types ORDER BY id ASC");
+        Response::success($types);
+    }
 }

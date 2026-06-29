@@ -133,7 +133,21 @@ class JournalController {
         $entry = Database::fetch("SELECT * FROM journal_entries WHERE id = ?", [$id]);
         if (!$entry) throw new \App\Core\Exceptions\NotFoundException("Journal Entry not found");
         if ($entry['status'] !== 'draft') throw new \Exception("Only draft entries can be posted");
-        if (!$entry['is_balanced']) throw new \Exception("Entry is not balanced");
+        
+        // Use AccountingEngine to check period lock
+        // AccountingEngine::checkPeriodLock is private, but we can bypass it by checking here or we make it public.
+        // Let's do the period lock check here to match AccountingEngine
+        $year = (int)date('Y', strtotime($entry['entry_date']));
+        $month = (int)date('m', strtotime($entry['entry_date']));
+        $lock = Database::fetch("SELECT type FROM period_locks WHERE year = ? AND month = ?", [$year, $month]);
+        if ($lock && $lock['type'] === 'hard') {
+            throw new \App\Core\Exceptions\ValidationException(["date" => "Financial period is hard-locked."]);
+        }
+        
+        // Ensure balance
+        if (abs($entry['total_debit'] - $entry['total_credit']) > 0.01) {
+            throw new \Exception("Entry is not balanced");
+        }
         
         Database::query(
             "UPDATE journal_entries SET status = 'posted', posted_by = ?, posted_at = NOW() WHERE id = ?",
@@ -143,5 +157,15 @@ class JournalController {
         Logger::audit('POST', 'JOURNAL_ENTRY', (int)$id);
         
         Response::success(null, 'Journal entry posted successfully');
+    }
+
+    public function reverse(Request $request, string $id): void {
+        Permission::check('journals', 'create');
+        
+        $newEntryId = AccountingEngine::reverseEntry((int)$id, (int)Auth::id());
+        
+        Logger::audit('REVERSE', 'JOURNAL_ENTRY', (int)$id, [], ['new_entry_id' => $newEntryId]);
+        
+        Response::success(['id' => $newEntryId], 'Journal entry reversed successfully');
     }
 }
