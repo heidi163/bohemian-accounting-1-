@@ -199,7 +199,7 @@ export function ReportsPage() {
       </div>
 
       {activeReport && (
-        <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 -col p-4 overflow-y-auto overscroll-none grid place-items-center">
+        <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 -col p-4 overflow-y-auto overscroll-none flex justify-center">
           <div className="bg-white rounded-2xl shadow-2xl w-full max-w-4xl h-[80vh] flex flex-col overflow-hidden">
             <div className="flex items-center justify-between p-6 border-b border-slate-100 bg-slate-50/80">
               <div>
