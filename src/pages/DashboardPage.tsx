@@ -138,11 +138,11 @@ export function DashboardPage() {
           </div>
           <div className="flex-1 px-4 md:px-8 pb-6" style={{ direction: 'ltr' }}>
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={data} barSize={12}>
+              <BarChart data={data} barSize={24}>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" opacity={0.5} />
                 <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: '#94a3b8', fontSize: 11, fontWeight: 500 }} dy={10} />
-                <Tooltip cursor={{ fill: '#f8fafc', radius: 8 }} contentStyle={{ borderRadius: '1rem', border: 'none', boxShadow: '0 10px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)' }} />
-                <Bar dataKey="إيرادات" fill="var(--color-primary-500)" radius={[10, 10, 10, 10]} background={{ fill: 'var(--color-primary-50)', radius: [10, 10, 10, 10] }} />
+                <Tooltip cursor={{ fill: '#f8fafc', radius: 12 }} contentStyle={{ borderRadius: '1rem', border: 'none', boxShadow: '0 10px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)' }} />
+                <Bar dataKey="إيرادات" fill="var(--color-primary-500)" radius={[12, 12, 12, 12]} background={{ fill: 'var(--color-primary-50)', radius: [12, 12, 12, 12] }} />
               </BarChart>
             </ResponsiveContainer>
           </div>
