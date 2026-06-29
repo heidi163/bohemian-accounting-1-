@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { ArrowUpRight, ArrowDownRight, Users, Receipt, DollarSign, Percent, Clock, Wallet } from "lucide-react";
 import { type DashboardData } from "../types";
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from "recharts";
 import { getActiveCompany } from "../utils/storage";
 
 const data = [
@@ -11,7 +11,11 @@ const data = [
   { name: 'أبريل', إيرادات: 278000, مصروفات: 390800 },
   { name: 'مايو', إيرادات: 189000, مصروفات: 48000 },
   { name: 'يونيو', إيرادات: 239000, مصروفات: 38000 },
+  { name: 'يوليو', إيرادات: 349000, مصروفات: 143000 },
+  { name: 'أغسطس', إيرادات: 200000, مصروفات: 98000 },
 ];
+
+const COLORS = ['#6366f1', '#f59e0b', '#10b981', '#f43f5e', '#8b5cf6'];
 
 export function DashboardPage() {
   const [stats, setStats] = useState<DashboardData | null>(null);
@@ -30,7 +34,7 @@ export function DashboardPage() {
       });
   }, []);
 
-  if (!stats) return <div className="animate-pulse p-8 shadow-sm rounded-2xl bg-white border border-slate-200">جاري التحميل...</div>;
+  if (!stats) return <div className="animate-pulse p-8 shadow-sm rounded-3xl bg-white border border-slate-100">جاري التحميل...</div>;
 
   const company = getActiveCompany();
   const kpis = company === "BGK" ? {
@@ -59,127 +63,161 @@ export function DashboardPage() {
     { name: 'تسويق وإعلانات', amount: 85000, percentage: 9 },
   ];
 
+  const pieData = topExpenses.map(exp => ({ name: exp.name, value: exp.amount }));
+
   return (
     <div className="space-y-6">
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-        <div className="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
-          <div className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1 flex items-center gap-1"><Wallet className="w-3 h-3"/> إجمالي النقد (Cash)</div>
-          <div className="text-2xl font-bold text-slate-900" dir="ltr">
-             {new Intl.NumberFormat('ar-EG', { style: 'currency', currency: 'EGP', maximumSignificantDigits: 4 }).format(stats.totalCash)}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="bg-white p-6 rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] border-0 flex flex-col justify-between min-h-[140px] hover:-translate-y-1 transition-transform duration-300">
+          <div className="text-sm font-semibold text-slate-500 mb-2 flex justify-between items-center">
+            <span>إجمالي النقد</span>
+            <div className="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center text-slate-400"><Wallet className="w-4 h-4"/></div>
           </div>
-          <div className="text-xs text-primary-500 font-medium mt-1">الرصيد المتاح</div>
+          <div>
+            <div className="text-3xl font-bold text-slate-900 tracking-tight" dir="ltr">
+               {new Intl.NumberFormat('ar-EG', { style: 'currency', currency: 'EGP', maximumSignificantDigits: 4 }).format(stats.totalCash)}
+            </div>
+            <div className="text-sm text-emerald-500 font-medium mt-1">الرصيد المتاح حالياً</div>
+          </div>
         </div>
         
-        <div className="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
-          <div className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1 flex items-center gap-1"><DollarSign className="w-3 h-3"/> الإيرادات (Revenue)</div>
-          <div className="text-2xl font-bold text-slate-900" dir="ltr">
-             {new Intl.NumberFormat('ar-EG', { style: 'currency', currency: 'EGP', maximumSignificantDigits: 4 }).format(kpis.revenue)}
+        <div className="bg-white p-6 rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] border-0 flex flex-col justify-between min-h-[140px] hover:-translate-y-1 transition-transform duration-300">
+          <div className="text-sm font-semibold text-slate-500 mb-2 flex justify-between items-center">
+            <span>الإيرادات</span>
+            <div className="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center text-slate-400"><DollarSign className="w-4 h-4"/></div>
           </div>
-          <div className="text-xs text-emerald-500 font-medium mt-1">↑ 8% عن العام الماضي</div>
-        </div>
-
-        <div className="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
-          <div className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1 flex items-center gap-1"><Receipt className="w-3 h-3"/> المصروفات (Expenses)</div>
-          <div className="text-2xl font-bold text-slate-900" dir="ltr">
-             {new Intl.NumberFormat('ar-EG', { style: 'currency', currency: 'EGP', maximumSignificantDigits: 4 }).format(kpis.expenses)}
+          <div>
+            <div className="text-3xl font-bold text-slate-900 tracking-tight" dir="ltr">
+               {new Intl.NumberFormat('ar-EG', { style: 'currency', currency: 'EGP', maximumSignificantDigits: 4 }).format(kpis.revenue)}
+            </div>
+            <div className="text-sm text-emerald-500 font-medium mt-1">↑ 8.2% عن العام الماضي</div>
           </div>
-          <div className="text-xs text-rose-500 font-medium mt-1">↑ 3% عن العام الماضي</div>
         </div>
 
-        <div className="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
-          <div className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1 flex items-center gap-1"><ArrowUpRight className="w-3 h-3"/> صافي الربح (Net Profit)</div>
-          <div className="text-2xl font-bold text-slate-900" dir="ltr">
-             {new Intl.NumberFormat('ar-EG', { style: 'currency', currency: 'EGP', maximumSignificantDigits: 4 }).format(stats.netProfit)}
+        <div className="bg-white p-6 rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] border-0 flex flex-col justify-between min-h-[140px] hover:-translate-y-1 transition-transform duration-300">
+          <div className="text-sm font-semibold text-slate-500 mb-2 flex justify-between items-center">
+            <span>المصروفات</span>
+            <div className="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center text-slate-400"><Receipt className="w-4 h-4"/></div>
           </div>
-          <div className="text-xs text-emerald-500 font-medium mt-1">↑ 12% عن الشهر الماضي</div>
-        </div>
-
-        <div className="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
-          <div className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1 flex items-center gap-1"><Percent className="w-3 h-3"/> هامش الربح (Margin %)</div>
-          <div className="text-2xl font-bold text-slate-900" dir="ltr">{kpis.margin}%</div>
-          <div className="text-xs text-emerald-500 font-medium mt-1">أعلى من المتوسط (35%)</div>
-        </div>
-
-        <div className="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
-          <div className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1 flex items-center gap-1"><Clock className="w-3 h-3"/> فترة التحصيل (DSO)</div>
-          <div className="text-2xl font-bold text-slate-900" dir="ltr">{kpis.dso} يوم</div>
-          <div className="text-xs text-rose-500 font-medium mt-1">بطيء - الهدف 30 يوم</div>
-        </div>
-
-        <div className="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
-          <div className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1 flex items-center gap-1"><Clock className="w-3 h-3"/> فترة السداد (DPO)</div>
-          <div className="text-2xl font-bold text-slate-900" dir="ltr">{kpis.dpo} يوم</div>
-          <div className="text-xs text-primary-500 font-medium mt-1">ممتاز (متوافق مع الشروط)</div>
-        </div>
-        
-        <div className="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
-          <div className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1 flex items-center gap-1"><ArrowDownRight className="w-3 h-3"/> حسابات القبض</div>
-          <div className="text-2xl font-bold text-slate-900" dir="ltr">
-             {new Intl.NumberFormat('ar-EG', { style: 'currency', currency: 'EGP', maximumSignificantDigits: 4 }).format(stats.receivables)}
+          <div>
+            <div className="text-3xl font-bold text-slate-900 tracking-tight" dir="ltr">
+               {new Intl.NumberFormat('ar-EG', { style: 'currency', currency: 'EGP', maximumSignificantDigits: 4 }).format(kpis.expenses)}
+            </div>
+            <div className="text-sm text-rose-500 font-medium mt-1">↑ 3.4% عن العام الماضي</div>
           </div>
-          <div className="text-xs text-slate-400 font-medium mt-1">إجمالي المبالغ للتحصيل</div>
+        </div>
+
+        <div className="bg-white p-6 rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] border-0 flex flex-col justify-between min-h-[140px] hover:-translate-y-1 transition-transform duration-300">
+          <div className="text-sm font-semibold text-slate-500 mb-2 flex justify-between items-center">
+            <span>صافي الربح</span>
+            <div className="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center text-slate-400"><ArrowUpRight className="w-4 h-4"/></div>
+          </div>
+          <div>
+            <div className="text-3xl font-bold text-slate-900 tracking-tight" dir="ltr">
+               {new Intl.NumberFormat('ar-EG', { style: 'currency', currency: 'EGP', maximumSignificantDigits: 4 }).format(stats.netProfit)}
+            </div>
+            <div className="text-sm text-emerald-500 font-medium mt-1">↑ 12% عن الشهر الماضي</div>
+          </div>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col min-h-[350px]">
-          <div className="p-6 border-b border-slate-100 flex items-center justify-between">
-            <h2 className="font-bold text-slate-800">الإيرادات مقابل المصروفات (2026)</h2>
-            <button onClick={() => alert('جاري تحميل التقرير...')} className="text-primary-600 text-sm font-semibold hover:underline">تحميل التقرير</button>
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <div className="lg:col-span-8 bg-white rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] border-0 flex flex-col min-h-[400px]">
+          <div className="p-6 md:p-8 flex items-center justify-between">
+            <h2 className="text-lg font-bold text-slate-900 tracking-tight">حركة المبيعات (Sales dynamics)</h2>
+            <select className="bg-slate-50 border-0 text-sm font-medium rounded-full px-4 py-1.5 text-slate-600 outline-none cursor-pointer focus:ring-2 focus:ring-primary/20">
+              <option>2026</option>
+              <option>2025</option>
+            </select>
           </div>
-          <div className="flex-1 p-6" style={{ direction: 'ltr' }}>
+          <div className="flex-1 px-4 md:px-8 pb-6" style={{ direction: 'ltr' }}>
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={data}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
-                <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: '#94a3b8', fontSize: 12 }} />
-                <YAxis axisLine={false} tickLine={false} tick={{ fill: '#94a3b8', fontSize: 12 }} tickFormatter={(value) => `${value / 1000}k`} />
-                <Tooltip cursor={{ fill: '#f8fafc' }} contentStyle={{ borderRadius: '0.75rem', border: '1px solid #e2e8f0', boxShadow: '0 1px 2px 0 rgb(0 0 0 / 0.05)' }} />
-                <Bar dataKey="إيرادات" fill="#6366f1" radius={[4, 4, 0, 0]} />
-                <Bar dataKey="مصروفات" fill="#f59e0b" radius={[4, 4, 0, 0]} />
+              <BarChart data={data} barSize={12}>
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" opacity={0.5} />
+                <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: '#94a3b8', fontSize: 11, fontWeight: 500 }} dy={10} />
+                <Tooltip cursor={{ fill: '#f8fafc', radius: 8 }} contentStyle={{ borderRadius: '1rem', border: 'none', boxShadow: '0 10px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)' }} />
+                <Bar dataKey="إيرادات" fill="#6366f1" radius={[10, 10, 10, 10]} background={{ fill: '#f1f5f9', radius: [10, 10, 10, 10] }} />
               </BarChart>
             </ResponsiveContainer>
           </div>
         </div>
 
-        <div className="bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col min-h-[350px]">
-           <div className="p-6 border-b border-slate-100 flex items-center justify-between">
-            <h2 className="font-bold text-slate-800">أكبر العملاء (Top Clients)</h2>
+        <div className="lg:col-span-4 bg-white rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] border-0 flex flex-col">
+          <div className="p-6 pb-2 border-b border-slate-50 flex flex-col">
+             <h2 className="text-lg font-bold text-slate-900 tracking-tight">هيكل المصروفات</h2>
+             <p className="text-sm text-slate-500 mt-1">توزيع أكبر المصروفات للعام الحالي</p>
           </div>
-          <div className="flex-1 p-6 space-y-4">
-             {topClients.map((client, idx) => (
-                <div key={idx} className="flex justify-between items-center border-b border-slate-50 pb-3 last:border-0 last:pb-0">
-                   <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-full bg-primary-50 text-primary-600 flex items-center justify-center font-bold"><Users className="w-4 h-4"/></div>
-                      <div>
-                         <p className="font-bold text-slate-800">{client.name}</p>
-                         <p className="text-xs text-slate-500">{client.percentage}% من الإيرادات</p>
+          <div className="flex-1 p-6 flex flex-col justify-center items-center" style={{ direction: 'ltr' }}>
+             <ResponsiveContainer width="100%" height={220}>
+                <PieChart>
+                   <Pie
+                      data={pieData}
+                      innerRadius={60}
+                      outerRadius={90}
+                      paddingAngle={5}
+                      dataKey="value"
+                      stroke="none"
+                   >
+                      {pieData.map((entry, index) => (
+                         <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                      ))}
+                   </Pie>
+                   <Tooltip 
+                     contentStyle={{ borderRadius: '1rem', border: 'none', boxShadow: '0 4px 15px rgb(0 0 0 / 0.05)', textAlign: 'right' }}
+                     itemStyle={{ color: '#0f172a', fontWeight: 'bold' }}
+                     formatter={(value: number) => new Intl.NumberFormat('ar-EG', { style: 'currency', currency: 'EGP', maximumSignificantDigits: 4 }).format(value)}
+                   />
+                </PieChart>
+             </ResponsiveContainer>
+             <div className="w-full mt-4 space-y-3" dir="rtl">
+                {topExpenses.map((exp, idx) => (
+                   <div key={idx} className="flex items-center justify-between text-sm">
+                      <div className="flex items-center gap-2">
+                         <div className="w-3 h-3 rounded-full" style={{ backgroundColor: COLORS[idx % COLORS.length] }}></div>
+                         <span className="font-medium text-slate-700">{exp.name}</span>
                       </div>
+                      <span className="font-bold text-slate-900">{exp.percentage}%</span>
                    </div>
-                   <div className="font-bold text-slate-900" dir="ltr">
-                      {new Intl.NumberFormat('ar-EG', { style: 'currency', currency: 'EGP', maximumSignificantDigits: 4 }).format(client.amount)}
-                   </div>
-                </div>
-             ))}
+                ))}
+             </div>
           </div>
-          <div className="p-6 border-y border-slate-100 flex items-center justify-between">
-            <h2 className="font-bold text-slate-800">أكبر المصروفات (Top Expenses)</h2>
+        </div>
+        
+        <div className="lg:col-span-12 bg-white rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] border-0 p-6 md:p-8 overflow-x-auto">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-lg font-bold text-slate-900 tracking-tight">طلبات العملاء (Customer orders)</h2>
           </div>
-          <div className="flex-1 p-6 space-y-4">
-             {topExpenses.map((exp, idx) => (
-                <div key={idx} className="flex justify-between items-center border-b border-slate-50 pb-3 last:border-0 last:pb-0">
-                   <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-full bg-rose-50 text-rose-600 flex items-center justify-center font-bold"><Receipt className="w-4 h-4"/></div>
-                      <div>
-                         <p className="font-bold text-slate-800">{exp.name}</p>
-                         <p className="text-xs text-slate-500">{exp.percentage}% من المصروفات</p>
+          <table className="w-full text-right border-collapse">
+            <thead>
+              <tr className="text-slate-400 text-sm border-b border-slate-50">
+                <th className="pb-4 font-medium px-2">العميل</th>
+                <th className="pb-4 font-medium px-2">التاريخ</th>
+                <th className="pb-4 font-medium px-2">الحالة</th>
+                <th className="pb-4 font-medium px-2">القيمة</th>
+              </tr>
+            </thead>
+            <tbody>
+              {topClients.map((client, idx) => (
+                <tr key={idx} className="border-b border-slate-50/50 last:border-0 hover:bg-slate-50/50 transition-colors">
+                  <td className="py-4 px-2">
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center font-bold text-slate-600 text-xs shrink-0">
+                         {client.name.charAt(0)}
                       </div>
-                   </div>
-                   <div className="font-bold text-slate-900" dir="ltr">
-                      {new Intl.NumberFormat('ar-EG', { style: 'currency', currency: 'EGP', maximumSignificantDigits: 4 }).format(exp.amount)}
-                   </div>
-                </div>
-             ))}
-          </div>
+                      <span className="font-bold text-slate-800">{client.name}</span>
+                    </div>
+                  </td>
+                  <td className="py-4 px-2 text-slate-500 font-medium">22.08.2026</td>
+                  <td className="py-4 px-2">
+                    <span className="bg-emerald-50 text-emerald-600 px-3 py-1 rounded-full text-xs font-bold">مكتمل</span>
+                  </td>
+                  <td className="py-4 px-2 font-bold text-slate-900" dir="ltr">
+                    {new Intl.NumberFormat('ar-EG', { style: 'currency', currency: 'EGP', maximumSignificantDigits: 4 }).format(client.amount)}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
