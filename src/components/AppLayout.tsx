@@ -89,11 +89,11 @@ export function AppLayout() {
 
       {/* Sidebar */}
       <aside className={clsx(
-        "fixed inset-y-0 start-0 z-50 w-72 md:w-64 bg-slate-900 text-white flex flex-col border-e border-slate-800 shrink-0 transition-transform duration-300 md:relative md:translate-x-0",
+        "fixed inset-y-0 start-0 z-50 w-72 md:w-64 bg-gradient-to-b from-[#1D2D44] to-[#152233] text-white flex flex-col border-e border-slate-800/50 shrink-0 transition-transform duration-300 md:relative md:translate-x-0",
         isMobileMenuOpen ? "translate-x-0" : "translate-x-full md:translate-x-0"
       )}>
         {/* Logo */}
-        <div className="p-4 flex items-center justify-between border-b border-slate-800 h-14 shrink-0">
+        <div className="p-4 flex items-center justify-between border-b border-white/5 h-14 shrink-0">
           <div className="flex items-center gap-3">
             {logoUrl ? (
               <img src={logoUrl} alt="Logo" className="w-8 h-8 rounded-lg object-cover shrink-0 bg-white" />
@@ -110,10 +110,10 @@ export function AppLayout() {
         </div>
 
         {/* Company Switcher */}
-        <div className="px-3 py-2 border-b border-slate-800 relative">
+        <div className="px-3 py-2 border-b border-white/5 relative">
           <button
             onClick={() => setShowCompanyMenu(!showCompanyMenu)}
-            className="w-full flex items-center justify-between bg-slate-800 hover:bg-slate-700 transition px-3 py-2 rounded-lg"
+            className="w-full flex items-center justify-between bg-white/5 hover:bg-white/10 transition px-3 py-2 rounded-lg"
           >
             <div className="flex items-center gap-2">
               <Building2 className="w-4 h-4 text-primary" />
@@ -125,13 +125,13 @@ export function AppLayout() {
             <ChevronDown className={clsx("w-4 h-4 text-slate-400 transition-transform", showCompanyMenu && "rotate-180")} />
           </button>
           {showCompanyMenu && (
-            <div className="absolute top-full start-3 end-3 mt-1 bg-slate-800 border border-slate-700 rounded-xl shadow-xl z-50 overflow-hidden">
+            <div className="absolute top-full start-3 end-3 mt-1 bg-[#1D2D44] border border-white/10 rounded-xl shadow-xl z-50 overflow-hidden">
               {(["BGK", "O2N"] as const).map((c) => (
                 <button
                   key={c}
                   onClick={() => { setActiveCompany(c); setShowCompanyMenu(false); }}
                   className={clsx(
-                    "w-full flex items-center gap-2 px-4 py-3 text-sm transition hover:bg-slate-700",
+                    "w-full flex items-center gap-2 px-4 py-3 text-sm transition hover:bg-white/10",
                     activeCompany === c ? "text-primary font-bold" : "text-slate-300"
                   )}
                 >
@@ -174,7 +174,7 @@ export function AppLayout() {
         </nav>
 
         {/* User Footer */}
-        <div className="p-3 border-t border-slate-800 flex items-center gap-2">
+        <div className="p-3 border-t border-white/5 flex items-center gap-2">
           <div className="w-8 h-8 rounded-full flex items-center justify-center font-bold text-white text-sm shrink-0" style={{ backgroundColor: primaryColor }}>أ</div>
           <div className="flex-1 min-w-0">
             <div className="text-sm font-bold text-white truncate">أحمد صلاح</div>
