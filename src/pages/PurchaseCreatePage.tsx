@@ -2,11 +2,37 @@ import { useState } from "react";
 import { useNavigate } from "react-router";
 import { ArrowRight, Plus, Trash2, Save, Send } from "lucide-react";
 import { getCompanyKey } from '../utils/storage';
+import { SearchableSelect } from "../components/ui/SearchableSelect";
 
 export function PurchaseCreatePage() {
   const navigate = useNavigate();
   const [lines, setLines] = useState([{ id: 1, description: "", quantity: 1, price: 0 }]);
   const [currency, setCurrency] = useState('EGP');
+  const [supplierId, setSupplierId] = useState('');
+  const [costCenter, setCostCenter] = useState('');
+
+  const supplierOptions = [
+    { value: '1', label: 'Amazon Web Services' },
+    { value: '2', label: 'Google Ads' },
+    { value: '3', label: 'Office Supplies Co.' }
+  ];
+  const currencyOptions = [
+    { value: 'EGP', label: 'جنيه مصري (EGP)' },
+    { value: 'USD', label: 'دولار أمريكي (USD)' },
+    { value: 'SAR', label: 'ريال سعودي (SAR)' },
+  ];
+  const costCenterOptions = [
+    { value: '', label: 'بدون (عام)' },
+    { value: 'FR', label: 'فرع الرياض (FR)' },
+    { value: 'HQ', label: 'المركز الرئيسي (HQ)' },
+  ];
+  const expenseOptions = [
+    { value: '', label: 'اختر حساب المصروف...' },
+    { value: 'مصروفات تسويق', label: 'مصروفات تسويق' },
+    { value: 'إيجار مقر', label: 'إيجار مقر' },
+    { value: 'اشتراكات برمجيات', label: 'اشتراكات برمجيات (SaaS)' },
+    { value: 'أدوات مكتبية', label: 'أدوات مكتبية وقرطاسية' },
+  ];
 
   const addLine = () => {
     setLines([...lines, { id: Date.now(), description: "", quantity: 1, price: 0 }]);
@@ -80,12 +106,7 @@ export function PurchaseCreatePage() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
           <div className="md:col-span-2">
             <label className="block text-sm font-medium text-slate-700 mb-2">المورد (Supplier)</label>
-            <select defaultValue="" className="w-full bg-white border border-slate-200 text-slate-900 text-sm rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-primary-500/20 outline-none transition-all">
-              <option value="" disabled>اختر المورد...</option>
-              <option value="1">Amazon Web Services</option>
-              <option value="2">Google Ads</option>
-              <option value="3">Office Supplies Co.</option>
-            </select>
+            <SearchableSelect value={supplierId} onChange={setSupplierId} options={supplierOptions} placeholder="اختر المورد..." allowCreate={true} />
           </div>
           <div>
             <label className="block text-sm font-medium text-slate-700 mb-2">رقم فاتورة المورد (Ref)</label>
@@ -106,19 +127,11 @@ export function PurchaseCreatePage() {
           </div>
           <div>
             <label className="block text-sm font-medium text-slate-700 mb-2">العملة (Currency)</label>
-            <select value={currency} onChange={(e) => setCurrency(e.target.value)} className="w-full bg-white border border-slate-200 text-slate-900 text-sm rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-primary-500/20 outline-none transition-all">
-              <option value="EGP">جنيه مصري (EGP)</option>
-              <option value="USD">دولار أمريكي (USD)</option>
-              <option value="SAR">ريال سعودي (SAR)</option>
-            </select>
+            <SearchableSelect value={currency} onChange={setCurrency} options={currencyOptions} />
           </div>
           <div>
              <label className="block text-sm font-medium text-slate-700 mb-2">مركز التكلفة (Cost Center)</label>
-             <select defaultValue="" className="w-full bg-white border border-slate-200 text-slate-900 text-sm rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-primary-500/20 outline-none transition-all">
-               <option value="">بدون (عام)</option>
-               <option value="FR">فرع الرياض (FR)</option>
-               <option value="HQ">المركز الرئيسي (HQ)</option>
-             </select>
+             <SearchableSelect value={costCenter} onChange={setCostCenter} options={costCenterOptions} />
           </div>
         </div>
 
@@ -148,17 +161,13 @@ export function PurchaseCreatePage() {
                 {lines.map((line) => (
                   <tr key={line.id} className="bg-white group">
                     <td className="p-2">
-                      <select 
+                      <SearchableSelect 
                         value={line.description}
-                        onChange={(e) => updateLine(line.id, 'description', e.target.value)}
-                        className="w-full bg-transparent border border-transparent hover:border-slate-200 focus:border-primary-500 rounded-lg px-3 py-1.5 outline-none transition-colors"
-                      >
-                         <option value="">اختر حساب المصروف...</option>
-                         <option value="مصروفات تسويق">مصروفات تسويق</option>
-                         <option value="إيجار مقر">إيجار مقر</option>
-                         <option value="اشتراكات برمجيات">اشتراكات برمجيات (SaaS)</option>
-                         <option value="أدوات مكتبية">أدوات مكتبية وقرطاسية</option>
-                      </select>
+                        onChange={(val) => updateLine(line.id, 'description', val)}
+                        options={expenseOptions}
+                        placeholder="اختر حساب المصروف..."
+                        allowCreate={true}
+                      />
                     </td>
                     <td className="p-2">
                       <input 

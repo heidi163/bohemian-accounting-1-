@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router";
 import { ArrowRight, Plus, Trash2 } from "lucide-react";
 import { getCompanyKey } from '../utils/storage';
+import { SearchableSelect } from "../components/ui/SearchableSelect";
 
 export function JournalCreatePage() {
   const navigate = useNavigate();
@@ -17,6 +18,30 @@ export function JournalCreatePage() {
     { id: 1, account: "", description: "", debit: 0, credit: 0 },
     { id: 2, account: "", description: "", debit: 0, credit: 0 },
   ]);
+
+  const companyOptions = [
+    { value: 'BGK', label: 'بوهيميان جيكس (BGK)' },
+    { value: 'O2N', label: 'أو تو نيشن (O2N)' },
+  ];
+  const statusOptions = [
+    { value: 'draft', label: 'مسودة (Draft)' },
+    { value: 'pending_approval', label: 'في انتظار الموافقة' },
+    { value: 'posted', label: 'مُرحل (Posted)' },
+  ];
+  const currencyOptions = [
+    { value: 'EGP', label: 'EGP (جنيه مصري)' },
+    { value: 'USD', label: 'USD (دولار أمريكي)' },
+    { value: 'EUR', label: 'EUR (يورو)' },
+    { value: 'GBP', label: 'GBP (جنيه إسترليني)' },
+  ];
+  const accountOptions = [
+    { value: '', label: 'اختر حساب...' },
+    { value: '1111', label: 'البنك الأهلي - EGP (1111)' },
+    { value: '1210', label: 'العملاء - محلي (1210)' },
+    { value: '2100', label: 'الموردين (2100)' },
+    { value: '5100', label: 'إيرادات تسويق (5100)' },
+    { value: '7100', label: 'مصروفات رواتب (7100)' },
+  ];
 
   const addLine = () => {
     setLines([...lines, { id: Date.now(), account: "", description: "", debit: 0, credit: 0 }]);
@@ -95,11 +120,7 @@ export function JournalCreatePage() {
           </div>
           <div>
             <label className="block text-sm font-medium text-slate-700 mb-2">الشركة</label>
-            <select value={header.company_id} onChange={e => setHeader({...header, company_id: e.target.value})} className="w-full bg-white border border-slate-200 text-slate-900 text-sm rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 outline-none transition-all">
-              <option value="" disabled>اختر الشركة...</option>
-              <option value="BGK">بوهيميان جيكس (BGK)</option>
-              <option value="O2N">أو تو نيشن (O2N)</option>
-            </select>
+            <SearchableSelect value={header.company_id} onChange={val => setHeader({...header, company_id: val})} options={companyOptions} />
           </div>
           <div>
             <label className="block text-sm font-medium text-slate-700 mb-2">التاريخ</label>
@@ -107,20 +128,11 @@ export function JournalCreatePage() {
           </div>
           <div>
              <label className="block text-sm font-medium text-slate-700 mb-2">الحالة</label>
-             <select value={header.status} onChange={e => setHeader({...header, status: e.target.value})} className="w-full bg-white border border-slate-200 text-slate-900 text-sm rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 outline-none transition-all">
-               <option value="draft">مسودة (Draft)</option>
-               <option value="pending_approval">في انتظار الموافقة</option>
-               <option value="posted">مُرحل (Posted)</option>
-             </select>
+             <SearchableSelect value={header.status} onChange={val => setHeader({...header, status: val})} options={statusOptions} />
           </div>
           <div>
              <label className="block text-sm font-medium text-slate-700 mb-2">العملة</label>
-             <select value={header.currency} onChange={e => setHeader({...header, currency: e.target.value})} className="w-full bg-white border border-slate-200 text-slate-900 text-sm rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 outline-none transition-all">
-               <option value="EGP">EGP (جنيه مصري)</option>
-               <option value="USD">USD (دولار أمريكي)</option>
-               <option value="EUR">EUR (يورو)</option>
-               <option value="GBP">GBP (جنيه إسترليني)</option>
-             </select>
+             <SearchableSelect value={header.currency} onChange={val => setHeader({...header, currency: val})} options={currencyOptions} />
           </div>
           <div>
              <label className="block text-sm font-medium text-slate-700 mb-2">سعر الصرف</label>
@@ -156,18 +168,13 @@ export function JournalCreatePage() {
                 {lines.map((line) => (
                   <tr key={line.id} className="bg-white hover:bg-slate-50 transition-colors">
                     <td className="p-2">
-                       <select 
+                       <SearchableSelect 
                         value={line.account}
-                        onChange={(e) => updateLine(line.id, 'account', e.target.value)}
-                        className="w-full bg-transparent border border-transparent hover:border-slate-200 focus:bg-white focus:border-primary-500 rounded-lg px-3 py-1.5 outline-none transition-colors"
-                       >
-                         <option value="" disabled>اختر حساب...</option>
-                         <option value="1111">البنك الأهلي - EGP (1111)</option>
-                         <option value="1210">العملاء - محلي (1210)</option>
-                         <option value="2100">الموردين (2100)</option>
-                         <option value="5100">إيرادات تسويق (5100)</option>
-                         <option value="7100">مصروفات رواتب (7100)</option>
-                       </select>
+                        onChange={(val) => updateLine(line.id, 'account', val)}
+                        options={accountOptions}
+                        placeholder="اختر حساب..."
+                        allowCreate={true}
+                       />
                     </td>
                     <td className="p-2">
                       <input 
