@@ -263,11 +263,14 @@ export function ChartOfAccountsPage() {
                   };
 
                   try {
-                    await fetch('/api/accounts', {
+                    const res = await fetch('/api/accounts', {
                       method: 'POST',
                       headers: { 'Content-Type': 'application/json' },
                       body: JSON.stringify(payload)
                     });
+                    if (!res.ok) throw new Error('API failed');
+                    const data = await res.json();
+                    if (!data.success) throw new Error('API reported failure');
                   } catch (e) {
                     const localAccounts = JSON.parse(localStorage.getItem(getCompanyKey('mock_accounts')) || '[]');
                     localAccounts.push(payload);
