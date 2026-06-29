@@ -153,7 +153,7 @@ export function JournalCreatePage() {
             </button>
           </div>
 
-          <div className="border border-slate-200 rounded-xl overflow-hidden">
+          <div className="border border-slate-200 rounded-xl shadow-sm">
             <table className="w-full text-start border-collapse">
               <thead className="bg-slate-50 text-slate-400 text-xs uppercase font-bold tracking-widest border-b border-slate-100">
                 <tr>

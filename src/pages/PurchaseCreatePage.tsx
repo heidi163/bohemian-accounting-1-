@@ -146,11 +146,11 @@ export function PurchaseCreatePage() {
             </h3>
           </div>
 
-          <div className="border border-slate-200 rounded-xl overflow-hidden shadow-sm">
+          <div className="border border-slate-200 rounded-xl shadow-sm">
             <table className="w-full text-start border-collapse">
               <thead className="bg-slate-50 text-slate-400 text-xs uppercase font-bold tracking-widest border-b border-slate-100">
                 <tr>
-                  <th className="px-4 py-3 text-start">حساب المصروف / الصنف</th>
+                  <th className="px-4 py-3 text-start rounded-tr-xl">حساب المصروف / الصنف</th>
                   <th className="px-4 py-3 text-start w-24">الكمية</th>
                   <th className="px-4 py-3 text-start w-32">السعر الوحدة</th>
                   <th className="px-4 py-3 text-end w-32">الإجمالي</th>
