@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { ArrowUpRight, ArrowDownRight, Users, Receipt, DollarSign, Percent, Clock, Wallet, Plus, FileText, Landmark, AlertCircle, Building2, CheckCircle2 } from "lucide-react";
+import { ArrowUpRight, ArrowDownRight, Users, Receipt, DollarSign, Percent, Clock, Wallet, Plus, FileText, Landmark, AlertCircle, Building2, TrendingDown, TrendingUp } from "lucide-react";
 import { type DashboardData } from "../types";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from "recharts";
 import { getActiveCompany } from "../utils/storage";
@@ -65,12 +65,11 @@ export function DashboardPage() {
 
   const pieData = topExpenses.map(exp => ({ name: exp.name, value: exp.amount }));
 
-  // New Mocks
-  const recentInvoices = [
-    { id: 'INV-2026-089', client: 'شركة الأفق للتجارة', amount: 350000, date: 'اليوم', status: 'غير مسددة' },
-    { id: 'INV-2026-088', client: 'مؤسسة الرواد', amount: 280000, date: 'منذ يومين', status: 'مسددة جزئياً' },
-    { id: 'INV-2026-087', client: 'جلوبال تيك', amount: 150000, date: '22 أغسطس', status: 'مسددة' },
-    { id: 'INV-2026-086', client: 'المتحدة للبرمجيات', amount: 85000, date: '20 أغسطس', status: 'متأخرة' },
+  // Top Debtors Mock Data
+  const topDebtors = [
+    { id: 'C-089', client: 'شركة الأفق للتجارة', amount: 350000, daysOverdue: 45, status: 'شديدة التأخير' },
+    { id: 'C-042', client: 'مؤسسة الرواد', amount: 120000, daysOverdue: 15, status: 'متأخرة' },
+    { id: 'C-105', client: 'المتحدة للبرمجيات', amount: 85000, daysOverdue: 5, status: 'تنبيه' },
   ];
 
   const bankBalances = [
@@ -86,10 +85,9 @@ export function DashboardPage() {
 
   const getStatusStyle = (status: string) => {
     switch(status) {
-      case 'مسددة': return 'bg-emerald-50 text-emerald-600 border border-emerald-100';
-      case 'غير مسددة': return 'bg-slate-50 text-slate-600 border border-slate-200';
-      case 'مسددة جزئياً': return 'bg-amber-50 text-amber-600 border border-amber-100';
-      case 'متأخرة': return 'bg-rose-50 text-rose-600 border border-rose-100';
+      case 'شديدة التأخير': return 'bg-rose-50 text-rose-700 border border-rose-100';
+      case 'متأخرة': return 'bg-amber-50 text-amber-700 border border-amber-100';
+      case 'تنبيه': return 'bg-slate-100 text-slate-700 border border-slate-200';
       default: return 'bg-slate-50 text-slate-600';
     }
   };
@@ -229,47 +227,75 @@ export function DashboardPage() {
           </div>
         </div>
         
-        {/* Bottom Section: Recent Invoices & Financial Health */}
-        <div className="lg:col-span-8 bg-white rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] border-0 flex flex-col">
-          <div className="p-6 border-b border-slate-50 flex items-center justify-between">
-            <div>
-              <h2 className="text-lg font-bold text-slate-900 tracking-tight">أحدث الفواتير</h2>
-              <p className="text-sm text-slate-500 mt-1">حالة الفواتير الصادرة مؤخراً للعملاء</p>
-            </div>
-            <button className="text-sm font-bold text-primary hover:bg-primary/5 px-4 py-2 rounded-xl transition-colors">عرض الكل</button>
+        {/* Bottom Section: Receivables, Payables & Top Debtors */}
+        <div className="lg:col-span-8 flex flex-col gap-6">
+          
+          {/* AR / AP Summary Widget */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+             <div className="bg-white rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] border-0 p-6 flex items-center justify-between hover:-translate-y-1 transition-transform duration-300 cursor-pointer">
+                <div>
+                   <p className="text-sm font-bold text-slate-500 mb-2">لنا عند العملاء (ذمم مدينة)</p>
+                   <h3 className="text-2xl font-bold text-slate-900" dir="ltr">
+                     {new Intl.NumberFormat('ar-EG', { style: 'currency', currency: 'EGP', maximumSignificantDigits: 4 }).format(stats.receivables)}
+                   </h3>
+                </div>
+                <div className="w-14 h-14 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center"><TrendingUp className="w-7 h-7"/></div>
+             </div>
+             <div className="bg-white rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] border-0 p-6 flex items-center justify-between hover:-translate-y-1 transition-transform duration-300 cursor-pointer">
+                <div>
+                   <p className="text-sm font-bold text-slate-500 mb-2">علينا للموردين (ذمم دائنة)</p>
+                   <h3 className="text-2xl font-bold text-slate-900" dir="ltr">
+                     {new Intl.NumberFormat('ar-EG', { style: 'currency', currency: 'EGP', maximumSignificantDigits: 4 }).format(stats.payables)}
+                   </h3>
+                </div>
+                <div className="w-14 h-14 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center"><TrendingDown className="w-7 h-7"/></div>
+             </div>
           </div>
-          <div className="p-0 overflow-x-auto">
-            <table className="w-full text-right border-collapse">
-              <thead>
-                <tr className="bg-slate-50/50 text-slate-500 text-xs uppercase font-bold tracking-wider">
-                  <th className="py-4 px-6 font-bold text-start">رقم الفاتورة / العميل</th>
-                  <th className="py-4 px-6 font-bold">التاريخ</th>
-                  <th className="py-4 px-6 font-bold">القيمة</th>
-                  <th className="py-4 px-6 font-bold text-end">الحالة</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-50">
-                {recentInvoices.map((inv, idx) => (
-                  <tr key={idx} className="hover:bg-slate-50/50 transition-colors group">
-                    <td className="py-4 px-6">
-                      <div className="flex flex-col">
-                        <span className="font-bold text-slate-900 group-hover:text-primary transition-colors cursor-pointer">{inv.client}</span>
-                        <span className="text-xs font-semibold text-slate-500 mt-0.5">{inv.id}</span>
-                      </div>
-                    </td>
-                    <td className="py-4 px-6 text-sm font-medium text-slate-600">{inv.date}</td>
-                    <td className="py-4 px-6 font-bold text-slate-900" dir="ltr">
-                      {new Intl.NumberFormat('ar-EG', { style: 'currency', currency: 'EGP', maximumSignificantDigits: 4 }).format(inv.amount)}
-                    </td>
-                    <td className="py-4 px-6 text-end">
-                      <span className={`px-3 py-1.5 rounded-xl text-xs font-bold inline-block ${getStatusStyle(inv.status)}`}>
-                        {inv.status}
-                      </span>
-                    </td>
+
+          {/* Top Debtors Table */}
+          <div className="bg-white rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] border-0 flex flex-col flex-1">
+            <div className="p-6 border-b border-slate-50 flex items-center justify-between">
+              <div>
+                <h2 className="text-lg font-bold text-slate-900 tracking-tight">أهم المديونيات المتأخرة</h2>
+                <p className="text-sm text-slate-500 mt-1">العملاء ذوي أكبر مبالغ غير مسددة ويجب متابعتهم</p>
+              </div>
+              <button className="text-sm font-bold text-primary hover:bg-primary/5 px-4 py-2 rounded-xl transition-colors">إدارة التحصيل</button>
+            </div>
+            <div className="p-0 overflow-x-auto">
+              <table className="w-full text-right border-collapse">
+                <thead>
+                  <tr className="bg-slate-50/50 text-slate-500 text-xs uppercase font-bold tracking-wider">
+                    <th className="py-4 px-6 font-bold text-start">العميل / المعرف</th>
+                    <th className="py-4 px-6 font-bold">أيام التأخير</th>
+                    <th className="py-4 px-6 font-bold">المبلغ المستحق</th>
+                    <th className="py-4 px-6 font-bold text-end">حالة المتابعة</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody className="divide-y divide-slate-50">
+                  {topDebtors.map((debtor, idx) => (
+                    <tr key={idx} className="hover:bg-slate-50/50 transition-colors group">
+                      <td className="py-4 px-6">
+                        <div className="flex flex-col">
+                          <span className="font-bold text-slate-900 group-hover:text-primary transition-colors cursor-pointer">{debtor.client}</span>
+                          <span className="text-xs font-semibold text-slate-500 mt-0.5">{debtor.id}</span>
+                        </div>
+                      </td>
+                      <td className="py-4 px-6">
+                        <span className="text-sm font-bold text-rose-600">{debtor.daysOverdue} يوم</span>
+                      </td>
+                      <td className="py-4 px-6 font-bold text-slate-900" dir="ltr">
+                        {new Intl.NumberFormat('ar-EG', { style: 'currency', currency: 'EGP', maximumSignificantDigits: 4 }).format(debtor.amount)}
+                      </td>
+                      <td className="py-4 px-6 text-end">
+                        <span className={`px-3 py-1.5 rounded-xl text-xs font-bold inline-block ${getStatusStyle(debtor.status)}`}>
+                          {debtor.status}
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
 
@@ -285,7 +311,7 @@ export function DashboardPage() {
             </div>
             <div className="p-4 space-y-3">
               {bankBalances.map((bank) => (
-                <div key={bank.id} className="flex items-center justify-between p-3 rounded-2xl hover:bg-slate-50 transition-colors border border-transparent hover:border-slate-100">
+                <div key={bank.id} className="flex items-center justify-between p-3 rounded-2xl hover:bg-slate-50 transition-colors border border-transparent hover:border-slate-100 cursor-pointer">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-slate-600 shrink-0">
                       <Building2 className="w-5 h-5" />
@@ -312,7 +338,7 @@ export function DashboardPage() {
             </div>
             <div className="p-4 space-y-3">
               {upcomingChecks.map((check) => (
-                <div key={check.id} className="flex items-center justify-between p-3 rounded-2xl bg-amber-50/30 border border-amber-100/50">
+                <div key={check.id} className="flex items-center justify-between p-3 rounded-2xl bg-amber-50/30 border border-amber-100/50 cursor-pointer hover:bg-amber-100/30 transition-colors">
                   <div>
                     <h3 className="font-bold text-slate-800 text-sm">{check.to}</h3>
                     <div className="flex items-center gap-2 mt-1">
