@@ -105,10 +105,10 @@ export function SettingsPage() {
           <nav className="space-y-2">
             <button 
               onClick={() => setActiveTab('company')}
-              className={`w-full flex items-center space-x-3  px-4 py-3 rounded-xl transition-all ${
+              className={`w-full flex items-center space-x-3  px-4 py-3 rounded-xl transition-all font-medium ${
                 activeTab === 'company' 
-                  ? 'bg-white shadow-sm text-primary border border-slate-200 font-bold' 
-                  : 'text-slate-600 hover:bg-slate-200/50 font-medium'
+                  ? 'bg-white shadow-sm text-primary border border-slate-200' 
+                  : 'text-slate-600 hover:bg-slate-200/50'
               }`}
             >
               <Building className="w-5 h-5 shrink-0" />
@@ -116,10 +116,10 @@ export function SettingsPage() {
             </button>
             <button 
               onClick={() => setActiveTab('taxes')}
-              className={`w-full flex items-center space-x-3  px-4 py-3 rounded-xl transition-all ${
+              className={`w-full flex items-center space-x-3  px-4 py-3 rounded-xl transition-all font-medium ${
                 activeTab === 'taxes' 
-                  ? 'bg-white shadow-sm text-primary border border-slate-200 font-bold' 
-                  : 'text-slate-600 hover:bg-slate-200/50 font-medium'
+                  ? 'bg-white shadow-sm text-primary border border-slate-200' 
+                  : 'text-slate-600 hover:bg-slate-200/50'
               }`}
             >
               <Percent className="w-5 h-5 opacity-70 shrink-0" />
@@ -127,10 +127,10 @@ export function SettingsPage() {
             </button>
             <button 
               onClick={() => setActiveTab('users')}
-              className={`w-full flex items-center space-x-3  px-4 py-3 rounded-xl transition-all ${
+              className={`w-full flex items-center space-x-3  px-4 py-3 rounded-xl transition-all font-medium ${
                 activeTab === 'users' 
-                  ? 'bg-white shadow-sm text-primary border border-slate-200 font-bold' 
-                  : 'text-slate-600 hover:bg-slate-200/50 font-medium'
+                  ? 'bg-white shadow-sm text-primary border border-slate-200' 
+                  : 'text-slate-600 hover:bg-slate-200/50'
               }`}
             >
               <Users className="w-5 h-5 opacity-70 shrink-0" />
@@ -138,10 +138,10 @@ export function SettingsPage() {
             </button>
             <button 
               onClick={() => setActiveTab('security')}
-              className={`w-full flex items-center space-x-3  px-4 py-3 rounded-xl transition-all ${
+              className={`w-full flex items-center space-x-3  px-4 py-3 rounded-xl transition-all font-medium ${
                 activeTab === 'security' 
-                  ? 'bg-white shadow-sm text-primary border border-slate-200 font-bold' 
-                  : 'text-slate-600 hover:bg-slate-200/50 font-medium'
+                  ? 'bg-white shadow-sm text-primary border border-slate-200' 
+                  : 'text-slate-600 hover:bg-slate-200/50'
               }`}
             >
               <KeyRound className="w-5 h-5 opacity-70 shrink-0" />
@@ -149,10 +149,10 @@ export function SettingsPage() {
             </button>
             <button 
               onClick={() => setActiveTab('theme')}
-              className={`w-full flex items-center space-x-3  px-4 py-3 rounded-xl transition-all ${
+              className={`w-full flex items-center space-x-3  px-4 py-3 rounded-xl transition-all font-medium ${
                 activeTab === 'theme' 
-                  ? 'bg-white shadow-sm text-primary border border-slate-200 font-bold' 
-                  : 'text-slate-600 hover:bg-slate-200/50 font-medium'
+                  ? 'bg-white shadow-sm text-primary border border-slate-200' 
+                  : 'text-slate-600 hover:bg-slate-200/50'
               }`}
             >
               <Palette className="w-5 h-5 opacity-70 shrink-0" />

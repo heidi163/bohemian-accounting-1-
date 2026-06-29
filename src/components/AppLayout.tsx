@@ -158,9 +158,9 @@ export function AppLayout() {
                       to={item.href}
                       className={clsx(
                         isActive
-                          ? 'bg-white/10 text-white shadow-sm font-semibold'
+                          ? 'bg-white/10 text-white shadow-sm'
                           : 'text-slate-400 hover:bg-white/5 hover:text-white',
-                        'flex items-center gap-2.5 px-3.5 py-2.5 rounded-2xl transition-all duration-300 text-sm'
+                        'flex items-center gap-2.5 px-3.5 py-2.5 rounded-2xl transition-all duration-300 text-sm font-medium'
                       )}
                     >
                       <item.icon className="w-4 h-4 shrink-0 transition-transform duration-300" aria-hidden="true" />
