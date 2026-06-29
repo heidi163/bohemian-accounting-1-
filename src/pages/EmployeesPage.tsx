@@ -87,7 +87,7 @@ export function EmployeesPage() {
                   </td>
                   <td className="px-6 py-4 text-end flex items-center justify-end gap-1">
                      <button onClick={() => navigate('/employees/advances')} title="سلف وقروض" className="p-2 text-slate-400 hover:bg-rose-50 hover:text-rose-600 rounded-lg transition"><Calculator className="w-4 h-4" /></button>
-                     <button onClick={() => alert('سيتم تفعيل إدارة التأمينات قريباً')} title="إدارة التأمينات" className="p-2 text-slate-400 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition"><ShieldCheck className="w-4 h-4" /></button>
+                     <button onClick={() => navigate('/employees/insurances')} title="إدارة التأمينات" className="p-2 text-slate-400 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition"><ShieldCheck className="w-4 h-4" /></button>
                      <button onClick={() => navigate('/employees/end-of-service')} title="نهاية الخدمة / ملف الموظف" className="p-2 text-slate-400 hover:bg-slate-100 hover:text-slate-700 rounded-lg transition"><FileText className="w-4 h-4" /></button>
                   </td>
                 </tr>

@@ -44,6 +44,7 @@ import { LoginPage } from "./pages/LoginPage";
 import { ForgotPasswordPage } from "./pages/ForgotPasswordPage";
 import { EmployeeAdvancesPage } from "./pages/EmployeeAdvancesPage";
 import { EndOfServicePage } from "./pages/EndOfServicePage";
+import { InsurancesPage } from "./pages/InsurancesPage";
 import { EmailTemplatesPage } from "./pages/EmailTemplatesPage";
 import { ChecksPage } from "./pages/ChecksPage";
 
@@ -67,6 +68,7 @@ export default function App() {
             <Route path="employees/new" element={<EmployeeCreatePage />} />
             <Route path="employees/advances" element={<EmployeeAdvancesPage />} />
             <Route path="employees/end-of-service" element={<EndOfServicePage />} />
+            <Route path="employees/insurances" element={<InsurancesPage />} />
             <Route path="payroll" element={<PayrollPage />} />
             <Route path="assets" element={<AssetsPage />} />
             <Route path="assets/new" element={<AssetCreatePage />} />
