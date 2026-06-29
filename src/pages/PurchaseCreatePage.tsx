@@ -131,7 +131,7 @@ export function PurchaseCreatePage() {
           </div>
           <div>
              <label className="block text-sm font-medium text-slate-700 mb-2">مركز التكلفة (Cost Center)</label>
-             <SearchableSelect value={costCenter} onChange={setCostCenter} options={costCenterOptions} />
+             <SearchableSelect value={costCenter} onChange={setCostCenter} options={costCenterOptions} allowCreate={true} />
           </div>
         </div>
 

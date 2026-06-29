@@ -184,11 +184,11 @@ export function InvoiceCreatePage() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8 bg-slate-50 p-6 rounded-xl border border-slate-200">
            <div>
               <label className="block text-sm font-medium text-slate-700 mb-2">مركز التكلفة (Cost Center)</label>
-              <SearchableSelect value={costCenter} onChange={setCostCenter} options={costCenterOptions} />
+              <SearchableSelect value={costCenter} onChange={setCostCenter} options={costCenterOptions} allowCreate={true} />
            </div>
            <div>
               <label className="block text-sm font-medium text-slate-700 mb-2">ارتباط بمشروع (Project Tracking)</label>
-              <SearchableSelect value={projectId} onChange={setProjectId} options={projectOptions} />
+              <SearchableSelect value={projectId} onChange={setProjectId} options={projectOptions} allowCreate={true} />
            </div>
         </div>
 
