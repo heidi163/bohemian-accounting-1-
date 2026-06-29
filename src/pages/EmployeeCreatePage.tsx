@@ -83,18 +83,21 @@ export function EmployeeCreatePage() {
           </div>
           <div>
             <label className="block text-sm font-medium text-slate-700 mb-2">القسم</label>
-            <select 
+            <input 
+              type="text"
+              list="departments-list"
               value={formData.department} 
               onChange={e => setFormData({...formData, department: e.target.value})} 
+              placeholder="اختر أو اكتب القسم..."
               className="w-full bg-slate-50 border border-slate-200 text-slate-900 text-sm rounded-xl px-4 py-2.5 focus:bg-white focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 outline-none transition-all"
-            >
-              <option value="" disabled>اختر القسم...</option>
-              <option value="Engineering">الهندسة (Engineering)</option>
-              <option value="Sales">المبيعات (Sales)</option>
-              <option value="Marketing">التسويق (Marketing)</option>
-              <option value="HR">الموارد البشرية (HR)</option>
-              <option value="Finance">المالية (Finance)</option>
-            </select>
+            />
+            <datalist id="departments-list">
+              <option value="الهندسة (Engineering)" />
+              <option value="المبيعات (Sales)" />
+              <option value="التسويق (Marketing)" />
+              <option value="الموارد البشرية (HR)" />
+              <option value="المالية (Finance)" />
+            </datalist>
           </div>
           <div>
             <label className="block text-sm font-medium text-slate-700 mb-2">المسمى الوظيفي</label>
