@@ -15,7 +15,13 @@ const data = [
   { name: 'أغسطس', إيرادات: 200000, مصروفات: 98000 },
 ];
 
-const COLORS = ['#6366f1', '#f59e0b', '#10b981', '#f43f5e', '#8b5cf6'];
+const COLORS = [
+  'var(--color-primary-500)', 
+  'var(--color-primary-300)', 
+  'var(--color-primary-700)', 
+  'var(--color-primary-400)', 
+  'var(--color-primary-600)'
+];
 
 export function DashboardPage() {
   const [stats, setStats] = useState<DashboardData | null>(null);
@@ -136,7 +142,7 @@ export function DashboardPage() {
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" opacity={0.5} />
                 <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: '#94a3b8', fontSize: 11, fontWeight: 500 }} dy={10} />
                 <Tooltip cursor={{ fill: '#f8fafc', radius: 8 }} contentStyle={{ borderRadius: '1rem', border: 'none', boxShadow: '0 10px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)' }} />
-                <Bar dataKey="إيرادات" fill="#6366f1" radius={[10, 10, 10, 10]} background={{ fill: '#f1f5f9', radius: [10, 10, 10, 10] }} />
+                <Bar dataKey="إيرادات" fill="var(--color-primary-500)" radius={[10, 10, 10, 10]} background={{ fill: 'var(--color-primary-50)', radius: [10, 10, 10, 10] }} />
               </BarChart>
             </ResponsiveContainer>
           </div>
