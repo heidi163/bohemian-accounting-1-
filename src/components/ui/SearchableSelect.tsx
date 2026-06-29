@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { ChevronDown, Search, Check } from 'lucide-react';
+import { ChevronDown, Search, Check, Plus } from 'lucide-react';
 import { clsx } from 'clsx';
 
 export interface SelectOption {
@@ -14,9 +14,10 @@ interface SearchableSelectProps {
   placeholder?: string;
   className?: string;
   disabled?: boolean;
+  allowCreate?: boolean;
 }
 
-export function SearchableSelect({ value, onChange, options, placeholder = "اختر...", className, disabled = false }: SearchableSelectProps) {
+export function SearchableSelect({ value, onChange, options, placeholder = "اختر...", className, disabled = false, allowCreate = false }: SearchableSelectProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const wrapperRef = useRef<HTMLDivElement>(null);
@@ -36,6 +37,8 @@ export function SearchableSelect({ value, onChange, options, placeholder = "اخ
   );
 
   const selectedOption = options.find(opt => opt.value === value);
+  const exactMatch = options.some(opt => opt.label.toLowerCase() === searchTerm.toLowerCase() || opt.value.toLowerCase() === searchTerm.toLowerCase());
+  const showCreate = allowCreate && searchTerm.trim() !== '' && !exactMatch;
 
   return (
     <div ref={wrapperRef} className={clsx("relative", className)}>
@@ -48,8 +51,8 @@ export function SearchableSelect({ value, onChange, options, placeholder = "اخ
           disabled ? "opacity-60 cursor-not-allowed bg-slate-50" : "focus:ring-2 focus:ring-primary/20 hover:border-slate-300"
         )}
       >
-        <span className={clsx("truncate", selectedOption ? "text-slate-900 font-medium" : "text-slate-400")}>
-          {selectedOption ? selectedOption.label : placeholder}
+        <span className={clsx("truncate", (selectedOption || (allowCreate && value)) ? "text-slate-900 font-medium" : "text-slate-400")}>
+          {selectedOption ? selectedOption.label : (allowCreate && value ? value : placeholder)}
         </span>
         <ChevronDown className="w-4 h-4 text-slate-400 shrink-0" />
       </button>
@@ -68,7 +71,7 @@ export function SearchableSelect({ value, onChange, options, placeholder = "اخ
             />
           </div>
           <div className="max-h-60 overflow-y-auto p-1">
-            {filteredOptions.length === 0 ? (
+            {filteredOptions.length === 0 && !showCreate ? (
               <div className="p-3 text-sm text-center text-slate-500">لا توجد نتائج</div>
             ) : (
               filteredOptions.map((option) => (
@@ -89,6 +92,20 @@ export function SearchableSelect({ value, onChange, options, placeholder = "اخ
                   {value === option.value && <Check className="w-4 h-4 text-primary" />}
                 </button>
               ))
+            )}
+            {showCreate && (
+              <button
+                type="button"
+                onClick={() => {
+                  onChange(searchTerm);
+                  setIsOpen(false);
+                  setSearchTerm('');
+                }}
+                className="w-full text-start px-3 py-2 text-sm rounded-lg flex items-center gap-2 hover:bg-primary/5 text-primary font-bold transition-colors mt-1 border-t border-slate-100"
+              >
+                <Plus className="w-4 h-4" />
+                إضافة "{searchTerm}"
+              </button>
             )}
           </div>
         </div>

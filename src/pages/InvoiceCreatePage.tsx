@@ -161,7 +161,7 @@ export function InvoiceCreatePage() {
           </div>
           <div className="md:col-span-2">
             <label className="block text-sm font-medium text-slate-700 mb-2">العميل</label>
-            <SearchableSelect value={customerId} onChange={setCustomerId} options={customerOptions} placeholder="اختر العميل..." />
+            <SearchableSelect value={customerId} onChange={setCustomerId} options={customerOptions} placeholder="اختر العميل..." allowCreate={true} />
           </div>
           <div>
             <label className="block text-sm font-medium text-slate-700 mb-2">تاريخ الإصدار</label>
