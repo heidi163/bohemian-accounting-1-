@@ -151,6 +151,16 @@ async function startServer() {
     res.json({ success: true, data: accounts });
   });
 
+  app.get("/api/account-types", (req, res) => {
+    res.json({ success: true, data: [
+      { id: "asset", name_ar: "أصول" },
+      { id: "liability", name_ar: "خصوم" },
+      { id: "equity", name_ar: "حقوق ملكية" },
+      { id: "revenue", name_ar: "إيرادات" },
+      { id: "expense", name_ar: "مصروفات" }
+    ]});
+  });
+
   app.post("/api/accounts", (req, res) => {
     const newAccount = req.body;
     newAccount.id = accounts.length > 0 ? Math.max(...accounts.map(a => a.id)) + 1 : 1;

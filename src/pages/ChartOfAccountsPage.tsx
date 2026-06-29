@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { clsx } from "clsx";
 import { Copy, Plus, Filter, Search, ChevronDown, ChevronUp, X } from "lucide-react";
-import apiClient from "../api/client";
+import { getCompanyKey } from '../utils/storage';
 
 interface Account {
   id: number;
@@ -40,31 +40,57 @@ export function ChartOfAccountsPage() {
   });
 
   const loadAccounts = async () => {
+    let loadedAccounts: Account[] = [];
+    let typesData: any[] = [];
+    
     try {
       const [resAcc, resTypes] = await Promise.all([
-        apiClient.get('/accounts'),
-        apiClient.get('/account-types')
+        fetch('/api/accounts').then(res => res.json()),
+        fetch('/api/account-types').then(res => res.json())
       ]);
-      const data = resAcc.data.data;
-      setAccounts(data);
-      
-      const typesData = resTypes.data.data;
-      setAccountTypes(typesData);
-      if (typesData.length > 0 && !newAccount.type) {
-        setNewAccount(prev => ({...prev, type: typesData[0].id.toString()}));
-      }
-      const toExpand = new Set<string>();
-      data.forEach((acc: Account) => {
-        if (acc.level !== 'detail') {
-          toExpand.add(acc.code);
-        }
-      });
-      setExpandedCodes(toExpand);
+      loadedAccounts = resAcc.data;
+      typesData = resTypes.data;
     } catch (error) {
-      console.error("Failed to load accounts", error);
-      // Fallback empty if needed
-      setAccounts([]);
+      console.error("Failed to load accounts, using local storage fallback", error);
+      
+      const localAccounts = JSON.parse(localStorage.getItem(getCompanyKey('mock_accounts')) || '[]');
+      if (localAccounts.length > 0) {
+        loadedAccounts = localAccounts;
+      } else {
+        loadedAccounts = [
+          { id: 1, code: '1', name: 'الأصول', type: 'asset', level: 'main', parent_code: null, company_id: 'ALL', is_active: true },
+          { id: 2, code: '11', name: 'الأصول المتداولة', type: 'asset', level: 'sub', parent_code: '1', company_id: 'ALL', is_active: true },
+          { id: 3, code: '111', name: 'النقدية بالبنوك', type: 'asset', level: 'detail', parent_code: '11', company_id: 'ALL', is_active: true },
+          { id: 4, code: '112', name: 'العملاء', type: 'asset', level: 'detail', parent_code: '11', company_id: 'ALL', is_active: true },
+          { id: 5, code: '2', name: 'الخصوم', type: 'liability', level: 'main', parent_code: null, company_id: 'ALL', is_active: true },
+          { id: 6, code: '3', name: 'حقوق الملكية', type: 'equity', level: 'main', parent_code: null, company_id: 'ALL', is_active: true },
+          { id: 7, code: '4', name: 'الإيرادات', type: 'revenue', level: 'main', parent_code: null, company_id: 'ALL', is_active: true },
+          { id: 8, code: '5', name: 'المصروفات', type: 'expense', level: 'main', parent_code: null, company_id: 'ALL', is_active: true },
+        ];
+        localStorage.setItem(getCompanyKey('mock_accounts'), JSON.stringify(loadedAccounts));
+      }
+      
+      typesData = [
+        { id: "asset", name_ar: "أصول" },
+        { id: "liability", name_ar: "خصوم" },
+        { id: "equity", name_ar: "حقوق ملكية" },
+        { id: "revenue", name_ar: "إيرادات" },
+        { id: "expense", name_ar: "مصروفات" }
+      ];
     }
+    
+    setAccounts(loadedAccounts);
+    setAccountTypes(typesData);
+    if (typesData.length > 0 && !newAccount.type) {
+      setNewAccount(prev => ({...prev, type: typesData[0].id.toString()}));
+    }
+    const toExpand = new Set<string>();
+    loadedAccounts.forEach((acc: Account) => {
+      if (acc.level !== 'detail') {
+        toExpand.add(acc.code);
+      }
+    });
+    setExpandedCodes(toExpand);
   };
 
   useEffect(() => {
@@ -226,16 +252,27 @@ export function ChartOfAccountsPage() {
                 
                 try {
                   const payload = {
+                    id: Date.now(),
                     code: newAccount.code,
-                    name_ar: newAccount.name,
-                    account_type_id: parseInt(newAccount.type || '1'),
+                    name: newAccount.name,
+                    type: newAccount.type,
                     level: newAccount.level,
-                    parent_id: newAccount.parent_code ? parseInt(newAccount.parent_code) : null, // Mapping parent_code to parent_id is complex here without knowing IDs, simplified for now
-                    scope: newAccount.company_id === 'ALL' ? 'all' : newAccount.company_id.toLowerCase(),
+                    parent_code: newAccount.parent_code || null,
+                    company_id: newAccount.company_id,
                     is_active: newAccount.is_active
                   };
 
-                  await apiClient.post('/accounts', payload);
+                  try {
+                    await fetch('/api/accounts', {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify(payload)
+                    });
+                  } catch (e) {
+                    const localAccounts = JSON.parse(localStorage.getItem(getCompanyKey('mock_accounts')) || '[]');
+                    localAccounts.push(payload);
+                    localStorage.setItem(getCompanyKey('mock_accounts'), JSON.stringify(localAccounts));
+                  }
                   
                   await loadAccounts();
                   setIsModalOpen(false);
