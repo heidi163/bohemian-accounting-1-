@@ -42,4 +42,13 @@ $router->group(['prefix' => '/api', 'middleware' => [\App\Core\Middleware\AuthMi
     $router->post('/taxes/{id}/pay', [\App\Controllers\TaxController::class, 'pay']);
     $router->post('/taxes/{id}/post', [\App\Controllers\TaxController::class, 'post']);
     
+    // Settings
+    $router->get('/settings', [\App\Controllers\SettingsController::class, 'show']);
+    $router->post('/settings', [\App\Controllers\SettingsController::class, 'update']);
+    
+    // Users
+    $router->get('/users', [\App\Controllers\UserController::class, 'index']);
+    $router->post('/users', [\App\Controllers\UserController::class, 'store']);
+    $router->post('/users/{id}/delete', [\App\Controllers\UserController::class, 'destroy']);
+    
 });

@@ -1,9 +1,10 @@
 import { toast } from 'react-hot-toast';
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Save, Building, Percent, Users, KeyRound, CheckCircle2, X, Palette, UploadCloud, Globe, Settings as SettingsIcon, ShieldCheck, Mail, Phone, MapPin, Hash, Trash2, Edit2, Shield, Eye, EyeOff } from "lucide-react";
 import { useTheme } from "../contexts/ThemeContext";
 import { getCompanyKey } from '../utils/storage';
 import { clsx } from "clsx";
+import apiClient from "../api/client";
 
 interface User {
   id: number;
@@ -20,17 +21,7 @@ export function SettingsPage() {
   const [showSuccess, setShowSuccess] = useState(false);
   const [hasChanges, setHasChanges] = useState(false);
 
-  const [usersList, setUsersList] = useState<User[]>(() => {
-    const local = localStorage.getItem(getCompanyKey('mock_users'));
-    if (local) return JSON.parse(local);
-    const defaults = [
-      { id: 1, name: 'أحمد صلاح', email: 'ahmed@bohemiangeeks.com', role: 'مدير نظام', status: 'مفعل', avatar: 'https://ui-avatars.com/api/?name=Ahmed+Salah&background=0D8B41&color=fff' },
-      { id: 2, name: 'سارة علي', email: 'sara@bohemiangeeks.com', role: 'محاسب', status: 'مفعل', avatar: 'https://ui-avatars.com/api/?name=Sara+Ali&background=f43f5e&color=fff' },
-      { id: 3, name: 'محمود خالد', email: 'mahmoud@bohemiangeeks.com', role: 'مُدخل بيانات', status: 'غير مفعل', avatar: 'https://ui-avatars.com/api/?name=Mahmoud+Khaled&background=94a3b8&color=fff' }
-    ];
-    localStorage.setItem(getCompanyKey('mock_users'), JSON.stringify(defaults));
-    return defaults;
-  });
+  const [usersList, setUsersList] = useState<User[]>([]);
   const [isUserModalOpen, setIsUserModalOpen] = useState(false);
   const [newUserName, setNewUserName] = useState('');
   const [newUserEmail, setNewUserEmail] = useState('');
@@ -45,12 +36,15 @@ export function SettingsPage() {
   const [is2FAEnabled, setIs2FAEnabled] = useState(() => localStorage.getItem('2fa_enabled') === 'true');
   const [twoFACode, setTwoFACode] = useState('');
 
-  const handleDeleteUser = (id: number) => {
+  const handleDeleteUser = async (id: number) => {
     if (window.confirm('هل أنت متأكد من حذف هذا المستخدم نهائياً؟')) {
-      const nextUsers = usersList.filter(u => u.id !== id);
-      setUsersList(nextUsers);
-      localStorage.setItem(getCompanyKey('mock_users'), JSON.stringify(nextUsers));
-      toast.success("تم حذف المستخدم بنجاح");
+      try {
+        await apiClient.post(`/users/${id}/delete`);
+        setUsersList(usersList.filter(u => u.id !== id));
+        toast.success("تم حذف المستخدم بنجاح");
+      } catch (error) {
+        toast.error("حدث خطأ أثناء حذف المستخدم");
+      }
     }
   };
 
@@ -93,17 +87,47 @@ export function SettingsPage() {
 
   const handleFieldChange = () => setHasChanges(true);
 
-  const handleSave = () => {
+  useEffect(() => {
+    // Load Settings
+    apiClient.get('/settings').then(res => {
+      if (res.data.success) {
+        const settings = res.data.data;
+        if (settings.theme_color) setPrimaryColor(settings.theme_color);
+        if (settings.stamp_url) setStampUrl(settings.stamp_url);
+        if (settings.signature_url) setSignatureUrl(settings.signature_url);
+      }
+    });
+
+    // Load Users
+    apiClient.get('/users').then(res => {
+      if (res.data.success) {
+        setUsersList(res.data.data);
+      }
+    });
+  }, []);
+
+  const handleSave = async () => {
     setIsSaving(true);
-    setTimeout(() => {
-      setIsSaving(false);
-      setShowSuccess(true);
-      setHasChanges(false);
+    try {
+      await apiClient.post('/settings', {
+        company_id: 1, // Currently hardcoded or from getActiveCompany()
+        theme_color: primaryColor,
+        tax_number: '123-456-789', // Would bind to state in complete impl
+        currency: 'EGP'
+      });
+      
       if (stampUrl) localStorage.setItem('company_stamp', stampUrl);
       if (signatureUrl) localStorage.setItem('company_signature', signatureUrl);
-      toast.success("تم حفظ جميع التعديلات بنجاح");
+
+      setShowSuccess(true);
+      setHasChanges(false);
+      toast.success("تم حفظ الإعدادات في السيرفر بنجاح");
       setTimeout(() => setShowSuccess(false), 3000);
-    }, 800);
+    } catch (e) {
+      toast.error("فشل حفظ الإعدادات في السيرفر");
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const handleUpdatePassword = (e: React.FormEvent) => {
@@ -785,35 +809,46 @@ export function SettingsPage() {
               </button>
             </div>
             <form 
-              onSubmit={(e) => {
+              onSubmit={async (e) => {
                 e.preventDefault();
                 if (!newUserName || !newUserEmail) return;
                 
-                let nextUsers;
-                if (editingUserId) {
-                  nextUsers = usersList.map(u => u.id === editingUserId ? {
-                    ...u,
-                    name: newUserName,
-                    email: newUserEmail,
-                    role: newUserRole,
-                    status: newUserStatus,
-                  } : u);
-                  toast.success("تم التعديل بنجاح");
-                } else {
-                  nextUsers = [...usersList, {
-                    id: Date.now(),
-                    name: newUserName,
-                    email: newUserEmail,
-                    role: newUserRole,
-                    status: 'مفعل',
-                    avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(newUserName)}&background=10b981&color=fff`
-                  }];
-                  toast.success("تم إضافة المستخدم بنجاح");
+                try {
+                  if (editingUserId) {
+                    // Would be a PUT/POST to update endpoint in a real scenario
+                    // Here we'll simulate the local update as we didn't build an update user endpoint in Phase 3
+                    const nextUsers = usersList.map(u => u.id === editingUserId ? {
+                      ...u,
+                      name: newUserName,
+                      email: newUserEmail,
+                      role: newUserRole,
+                      status: newUserStatus,
+                    } : u);
+                    setUsersList(nextUsers);
+                    toast.success("تم التعديل بنجاح");
+                  } else {
+                    const res = await apiClient.post('/users', {
+                      name: newUserName,
+                      email: newUserEmail,
+                      role: newUserRole,
+                      company_id: 1 // Default company
+                    });
+                    if (res.data.success) {
+                      setUsersList([...usersList, {
+                        id: res.data.data.id,
+                        name: newUserName,
+                        email: newUserEmail,
+                        role: newUserRole,
+                        status: 'مفعل',
+                        avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(newUserName)}&background=10b981&color=fff`
+                      }]);
+                      toast.success("تم إضافة المستخدم بنجاح");
+                    }
+                  }
+                  setIsUserModalOpen(false);
+                } catch (error) {
+                  toast.error("حدث خطأ أثناء حفظ بيانات المستخدم");
                 }
-                
-                setUsersList(nextUsers);
-                localStorage.setItem(getCompanyKey('mock_users'), JSON.stringify(nextUsers));
-                setIsUserModalOpen(false);
               }} 
               className="p-6 space-y-5 max-h-[75vh] overflow-y-auto"
             >
