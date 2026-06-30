@@ -183,6 +183,33 @@ class AccountingEngine {
 
     // Additional methods like postPurchaseInvoice, postBankTransfer, postPayroll would follow the exact same strict dual-entry pattern.
     
+    public static function postTaxPayment(array $payment, array $tax, array $bankAccount): int {
+        // Debit Taxes Payable (Liability)
+        // Credit Bank (Asset)
+        
+        $lines = [
+            [
+                'account_id' => 33, // Taxes Payable (Using dummy ID 33 based on seed)
+                'description' => "Payment of {$tax['type']} tax for period {$tax['period']}",
+                'debit' => $payment['amount']
+            ],
+            [
+                'account_id' => $bankAccount['account_id'], 
+                'description' => "Tax Payment - {$tax['type']} ({$tax['period']})",
+                'credit' => $payment['amount'],
+                'bank_account_id' => $bankAccount['id']
+            ]
+        ];
+
+        return self::postEntry([
+            'company_id' => $tax['company_id'],
+            'entry_date' => $payment['payment_date'],
+            'description' => "Tax Payment - {$tax['type']} - {$tax['period']}",
+            'reference_type' => 'tax_payment',
+            'reference_id' => $payment['tax_id']
+        ], $lines);
+    }
+    
     public static function postBankTransfer(array $transfer, array $fromBank, array $toBank): int {
         $lines = [
             [

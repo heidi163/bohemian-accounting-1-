@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { type TaxRecord, type TaxSummary } from "../types";
 import { clsx } from "clsx";
 import { Calculator, FileText, CheckCircle, Clock, AlertCircle, Plus, RefreshCcw, Landmark, Receipt, X } from "lucide-react";
-import { getCompanyKey } from '../utils/storage';
+import apiClient from "../api/client";
 
 const taxTypeTranslations: Record<string, string> = {
   vat: 'ضريبة القيمة المضافة',
@@ -19,41 +19,14 @@ export function TaxesPage() {
   const [focusedRecord, setFocusedRecord] = useState<TaxRecord | null>(null);
   const [paymentAmount, setPaymentAmount] = useState<number>(0);
 
-  const fetchTaxes = () => {
-    fetch("/api/taxes")
-      .then((res) => {
-        if (!res.ok) throw new Error();
-        return res.json();
-      })
-      .then((data) => {
-        setSummary(data.summary);
-        setRecords(data.records);
-      })
-      .catch(() => {
-        const storedSummary = localStorage.getItem(getCompanyKey('mock_taxes_summary'));
-        const storedRecords = localStorage.getItem(getCompanyKey('mock_taxes_records'));
-        
-        const localSummary = storedSummary ? JSON.parse(storedSummary) : {
-          vat_liability: 150000, vat_paid: 100000,
-          income_liability: 500000, income_paid: 200000,
-          withholding_liability: 20000, withholding_paid: 5000,
-          payroll_liability: 45000, payroll_paid: 30000
-        };
-        
-        const localRecords = storedRecords && storedRecords !== '[]' ? JSON.parse(storedRecords) : [
-          { id: 1, type: 'vat', period: '2026-Q1', liability_amount: 50000, paid_amount: 50000, due_date: '2026-04-30', status: 'paid' },
-          { id: 2, type: 'vat', period: '2026-Q2', liability_amount: 60000, paid_amount: 20000, due_date: '2026-07-30', status: 'partial' },
-          { id: 3, type: 'income', period: '2025', liability_amount: 500000, paid_amount: 200000, due_date: '2026-04-30', status: 'partial' }
-        ];
-        
-        if (!localStorage.getItem(getCompanyKey('mock_taxes_summary'))) {
-          localStorage.setItem(getCompanyKey('mock_taxes_summary'), JSON.stringify(localSummary));
-          localStorage.setItem(getCompanyKey('mock_taxes_records'), JSON.stringify(localRecords));
-        }
-        
-        setSummary(localSummary);
-        setRecords(localRecords);
-      });
+  const fetchTaxes = async () => {
+    try {
+      const res = await apiClient.get('/taxes');
+      setSummary(res.data.summary);
+      setRecords(res.data.records);
+    } catch (error) {
+      toast.error('حدث خطأ أثناء تحميل بيانات الضرائب');
+    }
   };
 
   useEffect(() => {
@@ -68,45 +41,27 @@ export function TaxesPage() {
 
   const handleRegisterPayment = async () => {
     if (!focusedRecord) return;
-    setTimeout(() => {
-      const localRecords = JSON.parse(localStorage.getItem(getCompanyKey('mock_taxes_records')) || '[]');
-      const localSummary = JSON.parse(localStorage.getItem(getCompanyKey('mock_taxes_summary')) || 'null');
-      
-      const updatedRecords = localRecords.map((r: any) => {
-        if (r.id === focusedRecord.id) {
-          const newPaid = r.paid_amount + paymentAmount;
-          return { ...r, paid_amount: newPaid, status: newPaid >= r.liability_amount ? 'paid' : 'partial' };
-        }
-        return r;
+    try {
+      await apiClient.post(`/taxes/${focusedRecord.id}/pay`, {
+        amount: paymentAmount,
+        bank_account_id: 1 // Default to bank 1 for now
       });
-      
-      if (localSummary) {
-        if (focusedRecord.type === 'vat') localSummary.vat_paid += paymentAmount;
-        if (focusedRecord.type === 'income') localSummary.income_paid += paymentAmount;
-        if (focusedRecord.type === 'withholding') localSummary.withholding_paid += paymentAmount;
-        if (focusedRecord.type === 'payroll') localSummary.payroll_paid += paymentAmount;
-      }
-      
-      localStorage.setItem(getCompanyKey('mock_taxes_records'), JSON.stringify(updatedRecords));
-      localStorage.setItem(getCompanyKey('mock_taxes_summary'), JSON.stringify(localSummary));
-      
       toast.success('تم تسجيل الدفعة بنجاح');
       setActiveModal(null);
       fetchTaxes();
-    }, 500);
+    } catch (error: any) {
+      toast.error(error.response?.data?.message || 'حدث خطأ أثناء تسجيل الدفعة');
+    }
   };
 
   const handlePostTax = async (record: TaxRecord) => {
-    setTimeout(() => {
-      const localRecords = JSON.parse(localStorage.getItem(getCompanyKey('mock_taxes_records')) || '[]');
-      const updatedRecords = localRecords.map((r: any) => {
-        if (r.id === record.id) return { ...r, status: 'posted' };
-        return r;
-      });
-      localStorage.setItem(getCompanyKey('mock_taxes_records'), JSON.stringify(updatedRecords));
+    try {
+      await apiClient.post(`/taxes/${record.id}/post`);
       toast.success('تم ترحيل الضريبة وإغلاق الفترة بنجاح');
       fetchTaxes();
-    }, 500);
+    } catch (error: any) {
+      toast.error(error.response?.data?.message || 'حدث خطأ أثناء الترحيل');
+    }
   };
 
   return (

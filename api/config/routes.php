@@ -35,4 +35,9 @@ $router->group(['prefix' => '/api', 'middleware' => [\App\Core\Middleware\AuthMi
     $router->post('/journal-entries/{id}/post', [\App\Controllers\JournalController::class, 'post']);
     $router->post('/journal-entries/{id}/reverse', [\App\Controllers\JournalController::class, 'reverse']);
     
+    // Taxes
+    $router->get('/taxes', [\App\Controllers\TaxController::class, 'index']);
+    $router->post('/taxes/{id}/pay', [\App\Controllers\TaxController::class, 'pay']);
+    $router->post('/taxes/{id}/post', [\App\Controllers\TaxController::class, 'post']);
+    
 });
