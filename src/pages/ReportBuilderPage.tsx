@@ -3,8 +3,11 @@ import { type ReportConfig } from "../types";
 import { clsx } from "clsx";
 import { Wrench, Database, Filter, Columns, BarChart3, Save, Copy, Clock, Share2, FileDown, Play, LayoutGrid } from "lucide-react";
 import { BarChart, Bar, LineChart, Line, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { useNavigate } from 'react-router';
+import { getCompanyKey } from '../utils/storage';
 
 export function ReportBuilderPage() {
+  const navigate = useNavigate();
   const [config, setConfig] = useState<ReportConfig>({
     dataSource: 'invoices',
     columns: [],
@@ -361,7 +364,19 @@ export function ReportBuilderPage() {
                   <input type="text" value={modalInput} onChange={e => setModalInput(e.target.value)} placeholder="مثال: مبيعات الربع الأول..." className="w-full bg-slate-50 border border-slate-200 text-slate-900 text-sm rounded-xl px-4 py-2.5 outline-none focus:border-primary-500" />
                   <button onClick={() => {
                     if (!modalInput.trim()) { setModalError('الرجاء إدخال اسم للتقرير'); return; }
+                    
+                    const existingReports = JSON.parse(localStorage.getItem(getCompanyKey('mock_reports')) || '[]');
+                    const newReport = {
+                      id: "custom_" + Date.now(),
+                      title: modalInput.trim(),
+                      description: "تقرير مخصص (" + config.dataSource + ") " + (config.filters.length > 0 ? "مع فلاتر مخصصة" : "بدون فلاتر"),
+                      category: "مخصصة",
+                      iconType: "layout-dashboard"
+                    };
+                    localStorage.setItem(getCompanyKey('mock_reports'), JSON.stringify([newReport, ...existingReports]));
+                    
                     showToast('تم حفظ التقرير بنجاح');
+                    setTimeout(() => navigate('/reports'), 1000);
                   }} className="w-full mt-4 bg-primary-600 text-white py-3 rounded-xl text-sm font-bold hover:bg-primary-700 transition">تأكيد الحفظ</button>
                 </div>
               )}
