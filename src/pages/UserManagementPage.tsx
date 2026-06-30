@@ -474,8 +474,8 @@ export function UserManagementPage() {
       {/* ADD USER MODAL */}
       {showAddModal && (
         <div className="fixed inset-0 z-[999] overflow-y-auto bg-slate-900/60 backdrop-blur-sm text-center p-4 flex items-center justify-center animate-in fade-in duration-200">
-          <div className="bg-white rounded-3xl text-start overflow-hidden shadow-2xl w-full max-w-md animate-in zoom-in-95 duration-200">
-            <div className="p-6 border-b border-slate-50 flex justify-between items-center bg-slate-50/50">
+          <div className="bg-white rounded-3xl text-start overflow-visible shadow-2xl w-full max-w-md animate-in zoom-in-95 duration-200">
+            <div className="p-6 border-b border-slate-50 flex justify-between items-center bg-slate-50/50 rounded-t-3xl">
               <h3 className="font-black text-xl text-slate-800">إضافة مستخدم جديد</h3>
               <button onClick={() => setShowAddModal(false)} className="w-8 h-8 flex items-center justify-center rounded-full text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition">
                 <X className="w-5 h-5" />
@@ -513,8 +513,8 @@ export function UserManagementPage() {
       {/* EDIT USER MODAL */}
       {showEditModal && (
         <div className="fixed inset-0 z-[999] overflow-y-auto bg-slate-900/60 backdrop-blur-sm text-center p-4 flex items-center justify-center animate-in fade-in duration-200">
-          <div className="bg-white rounded-3xl text-start overflow-hidden shadow-2xl w-full max-w-md animate-in zoom-in-95 duration-200">
-            <div className="p-6 border-b border-slate-50 flex justify-between items-center bg-slate-50/50">
+          <div className="bg-white rounded-3xl text-start overflow-visible shadow-2xl w-full max-w-md animate-in zoom-in-95 duration-200">
+            <div className="p-6 border-b border-slate-50 flex justify-between items-center bg-slate-50/50 rounded-t-3xl">
               <h3 className="font-black text-xl text-slate-800">تعديل بيانات المستخدم</h3>
               <button onClick={() => setShowEditModal(false)} className="w-8 h-8 flex items-center justify-center rounded-full text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition">
                 <X className="w-5 h-5" />
@@ -566,8 +566,8 @@ export function UserManagementPage() {
       {/* ADD ROLE MODAL */}
       {showAddRoleModal && (
         <div className="fixed inset-0 z-[999] overflow-y-auto bg-slate-900/60 backdrop-blur-sm text-center p-4 flex items-center justify-center animate-in fade-in duration-200">
-          <div className="bg-white rounded-3xl text-start overflow-hidden shadow-2xl w-full max-w-md animate-in zoom-in-95 duration-200">
-            <div className="p-6 border-b border-slate-50 flex justify-between items-center bg-slate-50/50">
+          <div className="bg-white rounded-3xl text-start overflow-visible shadow-2xl w-full max-w-md animate-in zoom-in-95 duration-200">
+            <div className="p-6 border-b border-slate-50 flex justify-between items-center bg-slate-50/50 rounded-t-3xl">
               <h3 className="font-black text-xl text-slate-800">إنشاء دور مخصص</h3>
               <button onClick={() => setShowAddRoleModal(false)} className="w-8 h-8 flex items-center justify-center rounded-full text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition">
                 <X className="w-5 h-5" />
