@@ -35,6 +35,8 @@ export function SettingsPage() {
   const [newUserName, setNewUserName] = useState('');
   const [newUserEmail, setNewUserEmail] = useState('');
   const [newUserRole, setNewUserRole] = useState('محاسب');
+  const [isRoleDropdownOpen, setIsRoleDropdownOpen] = useState(false);
+  const defaultRoles = ["محاسب", "مدير نظام", "مُدخل بيانات", "مراجع مالي", "شريك"];
 
   const [editingUserId, setEditingUserId] = useState<number | null>(null);
   const [newUserStatus, setNewUserStatus] = useState('مفعل');
@@ -752,23 +754,52 @@ export function SettingsPage() {
                   placeholder="ahmed@example.com"
                 />
               </div>
-              <div>
+              <div className="relative">
                 <label className="block text-sm font-bold text-slate-700 mb-2">الصلاحية (الدور)</label>
-                <input 
-                  type="text"
-                  list="roles-list"
-                  value={newUserRole}
-                  onChange={(e) => setNewUserRole(e.target.value)}
-                  className="w-full bg-slate-50 border border-slate-200 text-slate-800 text-sm rounded-2xl px-5 py-3.5 focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 outline-none transition-all font-bold"
-                  placeholder="اختر أو اكتب صلاحية جديدة..."
-                />
-                <datalist id="roles-list">
-                  <option value="محاسب" />
-                  <option value="مدير نظام" />
-                  <option value="مُدخل بيانات" />
-                  <option value="مراجع مالي" />
-                  <option value="شريك" />
-                </datalist>
+                <div className="relative">
+                  <input 
+                    type="text"
+                    value={newUserRole}
+                    onFocus={() => setIsRoleDropdownOpen(true)}
+                    onBlur={() => setTimeout(() => setIsRoleDropdownOpen(false), 200)}
+                    onChange={(e) => {
+                      setNewUserRole(e.target.value);
+                      setIsRoleDropdownOpen(true);
+                    }}
+                    className="w-full bg-slate-50 border border-slate-200 text-slate-800 text-sm rounded-2xl px-5 py-3.5 focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 outline-none transition-all font-bold pe-12"
+                    placeholder="اختر أو اكتب صلاحية جديدة..."
+                  />
+                  <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                  </div>
+                </div>
+
+                {isRoleDropdownOpen && (
+                  <div className="absolute z-50 w-full mt-2 bg-white border border-slate-200 rounded-2xl shadow-xl overflow-hidden animate-in fade-in slide-in-from-top-2">
+                    <ul className="max-h-48 overflow-y-auto p-1">
+                      {defaultRoles.filter(r => r.includes(newUserRole)).map(role => (
+                        <li 
+                          key={role}
+                          onClick={() => {
+                            setNewUserRole(role);
+                            setIsRoleDropdownOpen(false);
+                          }}
+                          className="px-4 py-3 hover:bg-slate-50 rounded-xl cursor-pointer text-sm font-bold text-slate-700 transition-colors"
+                        >
+                          {role}
+                        </li>
+                      ))}
+                      {newUserRole && !defaultRoles.includes(newUserRole) && (
+                        <li 
+                          onClick={() => setIsRoleDropdownOpen(false)}
+                          className="px-4 py-3 hover:bg-emerald-50 rounded-xl cursor-pointer text-sm font-bold text-emerald-700 transition-colors flex items-center gap-2"
+                        >
+                          <span className="text-emerald-500 font-black text-lg leading-none">+</span> إضافة "{newUserRole}"
+                        </li>
+                      )}
+                    </ul>
+                  </div>
+                )}
               </div>
 
               {editingUserId && (
