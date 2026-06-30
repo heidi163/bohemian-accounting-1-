@@ -82,30 +82,35 @@ export function TaxesPage() {
     } catch (error: any) {
       // Fallback for Vercel
       setTimeout(() => {
-        const localRecords = JSON.parse(localStorage.getItem(getCompanyKey('mock_taxes_records')) || '[]');
-        const localSummary = JSON.parse(localStorage.getItem(getCompanyKey('mock_taxes_summary')) || 'null');
-        
-        const updatedRecords = localRecords.map((r: any) => {
-          if (r.id === focusedRecord.id) {
-            const newPaid = r.paid_amount + paymentAmount;
-            return { ...r, paid_amount: newPaid, status: newPaid >= r.liability_amount ? 'paid' : 'partial' };
+        try {
+          const localRecords = JSON.parse(localStorage.getItem(getCompanyKey('mock_taxes_records')) || '[]');
+          const localSummary = JSON.parse(localStorage.getItem(getCompanyKey('mock_taxes_summary')) || 'null');
+          
+          const updatedRecords = localRecords.map((r: any) => {
+            if (r.id === focusedRecord.id) {
+              const newPaid = r.paid_amount + paymentAmount;
+              return { ...r, paid_amount: newPaid, status: newPaid >= r.liability_amount ? 'paid' : 'partial' };
+            }
+            return r;
+          });
+          
+          if (localSummary) {
+            if (focusedRecord.type === 'vat') localSummary.vat_paid += paymentAmount;
+            if (focusedRecord.type === 'income') localSummary.income_paid += paymentAmount;
+            if (focusedRecord.type === 'withholding') localSummary.withholding_paid += paymentAmount;
+            if (focusedRecord.type === 'payroll') localSummary.payroll_paid += paymentAmount;
           }
-          return r;
-        });
-        
-        if (localSummary) {
-          if (focusedRecord.type === 'vat') localSummary.vat_paid += paymentAmount;
-          if (focusedRecord.type === 'income') localSummary.income_paid += paymentAmount;
-          if (focusedRecord.type === 'withholding') localSummary.withholding_paid += paymentAmount;
-          if (focusedRecord.type === 'payroll') localSummary.payroll_paid += paymentAmount;
+          
+          localStorage.setItem(getCompanyKey('mock_taxes_records'), JSON.stringify(updatedRecords));
+          localStorage.setItem(getCompanyKey('mock_taxes_summary'), JSON.stringify(localSummary));
+          
+          toast.success('تم تسجيل الدفعة بنجاح (Offline Mode)');
+          setActiveModal(null);
+          fetchTaxes();
+        } catch (e) {
+          toast.error("فشل في تحديث البيانات محلياً");
+          setActiveModal(null);
         }
-        
-        localStorage.setItem(getCompanyKey('mock_taxes_records'), JSON.stringify(updatedRecords));
-        localStorage.setItem(getCompanyKey('mock_taxes_summary'), JSON.stringify(localSummary));
-        
-        toast.success('تم تسجيل الدفعة بنجاح');
-        setActiveModal(null);
-        fetchTaxes();
       }, 500);
     }
   };
@@ -268,12 +273,12 @@ export function TaxesPage() {
                  <input type="number" value={paymentAmount} onChange={(e) => setPaymentAmount(Number(e.target.value))} className="w-full bg-white border border-slate-200 text-slate-900 font-bold text-lg rounded-xl px-4 py-3 outline-none focus:border-primary-500 text-right" dir="ltr" />
                </div>
 
-              <div className="pt-2">
+               <div className="pt-2">
                  <button 
                    onClick={handleRegisterPayment}
                    className="w-full bg-primary-600 text-white font-bold py-3 text-sm rounded-xl hover:bg-primary-700 transition"
                  >
-                   تأكيد الدفع (Confirm Payment)
+                   تأكيد الدفع (v2)
                  </button>
               </div>
             </div>
