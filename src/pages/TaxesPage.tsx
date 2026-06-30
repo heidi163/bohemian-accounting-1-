@@ -440,7 +440,7 @@ export function TaxesPage() {
                  <button 
                    onClick={handleAddTaxSubmit}
                    disabled={isSubmitting}
-                   className="w-full bg-slate-900 text-white font-bold py-3 text-sm rounded-xl hover:bg-slate-800 transition disabled:opacity-50"
+                   className="w-full bg-primary-600 text-white font-bold py-3 text-sm rounded-xl hover:bg-primary-700 transition disabled:opacity-50"
                  >
                    {isSubmitting ? 'جاري الحفظ...' : 'حفظ وإضافة'}
                  </button>
