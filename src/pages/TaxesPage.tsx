@@ -4,6 +4,7 @@ import { type TaxRecord, type TaxSummary } from "../types";
 import { clsx } from "clsx";
 import { Calculator, FileText, CheckCircle, Clock, AlertCircle, Plus, RefreshCcw, Landmark, Receipt, X } from "lucide-react";
 import apiClient from "../api/client";
+import { getCompanyKey } from '../utils/storage';
 
 const taxTypeTranslations: Record<string, string> = {
   vat: 'ضريبة القيمة المضافة',
