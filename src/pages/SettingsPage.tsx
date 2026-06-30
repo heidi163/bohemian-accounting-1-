@@ -700,6 +700,29 @@ export function SettingsPage() {
               </div>
             </div>
           )}
+
+          {/* Static Save Button */}
+          <div className="mt-10 pt-6 border-t border-slate-100 flex items-center justify-end">
+            <button 
+              onClick={handleSave}
+              disabled={isSaving || !hasChanges}
+              className={clsx(
+                "px-8 py-3.5 rounded-2xl font-black text-sm flex items-center justify-center gap-2 transition-all shadow-sm w-full sm:w-auto min-w-[200px]",
+                hasChanges 
+                  ? "bg-emerald-600 hover:bg-emerald-700 text-white shadow-lg shadow-emerald-600/20 active:scale-95" 
+                  : "bg-slate-100 text-slate-400 cursor-not-allowed"
+              )}
+            >
+              {isSaving ? (
+                <div className="w-5 h-5 border-2 border-current border-t-transparent rounded-full animate-spin"></div>
+              ) : showSuccess ? (
+                <CheckCircle2 className="w-5 h-5" />
+              ) : (
+                <Save className="w-5 h-5" />
+              )}
+              <span>{isSaving ? 'جاري الحفظ...' : showSuccess ? 'تم الحفظ بنجاح' : 'حفظ التعديلات'}</span>
+            </button>
+          </div>
         </div>
       </div>
 
@@ -721,7 +744,7 @@ export function SettingsPage() {
           <button 
             onClick={handleSave}
             disabled={isSaving}
-            className="flex-2 sm:flex-none px-8 py-3 rounded-2xl text-sm font-bold bg-emerald-600 text-white hover:bg-emerald-700 shadow-lg shadow-emerald-600/20 active:scale-95 transition-all flex items-center justify-center gap-2 min-w-[160px]"
+            className="flex-[2] sm:flex-none px-8 py-3 rounded-2xl text-sm font-bold bg-emerald-600 text-white hover:bg-emerald-700 shadow-lg shadow-emerald-600/20 active:scale-95 transition-all flex items-center justify-center gap-2 min-w-[160px]"
           >
             {isSaving ? (
               <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
