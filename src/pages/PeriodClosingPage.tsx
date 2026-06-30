@@ -49,9 +49,12 @@ export function PeriodClosingPage() {
               checklists: [
                 { id: "t1", name: "مراجعة وتسوية قيود اليومية", isCompleted: status !== 'open', requiredForHardLock: true },
                 { id: "t2", name: "تسوية الحسابات البنكية", isCompleted: status !== 'open', requiredForHardLock: true },
-                { id: "t3", name: "تسجيل إهلاك الأصول الثابتة", isCompleted: status === 'hard_lock', requiredForHardLock: false },
-                { id: "t4", name: "احتساب الرواتب والضرائب", isCompleted: status !== 'open', requiredForHardLock: true },
-                { id: "t5", name: "مراجعة أرصدة العملاء والموردين", isCompleted: status === 'hard_lock', requiredForHardLock: true }
+                { id: "t3", name: "تسويات الاستحقاق والتأجيل (Accruals & Deferrals)", isCompleted: status === 'hard_lock', requiredForHardLock: true },
+                { id: "t4", name: "تسجيل إهلاك الأصول الثابتة (IAS 16)", isCompleted: status === 'hard_lock', requiredForHardLock: false },
+                { id: "t5", name: "احتساب الرواتب والضرائب", isCompleted: status !== 'open', requiredForHardLock: true },
+                { id: "t6", name: "مراجعة الذمم ومخصص الديون المشكوك فيها (IFRS 9)", isCompleted: status === 'hard_lock', requiredForHardLock: true },
+                { id: "t7", name: "إعادة تقييم فروق العملات الأجنبية (IAS 21)", isCompleted: status === 'hard_lock', requiredForHardLock: true },
+                { id: "t8", name: "مراجعة القوائم المالية الشهرية", isCompleted: status === 'hard_lock', requiredForHardLock: true }
               ]
             };
           });
