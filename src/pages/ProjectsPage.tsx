@@ -6,6 +6,11 @@ import { FolderKanban, TrendingUp, AlertTriangle, CheckCircle, PieChart, BarChar
 export function ProjectsPage() {
   const [projects, setProjects] = useState<Project[]>([]);
   const [analysis, setAnalysis] = useState<ProjectAnalysis[]>([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [newProject, setNewProject] = useState({ 
+    id: '', name: '', project_code: '', customer_name: '', start_date: '', end_date: '', 
+    status: 'in_progress', budget_revenue: 0, budget_cost: 0 
+  });
 
   const fetchData = async () => {
     try {
@@ -22,17 +27,27 @@ export function ProjectsPage() {
       setProjects(projData.data);
       setAnalysis(analysisData.data);
     } catch {
-      const defaultProjects = [
-        { id: 'proj_1', name: 'تطوير تطبيق موبايل', project_code: 'PRJ-001', customer_name: 'شركة الأفق', start_date: '2026-01-10', end_date: '2026-06-30', status: 'in_progress', budget_revenue: 150000, actual_revenue: 100000, budget_cost: 90000, actual_cost: 65000 },
-        { id: 'proj_2', name: 'تصميم هوية بصرية', project_code: 'PRJ-002', customer_name: 'مؤسسة الرواد', start_date: '2026-03-01', end_date: '2026-04-15', status: 'completed', budget_revenue: 45000, actual_revenue: 45000, budget_cost: 15000, actual_cost: 12000 }
-      ];
-      const defaultAnalysis = [
-        { id: 'proj_1', gross_profit: 35000, profit_margin: 35.0, revenue_variance: -50000, cost_variance: 25000 },
-        { id: 'proj_2', gross_profit: 33000, profit_margin: 73.3, revenue_variance: 0, cost_variance: 3000 }
-      ];
+      const localProjects = JSON.parse(localStorage.getItem('mock_projects') || '[]');
+      const localAnalysis = JSON.parse(localStorage.getItem('mock_projects_analysis') || '[]');
       
-      setProjects(defaultProjects);
-      setAnalysis(defaultAnalysis);
+      if (localProjects.length > 0) {
+        setProjects(localProjects);
+        setAnalysis(localAnalysis);
+      } else {
+        const defaultProjects = [
+          { id: 'proj_1', name: 'تطوير تطبيق موبايل', project_code: 'PRJ-001', customer_name: 'شركة الأفق', start_date: '2026-01-10', end_date: '2026-06-30', status: 'in_progress', budget_revenue: 150000, actual_revenue: 100000, budget_cost: 90000, actual_cost: 65000 },
+          { id: 'proj_2', name: 'تصميم هوية بصرية', project_code: 'PRJ-002', customer_name: 'مؤسسة الرواد', start_date: '2026-03-01', end_date: '2026-04-15', status: 'completed', budget_revenue: 45000, actual_revenue: 45000, budget_cost: 15000, actual_cost: 12000 }
+        ];
+        const defaultAnalysis = [
+          { id: 'proj_1', gross_profit: 35000, profit_margin: 35.0, revenue_variance: -50000, cost_variance: 25000 },
+          { id: 'proj_2', gross_profit: 33000, profit_margin: 73.3, revenue_variance: 0, cost_variance: 3000 }
+        ];
+        
+        localStorage.setItem('mock_projects', JSON.stringify(defaultProjects));
+        localStorage.setItem('mock_projects_analysis', JSON.stringify(defaultAnalysis));
+        setProjects(defaultProjects);
+        setAnalysis(defaultAnalysis);
+      }
     }
   };
 
@@ -42,13 +57,58 @@ export function ProjectsPage() {
 
   const getAnalysis = (id: string) => analysis.find(a => a.id === id);
 
+  const getStatusArabic = (status: string) => {
+    switch(status) {
+      case 'in_progress': return 'قيد التنفيذ';
+      case 'completed': return 'مكتمل';
+      case 'planned': return 'مخطط';
+      default: return status;
+    }
+  };
+
+  const handleAddProject = () => {
+    if (!newProject.name || !newProject.project_code) return;
+    
+    const proj: Project = {
+      ...newProject,
+      id: `proj_${Date.now()}`,
+      actual_revenue: 0,
+      actual_cost: 0,
+      budget_revenue: Number(newProject.budget_revenue),
+      budget_cost: Number(newProject.budget_cost)
+    };
+    
+    const anls: ProjectAnalysis = {
+      id: proj.id,
+      gross_profit: 0,
+      profit_margin: 0,
+      revenue_variance: -proj.budget_revenue,
+      cost_variance: proj.budget_cost
+    };
+
+    const updatedProjects = [proj, ...projects];
+    const updatedAnalysis = [anls, ...analysis];
+    
+    setProjects(updatedProjects);
+    setAnalysis(updatedAnalysis);
+    
+    localStorage.setItem('mock_projects', JSON.stringify(updatedProjects));
+    localStorage.setItem('mock_projects_analysis', JSON.stringify(updatedAnalysis));
+    
+    setIsModalOpen(false);
+    setNewProject({ id: '', name: '', project_code: '', customer_name: '', start_date: '', end_date: '', status: 'in_progress', budget_revenue: 0, budget_cost: 0 });
+  };
+
   return (
     <div className="space-y-6">
       <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
-          <h2 className="font-bold text-slate-800 text-2xl">حسابات المشاريع (Project Accounting)</h2>
-          <p className="text-slate-500 mt-1">إدارة موازنات المشاريع وتحليل الأرباح والخسائر والتباين.</p>
+          <h2 className="font-bold text-slate-800 text-2xl tracking-tight">حسابات المشاريع</h2>
+          <p className="text-slate-500 mt-2 text-sm font-medium">إدارة موازنات المشاريع وتحليل الأرباح والخسائر والتباين.</p>
         </div>
+        <button onClick={() => setIsModalOpen(true)} className="bg-primary-600 text-white px-5 py-3 rounded-2xl text-sm font-bold hover:bg-primary-700 transition shadow-sm hover:shadow-md hover:-translate-y-0.5">
+          + إضافة مشروع
+        </button>
       </div>
 
       <div className="space-y-6">
@@ -56,8 +116,8 @@ export function ProjectsPage() {
            const metrics = getAnalysis(project.id);
            
            return (
-              <div key={project.id} className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-                 <div className="p-6 border-b border-slate-100 flex flex-wrap gap-4 justify-between items-center bg-slate-50/50">
+              <div key={project.id} className="bg-white rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] border-0 overflow-hidden">
+                 <div className="p-6 border-b border-slate-50 flex flex-wrap gap-4 justify-between items-center bg-white">
                     <div className="flex items-center gap-4">
                        <div className="w-12 h-12 rounded-xl bg-primary-100 flex items-center justify-center text-primary-600">
                           <FolderKanban className="w-6 h-6" />
@@ -65,21 +125,21 @@ export function ProjectsPage() {
                        <div>
                           <h3 className="font-bold text-lg text-slate-900 flex items-center gap-2">
                              {project.name} 
-                             <span className="text-xs font-mono bg-white border border-slate-200 px-2 py-0.5 rounded-md text-slate-500">{project.project_code}</span>
+                             <span className="text-xs font-mono bg-slate-50 border border-slate-100 px-2 py-0.5 rounded-md text-slate-500 tracking-wider">{project.project_code}</span>
                           </h3>
-                          <div className="text-sm text-slate-500 mt-1 flex items-center gap-4">
+                          <div className="text-sm text-slate-500 mt-1 flex items-center gap-4 font-medium">
                              <span>العميل: {project.customer_name}</span>
                              <span>المدة: {project.start_date} إلى {project.end_date}</span>
                           </div>
                        </div>
                     </div>
                     <div>
-                       <span className={clsx('inline-flex items-center rounded-md px-3 py-1.5 text-xs font-bold uppercase tracking-wider', 
+                       <span className={clsx('inline-flex items-center rounded-lg px-3 py-1.5 text-xs font-bold tracking-wide', 
                           project.status === 'in_progress' ? 'bg-primary-100 text-primary-700' :
                           project.status === 'completed' ? 'bg-emerald-100 text-emerald-700' :
                           'bg-slate-100 text-slate-700'
                        )}>
-                          {project.status.replace('_', ' ')}
+                          {getStatusArabic(project.status)}
                        </span>
                     </div>
                  </div>
@@ -87,32 +147,32 @@ export function ProjectsPage() {
                  <div className="p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                     {/* Budget Section */}
                     <div className="col-span-1 md:col-span-2 grid grid-cols-2 gap-4">
-                       <div className="border border-slate-100 rounded-xl p-4 bg-slate-50 text-center relative overflow-hidden">
+                       <div className="border border-slate-100 rounded-2xl p-5 bg-slate-50 text-center relative overflow-hidden transition-all hover:border-primary-100 hover:bg-primary-50/50">
                           <div className="absolute top-0 inset-x-0 h-1 bg-primary-500"></div>
-                          <div className="text-xs text-slate-500 font-bold mb-1 uppercase tracking-wider">الإيرادات (Revenue)</div>
+                          <div className="text-xs text-slate-500 font-bold mb-3 uppercase tracking-wider">الإيرادات</div>
                           <div className="flex justify-between items-end mt-2">
                              <div className="text-start">
-                                <div className="text-[10px] text-slate-400 font-bold uppercase">الموازنة (Budget)</div>
+                                <div className="text-[10px] text-slate-400 font-bold uppercase mb-1">الموازنة</div>
                                 <div className="font-mono font-medium text-slate-600 text-sm" dir="ltr">{new Intl.NumberFormat('ar-EG').format(project.budget_revenue)}</div>
                              </div>
                              <div className="text-end">
-                                <div className="text-[10px] text-primary-400 font-bold uppercase">الفعلي (Actual)</div>
-                                <div className="font-mono font-bold text-primary-600 text-lg" dir="ltr">{new Intl.NumberFormat('ar-EG').format(project.actual_revenue)}</div>
+                                <div className="text-[10px] text-primary-400 font-bold uppercase mb-1">الفعلي</div>
+                                <div className="font-mono font-bold text-primary-600 text-xl" dir="ltr">{new Intl.NumberFormat('ar-EG').format(project.actual_revenue)}</div>
                              </div>
                           </div>
                        </div>
 
-                       <div className="border border-slate-100 rounded-xl p-4 bg-slate-50 text-center relative overflow-hidden">
+                       <div className="border border-slate-100 rounded-2xl p-5 bg-slate-50 text-center relative overflow-hidden transition-all hover:border-rose-100 hover:bg-rose-50/50">
                           <div className="absolute top-0 inset-x-0 h-1 bg-rose-500"></div>
-                          <div className="text-xs text-slate-500 font-bold mb-1 uppercase tracking-wider">التكاليف (Costs)</div>
+                          <div className="text-xs text-slate-500 font-bold mb-3 uppercase tracking-wider">التكاليف</div>
                           <div className="flex justify-between items-end mt-2">
                              <div className="text-start">
-                                <div className="text-[10px] text-slate-400 font-bold uppercase">الموازنة (Budget)</div>
+                                <div className="text-[10px] text-slate-400 font-bold uppercase mb-1">الموازنة</div>
                                 <div className="font-mono font-medium text-slate-600 text-sm" dir="ltr">{new Intl.NumberFormat('ar-EG').format(project.budget_cost)}</div>
                              </div>
                              <div className="text-end">
-                                <div className="text-[10px] text-rose-400 font-bold uppercase">الفعلي (Actual)</div>
-                                <div className="font-mono font-bold text-rose-600 text-lg" dir="ltr">{new Intl.NumberFormat('ar-EG').format(project.actual_cost)}</div>
+                                <div className="text-[10px] text-rose-400 font-bold uppercase mb-1">الفعلي</div>
+                                <div className="font-mono font-bold text-rose-600 text-xl" dir="ltr">{new Intl.NumberFormat('ar-EG').format(project.actual_cost)}</div>
                              </div>
                           </div>
                        </div>
@@ -121,33 +181,33 @@ export function ProjectsPage() {
                     {/* Analysis Section */}
                     {metrics && (
                        <>
-                          <div className="border border-slate-100 rounded-xl p-4 bg-emerald-50/50 flex flex-col justify-center">
-                             <div className="flex items-center gap-2 mb-2">
+                          <div className="border border-slate-100 rounded-2xl p-5 bg-emerald-50/30 flex flex-col justify-center">
+                             <div className="flex items-center gap-2 mb-3">
                                 <TrendingUp className="w-4 h-4 text-emerald-600" />
-                                <span className="text-xs text-emerald-800 font-bold uppercase">الربح الإجمالي (Gross Profit)</span>
+                                <span className="text-xs text-emerald-800 font-bold uppercase">الربح الإجمالي</span>
                              </div>
                              <div className="font-mono font-black text-2xl text-emerald-700" dir="ltr">
-                                {new Intl.NumberFormat('ar-EG', { style: 'currency', currency: 'EGP' }).format(metrics.gross_profit)}
+                                {new Intl.NumberFormat('ar-EG', { style: 'currency', currency: 'EGP', maximumSignificantDigits: 4 }).format(metrics.gross_profit)}
                              </div>
-                             <div className="text-xs text-emerald-600 mt-1 font-bold flex items-center gap-1">
-                                <PieChart className="w-3 h-3" /> هامش الربح: {metrics.profit_margin.toFixed(2)}%
+                             <div className="text-xs text-emerald-600 mt-2 font-bold flex items-center gap-1.5">
+                                <PieChart className="w-3.5 h-3.5" /> هامش الربح: {metrics.profit_margin.toFixed(2)}%
                              </div>
                           </div>
 
-                          <div className="border border-slate-100 rounded-xl p-4 flex flex-col justify-center">
-                             <div className="flex items-center gap-2 mb-2">
+                          <div className="border border-slate-100 rounded-2xl p-5 flex flex-col justify-center bg-slate-50/30">
+                             <div className="flex items-center gap-2 mb-3">
                                 <BarChart3 className="w-4 h-4 text-slate-600" />
-                                <span className="text-xs text-slate-600 font-bold uppercase">انحراف الموازنة (Variance)</span>
+                                <span className="text-xs text-slate-600 font-bold uppercase">انحراف الموازنة</span>
                              </div>
-                             <div className="space-y-2">
-                                <div className="flex justify-between text-sm border-b border-slate-100 pb-1">
-                                   <span className="text-slate-500 text-xs">تباين الإيرادات:</span>
+                             <div className="space-y-3">
+                                <div className="flex justify-between text-sm border-b border-slate-100 pb-2">
+                                   <span className="text-slate-500 text-xs font-medium">تباين الإيرادات:</span>
                                    <span className={clsx("font-mono font-bold text-xs", metrics.revenue_variance >= 0 ? 'text-emerald-600' : 'text-rose-600')} dir="ltr">
                                       {metrics.revenue_variance >= 0 ? '+' : ''}{new Intl.NumberFormat('ar-EG').format(metrics.revenue_variance)}
                                    </span>
                                 </div>
                                 <div className="flex justify-between text-sm">
-                                   <span className="text-slate-500 text-xs">وفر التكاليف:</span>
+                                   <span className="text-slate-500 text-xs font-medium">وفر التكاليف:</span>
                                    <span className={clsx("font-mono font-bold text-xs", metrics.cost_variance >= 0 ? 'text-emerald-600' : 'text-rose-600')} dir="ltr">
                                       {metrics.cost_variance >= 0 ? '+' : ''}{new Intl.NumberFormat('ar-EG').format(metrics.cost_variance)}
                                    </span>
@@ -161,6 +221,56 @@ export function ProjectsPage() {
            )
         })}
       </div>
+
+      {isModalOpen && (
+         <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl overflow-hidden shadow-2xl w-full max-w-lg transform transition-all border border-white">
+             <div className="flex items-center justify-between p-6 border-b border-slate-50 bg-slate-50/50">
+               <h3 className="text-xl font-bold text-slate-800">إضافة مشروع جديد</h3>
+               <button onClick={() => setIsModalOpen(false)} className="w-8 h-8 flex items-center justify-center rounded-xl bg-white text-slate-400 hover:text-rose-500 hover:bg-rose-50 transition-colors shadow-sm">✕</button>
+             </div>
+             <div className="p-6 space-y-4">
+               <div className="grid grid-cols-2 gap-4">
+                 <div>
+                   <label className="block text-sm font-bold text-slate-700 mb-2">كود المشروع</label>
+                   <input type="text" value={newProject.project_code} onChange={e => setNewProject({...newProject, project_code: e.target.value})} className="w-full bg-slate-50 border border-slate-200 text-slate-900 text-sm rounded-xl px-4 py-3 outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 font-mono transition-all" placeholder="PRJ-003" />
+                 </div>
+                 <div>
+                   <label className="block text-sm font-bold text-slate-700 mb-2">اسم المشروع</label>
+                   <input type="text" value={newProject.name} onChange={e => setNewProject({...newProject, name: e.target.value})} className="w-full bg-slate-50 border border-slate-200 text-slate-900 text-sm rounded-xl px-4 py-3 outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all" placeholder="مثال: نظام إدارة" />
+                 </div>
+               </div>
+               <div>
+                 <label className="block text-sm font-bold text-slate-700 mb-2">اسم العميل</label>
+                 <input type="text" value={newProject.customer_name} onChange={e => setNewProject({...newProject, customer_name: e.target.value})} className="w-full bg-slate-50 border border-slate-200 text-slate-900 text-sm rounded-xl px-4 py-3 outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all" placeholder="شركة..." />
+               </div>
+               <div className="grid grid-cols-2 gap-4">
+                 <div>
+                   <label className="block text-sm font-bold text-slate-700 mb-2">تاريخ البدء</label>
+                   <input type="date" value={newProject.start_date} onChange={e => setNewProject({...newProject, start_date: e.target.value})} className="w-full bg-slate-50 border border-slate-200 text-slate-900 text-sm rounded-xl px-4 py-3 outline-none focus:border-primary-500 transition-all" />
+                 </div>
+                 <div>
+                   <label className="block text-sm font-bold text-slate-700 mb-2">تاريخ الانتهاء</label>
+                   <input type="date" value={newProject.end_date} onChange={e => setNewProject({...newProject, end_date: e.target.value})} className="w-full bg-slate-50 border border-slate-200 text-slate-900 text-sm rounded-xl px-4 py-3 outline-none focus:border-primary-500 transition-all" />
+                 </div>
+               </div>
+               <div className="grid grid-cols-2 gap-4 border-t border-slate-100 pt-4 mt-2">
+                 <div>
+                   <label className="block text-sm font-bold text-slate-700 mb-2">موازنة الإيرادات</label>
+                   <input type="number" value={newProject.budget_revenue || ''} onChange={e => setNewProject({...newProject, budget_revenue: Number(e.target.value)})} className="w-full bg-slate-50 border border-slate-200 text-slate-900 text-sm rounded-xl px-4 py-3 outline-none focus:border-primary-500 font-mono transition-all" placeholder="0.00" />
+                 </div>
+                 <div>
+                   <label className="block text-sm font-bold text-slate-700 mb-2">موازنة التكاليف</label>
+                   <input type="number" value={newProject.budget_cost || ''} onChange={e => setNewProject({...newProject, budget_cost: Number(e.target.value)})} className="w-full bg-slate-50 border border-slate-200 text-slate-900 text-sm rounded-xl px-4 py-3 outline-none focus:border-primary-500 font-mono transition-all" placeholder="0.00" />
+                 </div>
+               </div>
+               <button onClick={handleAddProject} className="w-full bg-primary-600 text-white font-bold py-3.5 rounded-xl hover:bg-primary-700 transition shadow-sm hover:shadow-md hover:-translate-y-0.5 mt-4">
+                 حفظ المشروع
+               </button>
+             </div>
+           </div>
+         </div>
+      )}
     </div>
   );
 }
