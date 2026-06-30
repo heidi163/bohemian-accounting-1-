@@ -8,7 +8,7 @@ import {
   UserCheck, UserX, Activity
 } from "lucide-react";
 import { getCompanyKey } from '../utils/storage';
-
+import { SearchableSelect } from '../components/ui/SearchableSelect';
 export function UserManagementPage() {
   const [users, setUsers] = useState<User[]>([]);
   const [roles, setRoles] = useState<Role[]>([]);
@@ -267,16 +267,15 @@ export function UserManagementPage() {
                      <div className="absolute inset-y-0 start-0 flex items-center ps-4 pointer-events-none">
                         <Filter className="w-4 h-4 text-slate-400" />
                      </div>
-                     <select 
+                     <SearchableSelect 
                         value={roleFilter}
-                        onChange={e => setRoleFilter(e.target.value)}
-                        className="w-full bg-slate-50 border border-slate-100 text-slate-700 text-sm rounded-2xl focus:ring-primary-500 focus:border-primary-500 block ps-10 p-3 font-bold outline-none appearance-none cursor-pointer hover:bg-slate-100 transition"
-                     >
-                        <option value="all">كل الأدوار</option>
-                        {roles.map(r => (
-                           <option key={r.id} value={r.id}>{r.name}</option>
-                        ))}
-                     </select>
+                        onChange={setRoleFilter}
+                        options={[
+                          { value: 'all', label: 'كل الأدوار' },
+                          ...roles.map(r => ({ value: r.id, label: r.name }))
+                        ]}
+                        allowCreate={false}
+                     />
                   </div>
                </div>
 
@@ -492,11 +491,12 @@ export function UserManagementPage() {
               </div>
               <div>
                 <label className="block text-sm font-bold text-slate-700 mb-2">الدور (Role)</label>
-                <select value={newUserRole} onChange={e => setNewUserRole(e.target.value)} className="w-full border border-slate-200 rounded-2xl px-4 py-3 outline-none focus:border-primary-500 bg-slate-50 font-bold transition">
-                  {roles.map(r => (
-                    <option key={r.id} value={r.id}>{r.name}</option>
-                  ))}
-                </select>
+                <SearchableSelect 
+                  value={newUserRole} 
+                  onChange={setNewUserRole} 
+                  options={roles.map(r => ({ value: r.id, label: r.name }))}
+                  allowCreate={true}
+                />
               </div>
               <div className="pt-4 flex gap-3">
                 <button type="button" onClick={() => setShowAddModal(false)} className="flex-1 py-3.5 px-4 rounded-2xl font-bold border-2 border-slate-100 text-slate-600 hover:bg-slate-50 transition">إلغاء</button>
@@ -531,18 +531,24 @@ export function UserManagementPage() {
               <div className="flex gap-4">
                  <div className="flex-1">
                    <label className="block text-sm font-bold text-slate-700 mb-2">الدور</label>
-                   <select value={newUserRole} onChange={e => setNewUserRole(e.target.value)} className="w-full border border-slate-200 rounded-2xl px-4 py-3 outline-none focus:border-primary-500 bg-slate-50 font-bold transition">
-                     {roles.map(r => (
-                       <option key={r.id} value={r.id}>{r.name}</option>
-                     ))}
-                   </select>
+                   <SearchableSelect 
+                     value={newUserRole} 
+                     onChange={setNewUserRole} 
+                     options={roles.map(r => ({ value: r.id, label: r.name }))}
+                     allowCreate={true}
+                   />
                  </div>
                  <div className="flex-1">
                    <label className="block text-sm font-bold text-slate-700 mb-2">الحالة</label>
-                   <select value={editUserStatus} onChange={e => setEditUserStatus(e.target.value as any)} className="w-full border border-slate-200 rounded-2xl px-4 py-3 outline-none focus:border-primary-500 bg-slate-50 font-bold transition">
-                     <option value="active">نشط</option>
-                     <option value="locked">مقفول 🔒</option>
-                   </select>
+                   <SearchableSelect 
+                     value={editUserStatus} 
+                     onChange={(val) => setEditUserStatus(val as any)} 
+                     options={[
+                       { value: 'active', label: 'نشط' },
+                       { value: 'locked', label: 'مقفول' }
+                     ]}
+                     allowCreate={false}
+                   />
                  </div>
               </div>
               <div className="pt-4 flex gap-3">

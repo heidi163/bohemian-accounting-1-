@@ -71,7 +71,7 @@ export function PeriodClosingPage() {
   const toggleChecklist = async (taskId: string) => {
     if (!activePeriod) return;
     if (activePeriod.status === 'hard_lock') {
-      showToast("لا يمكن التعديل: الفترة مغلقة نهائياً 🔒");
+      showToast("لا يمكن التعديل: الفترة مغلقة نهائياً ");
       return;
     }
     const updated = { ...activePeriod };
@@ -92,7 +92,7 @@ export function PeriodClosingPage() {
     
     // Check prerequisites for hard lock
     if (status === 'hard_lock' && activePeriod.checklists.some(c => c.requiredForHardLock && !c.isCompleted)) {
-      showToast("⚠️ يجب إكمال جميع المهام الأساسية أولاً");
+      showToast("️ يجب إكمال جميع المهام الأساسية أولاً");
       return;
     }
 

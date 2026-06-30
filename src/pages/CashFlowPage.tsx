@@ -133,7 +133,7 @@ export function CashFlowPage() {
           },
           {
             label: "مؤشر الأمان النقدي",
-            value: runway > 50 ? "آمن جداً ✓" : `${runway} أسبوع`,
+            value: runway > 50 ? "آمن جداً " : `${runway} أسبوع`,
             icon: <Shield className="w-5 h-5" />,
             bg: runway > 8 ? "bg-emerald-50" : "bg-amber-50",
             iconColor: runway > 8 ? "text-emerald-600" : "text-amber-600",
@@ -232,7 +232,7 @@ export function CashFlowPage() {
                         row.ending_balance < 0 ? "text-rose-600" : "text-primary-600"
                       )} dir="ltr">
                         {fmtShort(row.ending_balance)}
-                        {row.ending_balance < 0 && <span className="mr-1 text-rose-500">⚠</span>}
+                        {row.ending_balance < 0 && <span className="mr-1 text-rose-500"></span>}
                       </td>
                     </tr>
                   ))}
