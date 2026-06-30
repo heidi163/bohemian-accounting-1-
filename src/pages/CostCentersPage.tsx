@@ -23,7 +23,7 @@ export function CostCentersPage() {
         const localCenters = JSON.parse(localStorage.getItem(getCompanyKey('mock_cost_centers')) || '[]');
         if (localCenters.length > 0) {
           setCostCentersTree(localCenters);
-        } else if (false) {
+        } else {
             const defaults = [
             {
               id: "HQ",
