@@ -367,7 +367,7 @@ export function AutomationPage() {
                 إضافة مهمة مجدولة جديدة
               </h3>
             </div>
-            <form onSubmit={handleAddJob} className="p-6 space-y-5">
+            <form onSubmit={handleAddJob} className="p-6 space-y-5 min-h-[380px] flex flex-col">
               <div>
                 <label className="block text-sm font-bold text-slate-700 mb-2">اسم المهمة (Task Name)</label>
                 <input 
@@ -406,7 +406,7 @@ export function AutomationPage() {
                   className="w-full"
                 />
               </div>
-              <div className="pt-6 flex gap-3">
+              <div className="pt-6 flex gap-3 mt-auto">
                 <button type="button" onClick={() => setShowAddModal(false)} className="flex-1 py-4 px-4 rounded-2xl font-bold border border-slate-200 text-slate-600 hover:bg-slate-50 transition">إلغاء</button>
                 <button type="submit" className="flex-1 py-4 px-4 rounded-2xl font-bold bg-primary-600 text-white hover:bg-primary-700 transition shadow-lg shadow-primary-600/20">
                   إضافة المهمة
