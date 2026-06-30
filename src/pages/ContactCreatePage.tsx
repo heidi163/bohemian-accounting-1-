@@ -3,6 +3,7 @@ import { useNavigate } from "react-router";
 import { ArrowRight, Plus, Trash2 } from "lucide-react";
 import { type SubContact } from "../types";
 import { getCompanyKey } from '../utils/storage';
+import apiClient from "../api/client";
 
 export function ContactCreatePage() {
   const navigate = useNavigate();
@@ -66,12 +67,8 @@ export function ContactCreatePage() {
               };
               
               try {
-                const res = await fetch('/api/contacts', {
-                  method: 'POST',
-                  headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify(newContact)
-                });
-                if (!res.ok) throw new Error('API failed');
+                const res = await apiClient.post('/customers', newContact);
+                if (!res.data.success) throw new Error('API failed');
               } catch (e) {
                 const localContacts = JSON.parse(localStorage.getItem(getCompanyKey('mock_contacts')) || '[]');
                 const localId = Date.now();

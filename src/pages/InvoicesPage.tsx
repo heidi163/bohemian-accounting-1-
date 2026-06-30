@@ -5,6 +5,7 @@ import { format } from "date-fns";
 import { useNavigate } from "react-router";
 import { FileText, Send, Download, DollarSign, Settings, X, Tag } from "lucide-react";
 import { getCompanyKey, getActiveCompany } from '../utils/storage';
+import apiClient from "../api/client";
 
 const statusStyles: Record<string, string> = {
   draft: 'bg-slate-100 text-slate-600',
@@ -45,13 +46,12 @@ export function InvoicesPage() {
   const navigate = useNavigate();
 
   const fetchInvoices = () => {
-    fetch("/api/invoices")
+    const company = getActiveCompany();
+    const companyId = company === "BGK" ? 1 : 2;
+
+    apiClient.get(`/invoices?company_id=${companyId}`)
       .then((res) => {
-        if (!res.ok) throw new Error('Network response was not ok');
-        return res.json();
-      })
-      .then((data) => {
-        if (data.success) setInvoices(data.data);
+        if (res.data.success) setInvoices(res.data.data);
       })
       .catch(() => {
         const localInvoices = JSON.parse(localStorage.getItem(getCompanyKey('mock_invoices')) || '[]');

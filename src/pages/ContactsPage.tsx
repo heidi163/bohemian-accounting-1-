@@ -24,12 +24,11 @@ export function ContactsPage() {
 
   const loadCustomers = async () => {
     try {
-      const res = await fetch('/api/contacts');
-      if (!res.ok) throw new Error('Network error');
-      const data = await res.json();
-      setContacts(data.data);
+      const res = await apiClient.get('/customers');
+      setContacts(res.data.data || []);
     } catch (error) {
-      const localContacts = JSON.parse(localStorage.getItem(getCompanyKey('mock_contacts')) || '[]');
+      // Fallback to local storage or defaults if API is unreachable
+      const localContacts = JSON.parse(localStorage.getItem('mock_contacts') || '[]');
       if (localContacts.length > 0) {
         setContacts(localContacts);
       } else {
@@ -38,8 +37,8 @@ export function ContactsPage() {
           { id: 2, code: 'CUST-2026-002', name: 'Sealy KSA', type: 'customer', email: 'finance@sealy.sa', phone: '+966 50 123 4567', balance: 120500, opening_balance: 20000, outstanding_balance: 100500, credit_limit: 200000, aging: { '0_30': 50000, '31_60': 50500, '61_90': 0, '91_plus': 0 }, sub_contacts: [] },
           { id: 3, code: 'SUPP-2026-001', name: 'Amazon Web Services', type: 'supplier', email: 'billing@aws.com', phone: '+1 800 123 4567', balance: -1200, opening_balance: 0, outstanding_balance: 0, credit_limit: 0, aging: { '0_30': 0, '31_60': 0, '61_90': 0, '91_plus': 0 }, sub_contacts: [] }
         ];
-        setContacts(defaultContacts);
-        localStorage.setItem(getCompanyKey('mock_contacts'), JSON.stringify(defaultContacts));
+        setContacts(defaultContacts as any);
+        localStorage.setItem('mock_contacts', JSON.stringify(defaultContacts));
       }
     }
   };

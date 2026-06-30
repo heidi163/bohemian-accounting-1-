@@ -3,6 +3,7 @@ import { useNavigate } from "react-router";
 import { ArrowRight, Plus, Trash2, Save, Send } from "lucide-react";
 import { getCompanyKey } from '../utils/storage';
 import { SearchableSelect } from "../components/ui/SearchableSelect";
+import apiClient from "../api/client";
 
 export function InvoiceCreatePage() {
   const navigate = useNavigate();
@@ -76,7 +77,8 @@ export function InvoiceCreatePage() {
 
     const payload = {
       type,
-      customer_name: customerNames[customerId] || 'عميل نقدي',
+      customer_id: customerId || 1, // Assume 1 if none provided
+      company_id: companyId === 'BGK' ? 1 : 2,
       invoice_date: invoiceDate || new Date().toISOString().split('T')[0],
       due_date: dueDate || new Date().toISOString().split('T')[0],
       currency,
@@ -86,16 +88,17 @@ export function InvoiceCreatePage() {
       discount_amount: discountAmount,
       status,
       paid_amount: 0,
-      recurring_status: 'none'
+      recurring_status: 'none',
+      lines: lines.map(l => ({
+         description: l.description,
+         quantity: l.quantity,
+         unit_price: l.price
+      }))
     };
 
     try {
-      const res = await fetch("/api/invoices", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload)
-      });
-      if (res.ok) {
+      const res = await apiClient.post("/invoices", payload);
+      if (res.data.success) {
         navigate('/invoices');
       } else {
         throw new Error('API failed');
