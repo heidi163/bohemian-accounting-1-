@@ -89,7 +89,8 @@ export function AppLayout() {
       {/* Sidebar */}
       <aside 
         style={{
-          background: `linear-gradient(180deg, ${secondaryColor} 0%, color-mix(in srgb, ${secondaryColor} 50%, black) 100%)`
+          backgroundColor: secondaryColor,
+          backgroundImage: `linear-gradient(180deg, rgba(255,255,255,0.05) 0%, rgba(0,0,0,0.3) 100%)`
         }}
         className={clsx(
         "fixed inset-y-0 start-0 z-50 w-72 md:w-64 text-white flex flex-col border-e border-slate-800/50 shrink-0 transition-transform duration-300 md:relative md:translate-x-0",
