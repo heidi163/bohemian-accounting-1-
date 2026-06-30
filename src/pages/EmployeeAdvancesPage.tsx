@@ -1,3 +1,4 @@
+import { toast } from 'react-hot-toast';
 import { useState } from "react";
 import { Banknote, Calculator, UserCheck, Clock, AlertCircle, Plus, Trash2, ChevronDown } from "lucide-react";
 import { clsx } from "clsx";
@@ -21,7 +22,7 @@ export function EmployeeAdvancesPage() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!form.employee || !form.amount) { alert("يرجى تعبئة جميع الحقول المطلوبة."); return; }
+    if (!form.employee || !form.amount) { toast.error("يرجى تعبئة جميع الحقول المطلوبة."); return; }
     const newAdvance = {
       id: Date.now(),
       employee: form.employee,
@@ -36,7 +37,7 @@ export function EmployeeAdvancesPage() {
     setAdvances(updatedAdvances);
     localStorage.setItem(getCompanyKey('mock_advances'), JSON.stringify(updatedAdvances));
     
-    alert(`تم تسجيل سلفة بمبلغ ${form.amount} EGP للموظف ${form.employee}.\nسيتم استقطاعها على ${form.recovery_months} أشهر.`);
+    toast.success(`تم تسجيل سلفة بمبلغ ${form.amount} EGP للموظف ${form.employee}.\nسيتم استقطاعها على ${form.recovery_months} أشهر.`);
     setShowForm(false);
     setForm({ employee: "", amount: "", reason: "", recovery_months: "3", bank_account: "" });
   };
@@ -150,7 +151,7 @@ export function EmployeeAdvancesPage() {
                   </span>
                 </td>
                 <td className="px-6 py-4 text-end">
-                  <button onClick={() => alert(`جاري تحميل تفاصيل سلفة ${adv.employee}`)} className="text-primary-600 hover:underline text-xs font-bold">تفاصيل</button>
+                  <button onClick={() => toast.success(`جاري تحميل تفاصيل سلفة ${adv.employee}`)} className="text-primary-600 hover:underline text-xs font-bold">تفاصيل</button>
                 </td>
               </tr>
             ))}

@@ -1,3 +1,4 @@
+import { toast } from 'react-hot-toast';
 import { useEffect, useState } from "react";
 import { type JournalEntry } from "../types";
 import { clsx } from "clsx";
@@ -94,11 +95,11 @@ export function JournalPage() {
                             if(confirm("هل تريد بالتأكيد عمل قيد عكسي (Reverse Entry) لهذا القيد؟")) {
                                try {
                                  await apiClient.post(`/journal-entries/${entry.id}/reverse`);
-                                 alert("تم إنشاء القيد العكسي بنجاح");
+                                 toast.success("تم إنشاء القيد العكسي بنجاح");
                                  loadJournals();
                                } catch (error) {
                                  console.error(error);
-                                 alert("حدث خطأ أثناء عكس القيد");
+                                 toast.error("حدث خطأ أثناء عكس القيد");
                                }
                             }
                           }

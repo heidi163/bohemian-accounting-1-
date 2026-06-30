@@ -1,3 +1,4 @@
+import { toast } from 'react-hot-toast';
 import { useEffect, useState } from "react";
 import { clsx } from "clsx";
 import { Copy, Plus, Filter, Search, ChevronDown, ChevronUp, X } from "lucide-react";
@@ -279,10 +280,10 @@ export function ChartOfAccountsPage() {
                   setNewAccount({
                     code: '', name: '', type: 'asset', level: 'detail', parent_code: '', company_id: 'ALL', is_active: true
                   });
-                  alert("تم إضافة الحساب بنجاح!");
+                  toast.success("تم إضافة الحساب بنجاح!");
                 } catch (error) {
                   console.error("Failed to add account", error);
-                  alert("حدث خطأ أثناء إضافة الحساب");
+                  toast.error("حدث خطأ أثناء إضافة الحساب");
                 }
               }} 
               className="p-6 space-y-4"

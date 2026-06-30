@@ -1,3 +1,4 @@
+import { toast } from 'react-hot-toast';
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import { ArrowRight, Save, UserPlus } from "lucide-react";
@@ -17,7 +18,7 @@ export function EmployeeCreatePage() {
 
   const handleSave = async () => {
     if (!formData.name || !formData.department || !formData.position || formData.basic_salary <= 0) {
-      alert('الرجاء إدخال جميع البيانات الأساسية والراتب بشكل صحيح');
+      toast.error('الرجاء إدخال جميع البيانات الأساسية والراتب بشكل صحيح');
       return;
     }
 
@@ -37,7 +38,7 @@ export function EmployeeCreatePage() {
     localEmployees.push(newEmployee);
     localStorage.setItem(getCompanyKey('mock_employees'), JSON.stringify(localEmployees));
     
-    alert('تمت إضافة الموظف بنجاح!');
+    toast.success('تمت إضافة الموظف بنجاح!');
     navigate('/employees');
   };
 

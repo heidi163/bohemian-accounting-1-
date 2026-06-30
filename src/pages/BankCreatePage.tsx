@@ -1,3 +1,4 @@
+import { toast } from 'react-hot-toast';
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import { ArrowRight } from "lucide-react";
@@ -40,7 +41,7 @@ export function BankCreatePage() {
     localBanks.push(newBank);
     localStorage.setItem(getCompanyKey('mock_banks'), JSON.stringify(localBanks));
     
-    alert("تم إضافة الحساب بنجاح!");
+    toast.success("تم إضافة الحساب بنجاح!");
     navigate('/banks');
   };
 

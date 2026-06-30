@@ -1,3 +1,4 @@
+import { toast } from 'react-hot-toast';
 import { useState, useRef } from "react";
 import { FolderOpen, FileText, UploadCloud, File, Download, Link as LinkIcon, Trash2, Search, Filter } from "lucide-react";
 import { clsx } from "clsx";
@@ -144,7 +145,7 @@ Exported On  : ${new Date().toLocaleString('ar-EG')}
             />
           </div>
           <button 
-            onClick={() => alert('تم تطبيق الفلتر بنجاح')} 
+            onClick={() => toast.success('تم تطبيق الفلتر بنجاح')} 
             className="p-2 border border-slate-200 bg-white rounded-xl text-slate-500 hover:bg-slate-50 transition ms-2"
           >
             <Filter className="w-5 h-5" />

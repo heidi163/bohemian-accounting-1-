@@ -1,3 +1,4 @@
+import { toast } from 'react-hot-toast';
 import { useEffect, useState } from "react";
 import { type PayrollRun } from "../types";
 import { clsx } from "clsx";
@@ -169,7 +170,7 @@ export function PayrollPage() {
                   </td>
                   <td className="px-6 py-4 text-end flex items-center justify-end gap-1">
                      <button title="تصدير مجمع PDF" className="p-2 text-slate-400 hover:bg-rose-50 hover:text-rose-600 rounded-lg transition"><Download className="w-4 h-4" /></button>
-                     <button onClick={() => alert('تم إرسال قسائم الرواتب عبر البريد لكل الموظفين')} title="إرسال عبر الإيميل (Auto Email)" className="p-2 text-slate-400 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition"><Send className="w-4 h-4" /></button>
+                     <button onClick={() => toast.success('تم إرسال قسائم الرواتب عبر البريد لكل الموظفين')} title="إرسال عبر الإيميل (Auto Email)" className="p-2 text-slate-400 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition"><Send className="w-4 h-4" /></button>
                      <button title="اعتماد كشوف الرواتب" className="p-2 text-slate-400 hover:bg-emerald-50 hover:text-emerald-600 rounded-lg transition"><CheckCircle2 className="w-4 h-4" /></button>
                      <button title="التفاصيل" className="p-2 text-slate-400 hover:bg-slate-100 hover:text-slate-700 rounded-lg transition"><FileText className="w-4 h-4" /></button>
                   </td>

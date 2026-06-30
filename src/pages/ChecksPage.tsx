@@ -1,3 +1,4 @@
+import { toast } from 'react-hot-toast';
 import { useState, useEffect } from "react";
 import { FileSignature, Plus, Search, Filter, ArrowUpRight, ArrowDownLeft, Banknote, CalendarDays, Building2, User, Clock, CheckCircle2, AlertCircle, RefreshCw } from "lucide-react";
 import { clsx } from "clsx";
@@ -48,7 +49,7 @@ export function ChecksPage() {
   const handleSaveCheck = (e: React.FormEvent) => {
     e.preventDefault();
     if (!newCheck.checkNumber || !newCheck.amount || !newCheck.partyName || !newCheck.bankName) {
-      alert("الرجاء تعبئة جميع الحقول المطلوبة (رقم الشيك، المبلغ، اسم البنك، واسم الطرف الآخر)");
+      toast.error("الرجاء تعبئة جميع الحقول المطلوبة (رقم الشيك، المبلغ، اسم البنك، واسم الطرف الآخر)");
       return;
     }
     
@@ -71,7 +72,7 @@ export function ChecksPage() {
     setIsModalOpen(false);
     setNewCheck({ type: activeTab, status: "pending" });
     setStatusFilter("all"); // Reset filter so the new check appears in the table
-    alert("تم حفظ الشيك بنجاح!");
+    toast.success("تم حفظ الشيك بنجاح!");
   };
 
   const handleUpdateStatus = (id: string, newStatus: "pending" | "cleared" | "bounced") => {

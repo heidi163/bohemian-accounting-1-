@@ -1,3 +1,4 @@
+import { toast } from 'react-hot-toast';
 import { useEffect, useState } from "react";
 import { type Contact } from "../types";
 import { useNavigate } from "react-router";
@@ -129,7 +130,7 @@ export function ContactsPage() {
 
   const handleImport = () => {
     if (!importedFile) {
-      alert('يرجى اختيار ملف CSV أولاً');
+      toast.error('يرجى اختيار ملف CSV أولاً');
       return;
     }
     const reader = new FileReader();

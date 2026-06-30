@@ -1,3 +1,4 @@
+import { toast } from 'react-hot-toast';
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import { ArrowRight, Plus, Trash2 } from "lucide-react";
@@ -90,7 +91,7 @@ export function JournalCreatePage() {
     localJournals.unshift(newEntry);
     localStorage.setItem(getCompanyKey('mock_journals'), JSON.stringify(localJournals));
     
-    alert('تم حفظ قيد اليومية بنجاح!');
+    toast.success('تم حفظ قيد اليومية بنجاح!');
     navigate('/journal');
   };
 

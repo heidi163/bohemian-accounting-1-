@@ -1,3 +1,4 @@
+import { toast } from 'react-hot-toast';
 import { useState } from "react";
 import { Save, Building, Percent, Users, KeyRound, CheckCircle2, X, Palette, UploadCloud } from "lucide-react";
 import { useTheme } from "../contexts/ThemeContext";
@@ -60,7 +61,7 @@ export function SettingsPage() {
     e.preventDefault();
     if (!currentPassword || !newPassword || !confirmPassword) return;
     if (newPassword !== confirmPassword) {
-      alert("كلمة المرور الجديدة غير متطابقة");
+      toast.error("كلمة المرور الجديدة غير متطابقة");
       return;
     }
     setIsUpdatingPassword(true);

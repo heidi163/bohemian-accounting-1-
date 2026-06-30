@@ -1,3 +1,4 @@
+import { toast } from 'react-hot-toast';
 import { useEffect, useState } from "react";
 import { type TaxRecord, type TaxSummary } from "../types";
 import { clsx } from "clsx";
@@ -89,7 +90,7 @@ export function TaxesPage() {
       localStorage.setItem(getCompanyKey('mock_taxes_records'), JSON.stringify(updatedRecords));
       localStorage.setItem(getCompanyKey('mock_taxes_summary'), JSON.stringify(localSummary));
       
-      alert('تم تسجيل الدفعة بنجاح');
+      toast.success('تم تسجيل الدفعة بنجاح');
       setActiveModal(null);
       fetchTaxes();
     }, 500);
@@ -103,7 +104,7 @@ export function TaxesPage() {
         return r;
       });
       localStorage.setItem(getCompanyKey('mock_taxes_records'), JSON.stringify(updatedRecords));
-      alert('تم ترحيل الضريبة وإغلاق الفترة بنجاح');
+      toast.success('تم ترحيل الضريبة وإغلاق الفترة بنجاح');
       fetchTaxes();
     }, 500);
   };

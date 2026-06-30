@@ -1,3 +1,4 @@
+import { toast } from 'react-hot-toast';
 import { useEffect, useState } from "react";
 import { type Loan, type LoanInstallment } from "../types";
 import { clsx } from "clsx";
@@ -70,7 +71,7 @@ export function LoansPage() {
       localStorage.setItem(getCompanyKey('mock_loans'), JSON.stringify(updatedLoans));
       setLoans(updatedLoans);
       setActiveModal(null);
-      alert('تم سداد القسط بنجاح');
+      toast.success('تم سداد القسط بنجاح');
     }, 500);
   };
 

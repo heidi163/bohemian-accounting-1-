@@ -5,6 +5,7 @@
 
 import { BrowserRouter, Routes, Route } from "react-router";
 import { ThemeProvider } from "./contexts/ThemeContext";
+import { Toaster } from 'react-hot-toast';
 import { AppLayout } from "./components/AppLayout";
 import { DashboardPage } from "./pages/DashboardPage";
 import { InvoicesPage } from "./pages/InvoicesPage";
@@ -51,6 +52,7 @@ import { ChecksPage } from "./pages/ChecksPage";
 export default function App() {
   return (
     <ThemeProvider>
+      <Toaster position="top-center" toastOptions={{ style: { fontFamily: 'inherit', fontSize: '14px', borderRadius: '12px' } }} />
       <BrowserRouter>
         <Routes>
           {/* Auth Routes — no layout */}

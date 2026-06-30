@@ -1,3 +1,4 @@
+import { toast } from 'react-hot-toast';
 import { useEffect, useState } from "react";
 import { type User, type Role, type PermissionMatrix } from "../types";
 import { clsx } from "clsx";
@@ -130,7 +131,7 @@ export function UserManagementPage() {
     const role = roles.find(r => r.id === activeRoleId);
     if (!role) return;
     if (role.isSystem) {
-      alert("لا يمكن تعديل صلاحيات أدوار النظام الأساسية!");
+      toast.error("لا يمكن تعديل صلاحيات أدوار النظام الأساسية!");
       return;
     }
     const permKey = `${mod}_${action}`;
