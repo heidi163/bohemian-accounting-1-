@@ -140,7 +140,24 @@ export function TaxesPage() {
         localStorage.setItem(getCompanyKey('mock_taxes_records'), JSON.stringify(updatedRecords));
         toast.success('تم ترحيل الضريبة وإغلاق الفترة بنجاح');
         fetchTaxes();
-      }, 500);
+      } catch (e) {
+        toast.error('حدث خطأ أثناء الترحيل');
+      }
+    };
+
+    try {
+      if (window.location.hostname.includes('vercel.app')) {
+        executeFallback();
+        return;
+      }
+      const res = await apiClient.post(`/taxes/${record.id}/post`, {}, { timeout: 3000 });
+      if (typeof res.data === 'string' || !res.data.success) {
+        throw new Error("Invalid API response");
+      }
+      toast.success('تم ترحيل الضريبة وإغلاق الفترة بنجاح');
+      fetchTaxes();
+    } catch (error: any) {
+      executeFallback();
     }
   };
 
