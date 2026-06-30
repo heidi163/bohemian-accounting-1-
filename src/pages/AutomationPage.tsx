@@ -1,14 +1,20 @@
 import { useState } from "react";
 import { 
   Bot, Clock, RotateCcw, Send, Settings, Database, CloudLightning, 
-  Mail, CalendarRange, ToggleLeft, ToggleRight, PlayCircle
+  Mail, CalendarRange, ToggleLeft, ToggleRight, PlayCircle, Plus, 
+  Search, ShieldAlert, Activity, CheckCircle2, XCircle, AlertCircle, TrendingUp
 } from "lucide-react";
 import { clsx } from "clsx";
+import { SearchableSelect } from "../components/ui/SearchableSelect";
 
 export function AutomationPage() {
   const [activeTab, setActiveTab] = useState<'jobs' | 'settings'>('jobs');
   const [showAddModal, setShowAddModal] = useState(false);
   const [toastMsg, setToastMsg] = useState('');
+  
+  // Filters
+  const [searchQuery, setSearchQuery] = useState('');
+  const [statusFilter, setStatusFilter] = useState('all');
   
   // Settings State
   const [sendReport, setSendReport] = useState(true);
@@ -26,24 +32,28 @@ export function AutomationPage() {
   };
   
   const [jobs, setJobs] = useState([
-    { id: 1, name: 'تحديث أسعار الصرف', type: 'Exchange Rate Updates', schedule: 'يومياً (00:00)', status: 'active', lastRun: '2026-06-16 00:00', icon: CloudLightning },
-    { id: 2, name: 'النسخ الاحتياطي اليومي', type: 'Daily Backups', schedule: 'يومياً (02:00)', status: 'active', lastRun: '2026-06-16 02:00', icon: Database },
-    { id: 3, name: 'إرسال ملخص يومي', type: 'Daily Summary Emails', schedule: 'يومياً (08:00)', status: 'active', lastRun: '2026-06-16 08:00', icon: Mail },
-    { id: 4, name: 'إنشاء الفواتير المتكررة', type: 'Recurring Invoices', schedule: 'شهرياً (يوم 1)', status: 'active', lastRun: '2026-06-01 00:00', icon: RotateCcw },
-    { id: 5, name: 'تسجيل القيود المتكررة', type: 'Recurring Journal Entries', schedule: 'شهرياً (يوم 28)', status: 'active', lastRun: '2026-05-28 00:00', icon: RotateCcw },
-    { id: 6, name: 'حساب الإهلاك الشهري', type: 'Monthly Depreciation', schedule: 'نهاية كل شهر', status: 'active', lastRun: '2026-05-31 23:59', icon: CalendarRange },
-    { id: 7, name: 'تذكير بالمدفوعات المتأخرة', type: 'Payment Reminders', schedule: 'أسبوعياً (الأحد)', status: 'inactive', lastRun: '-', icon: Send },
+    { id: 1, name: 'تحديث أسعار الصرف', type: 'Exchange Rate Updates', schedule: 'يومياً (00:00)', status: 'active', lastRun: '2026-06-16 00:00', nextRun: '2026-06-17 00:00', lastStatus: 'success', icon: CloudLightning },
+    { id: 2, name: 'النسخ الاحتياطي اليومي', type: 'Daily Backups', schedule: 'يومياً (02:00)', status: 'active', lastRun: '2026-06-16 02:00', nextRun: '2026-06-17 02:00', lastStatus: 'success', icon: Database },
+    { id: 3, name: 'إرسال ملخص يومي', type: 'Daily Summary Emails', schedule: 'يومياً (08:00)', status: 'active', lastRun: '2026-06-16 08:00', nextRun: '2026-06-17 08:00', lastStatus: 'success', icon: Mail },
+    { id: 4, name: 'إنشاء الفواتير المتكررة', type: 'Recurring Invoices', schedule: 'شهرياً (يوم 1)', status: 'active', lastRun: '2026-06-01 00:00', nextRun: '2026-07-01 00:00', lastStatus: 'success', icon: RotateCcw },
+    { id: 5, name: 'تسجيل القيود المتكررة', type: 'Recurring Journal Entries', schedule: 'شهرياً (يوم 28)', status: 'active', lastRun: '2026-05-28 00:00', nextRun: '2026-06-28 00:00', lastStatus: 'failed', icon: RotateCcw },
+    { id: 6, name: 'حساب الإهلاك الشهري', type: 'Monthly Depreciation', schedule: 'نهاية كل شهر', status: 'active', lastRun: '2026-05-31 23:59', nextRun: '2026-06-30 23:59', lastStatus: 'pending', icon: CalendarRange },
+    { id: 7, name: 'تذكير بالمدفوعات المتأخرة', type: 'Payment Reminders', schedule: 'أسبوعياً (الأحد)', status: 'inactive', lastRun: '-', nextRun: '-', lastStatus: 'pending', icon: Send },
   ]);
 
   const toggleStatus = (id: number) => {
     setJobs(jobs.map(job => 
-      job.id === id ? { ...job, status: job.status === 'active' ? 'inactive' : 'active' } : job
+      job.id === id ? { 
+        ...job, 
+        status: job.status === 'active' ? 'inactive' : 'active',
+        nextRun: job.status === 'active' ? '-' : 'تلقائي بناءً على الجدول'
+      } : job
     ));
     showToast('تم تحديث حالة المهمة المجدولة بنجاح');
   };
 
   const triggerJob = (name: string) => {
-    showToast(`تم تشغيل ${name} يدوياً بنجاح`);
+    showToast(`تم بدء تشغيل (${name}) يدوياً... يرجى الانتظار`);
   };
 
   const handleAddJob = (e: React.FormEvent) => {
@@ -57,6 +67,8 @@ export function AutomationPage() {
       schedule: newTaskSchedule,
       status: 'active',
       lastRun: '-',
+      nextRun: 'قريباً',
+      lastStatus: 'pending',
       icon: Settings
     };
     
@@ -66,19 +78,43 @@ export function AutomationPage() {
     showToast('تمت إضافة المهمة المجدولة بنجاح');
   };
 
+  const normalizeArabic = (text: string) => {
+    if (!text) return '';
+    return text.replace(/[أإآ]/g, 'ا').replace(/[ةه]/g, 'ه').replace(/[ىي]/g, 'ي').toLowerCase();
+  };
+
+  const filteredJobs = jobs.filter(job => {
+    const q = normalizeArabic(searchQuery);
+    const matchesSearch = 
+       normalizeArabic(job.name).includes(q) || 
+       normalizeArabic(job.type).includes(q);
+       
+    const matchesStatus = statusFilter === 'all' || job.status === statusFilter;
+    
+    return matchesSearch && matchesStatus;
+  });
+
+  const activeJobsCount = jobs.filter(j => j.status === 'active').length;
+  const failedJobsCount = jobs.filter(j => j.lastStatus === 'failed').length;
+
   return (
-    <div className="space-y-6">
-      <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-        <div>
-          <h2 className="font-bold text-slate-800 text-2xl flex items-center gap-2"><Bot className="w-7 h-7 text-primary-600"/> الأتمتة والمهام المجدولة (Automation)</h2>
-          <p className="text-slate-500 mt-1">إدارة المهام التلقائية (Cron Jobs)، التنبيهات، والعمليات الدورية.</p>
+    <div className="space-y-6 animate-in fade-in duration-500">
+      <div className="bg-white rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] border-0 p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 relative overflow-hidden">
+        <div className="absolute top-0 start-0 w-2 h-full bg-primary-500"></div>
+        <div className="ps-2">
+          <h2 className="font-black text-slate-800 text-2xl flex items-center gap-3">
+            <Bot className="w-8 h-8 text-primary-600"/> 
+            الأتمتة والمهام المجدولة 
+            <span className="text-slate-400 font-medium text-lg hidden sm:inline-block">/ Automation</span>
+          </h2>
+          <p className="text-slate-500 mt-2 font-medium">إدارة العمليات الدورية (Cron Jobs) وتشغيل المهام في الخلفية لضمان كفاءة النظام.</p>
         </div>
-        <div className="flex bg-slate-100 p-1 rounded-xl">
+        <div className="flex bg-slate-100 p-1.5 rounded-2xl w-full md:w-auto">
            <button
               onClick={() => setActiveTab('jobs')}
               className={clsx(
-                 "px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-2 transition",
-                 activeTab === 'jobs' ? "bg-white text-primary-700 shadow-sm" : "text-slate-500 hover:text-slate-700"
+                 "flex-1 md:flex-none px-6 py-2.5 rounded-xl text-sm font-bold flex items-center justify-center gap-2 transition-all",
+                 activeTab === 'jobs' ? "bg-white text-primary-700 shadow-sm" : "text-slate-500 hover:text-slate-700 hover:bg-slate-200/50"
               )}
            >
               <Clock className="w-4 h-4"/> المهام المجدولة
@@ -86,133 +122,293 @@ export function AutomationPage() {
            <button
               onClick={() => setActiveTab('settings')}
               className={clsx(
-                 "px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-2 transition",
-                 activeTab === 'settings' ? "bg-white text-primary-700 shadow-sm" : "text-slate-500 hover:text-slate-700"
+                 "flex-1 md:flex-none px-6 py-2.5 rounded-xl text-sm font-bold flex items-center justify-center gap-2 transition-all",
+                 activeTab === 'settings' ? "bg-white text-primary-700 shadow-sm" : "text-slate-500 hover:text-slate-700 hover:bg-slate-200/50"
               )}
            >
-              <Settings className="w-4 h-4"/> إعدادات الأتمتة
+              <Settings className="w-4 h-4"/> الإعدادات
            </button>
         </div>
       </div>
 
       {activeTab === 'jobs' && (
-        <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-          <div className="p-4 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
-            <h3 className="font-bold text-slate-800 text-lg">قائمة المهام التلقائية (Cron Jobs)</h3>
+        <div className="space-y-6 animate-in slide-in-from-bottom-4 duration-500">
+          
+          {/* Metrics Dashboard */}
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div className="bg-white rounded-3xl p-5 shadow-[0_4px_24px_rgb(0,0,0,0.02)] border border-slate-100 flex items-center gap-4">
+              <div className="w-12 h-12 bg-primary-50 rounded-2xl flex items-center justify-center shrink-0">
+                <Activity className="w-6 h-6 text-primary-600" />
+              </div>
+              <div>
+                <p className="text-sm text-slate-500 font-bold">مهام نشطة حالياً</p>
+                <p className="text-2xl font-black text-slate-800">{activeJobsCount}</p>
+              </div>
+            </div>
+            
+            <div className="bg-white rounded-3xl p-5 shadow-[0_4px_24px_rgb(0,0,0,0.02)] border border-slate-100 flex items-center gap-4 group hover:border-rose-200 transition-colors">
+              <div className="w-12 h-12 bg-rose-50 rounded-2xl flex items-center justify-center shrink-0 group-hover:bg-rose-100 transition-colors">
+                <ShieldAlert className="w-6 h-6 text-rose-600" />
+              </div>
+              <div>
+                <p className="text-sm text-slate-500 font-bold">مهام فشلت (آخر 24س)</p>
+                <p className="text-2xl font-black text-rose-600">{failedJobsCount}</p>
+              </div>
+            </div>
+
+            <div className="bg-white rounded-3xl p-5 shadow-[0_4px_24px_rgb(0,0,0,0.02)] border border-slate-100 flex items-center gap-4">
+              <div className="w-12 h-12 bg-amber-50 rounded-2xl flex items-center justify-center shrink-0">
+                <Clock className="w-6 h-6 text-amber-600" />
+              </div>
+              <div>
+                <p className="text-sm text-slate-500 font-bold">المهمة القادمة</p>
+                <p className="text-sm font-black text-slate-800 mt-1 truncate">00:00 (تحديث الصرف)</p>
+              </div>
+            </div>
+
+            <div className="bg-white rounded-3xl p-5 shadow-[0_4px_24px_rgb(0,0,0,0.02)] border border-slate-100 flex items-center gap-4">
+              <div className="w-12 h-12 bg-emerald-50 rounded-2xl flex items-center justify-center shrink-0">
+                <TrendingUp className="w-6 h-6 text-emerald-600" />
+              </div>
+              <div>
+                <p className="text-sm text-slate-500 font-bold">نسبة نجاح الأتمتة</p>
+                <p className="text-2xl font-black text-slate-800">99.8%</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Filters Bar */}
+          <div className="flex flex-col xl:flex-row justify-between items-stretch xl:items-center bg-white p-5 rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] border-0 gap-4">
+            <div className="flex flex-col md:flex-row items-center gap-4 w-full xl:max-w-2xl">
+              <div className="relative flex-1 w-full">
+                <Search className="w-5 h-5 absolute end-4 top-1/2 -translate-y-1/2 text-slate-400" />
+                <input 
+                  type="text" 
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="بحث عن مهمة (مثال: Backup)..." 
+                  className="w-full bg-slate-50 border border-slate-100 rounded-2xl pe-12 ps-5 py-3.5 focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all font-medium text-slate-700"
+                />
+              </div>
+              <div className="w-full md:w-56 z-50">
+                 <SearchableSelect 
+                   value={statusFilter}
+                   onChange={setStatusFilter}
+                   options={[
+                     { value: 'all', label: 'كل الحالات' },
+                     { value: 'active', label: 'نشط (Active)' },
+                     { value: 'inactive', label: 'متوقف (Inactive)' }
+                   ]}
+                   allowCreate={false}
+                   className="w-full"
+                 />
+              </div>
+            </div>
             <button 
               onClick={() => setShowAddModal(true)} 
-              className="bg-primary-600 text-white font-bold py-2 px-4 rounded-xl flex items-center gap-2 hover:bg-primary-700 transition text-sm"
+              className="bg-primary-600 text-white font-bold py-3.5 px-6 rounded-2xl flex items-center justify-center gap-2 hover:bg-primary-700 transition whitespace-nowrap shadow-lg shadow-primary-600/20"
             >
-              + إضافة مهمة مجدولة
+              <Plus className="w-5 h-5" /> إضافة مهمة مجدولة
             </button>
           </div>
-          <div className="overflow-x-auto">
-            <table className="w-full text-start text-sm">
-              <thead className="bg-slate-50 text-slate-400 font-bold uppercase text-[10px] border-b border-slate-100">
-                <tr>
-                  <th className="px-6 py-4 text-start">المهمة (Task)</th>
-                  <th className="px-6 py-4 text-start">النوع (Type)</th>
-                  <th className="px-6 py-4 text-start">الجدول الزمني (Schedule)</th>
-                  <th className="px-6 py-4 text-start">آخر تشغيل (Last Run)</th>
-                  <th className="px-6 py-4 text-center">التفعيل</th>
-                  <th className="px-6 py-4 text-end">إجراء يدوي</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100">
-                {jobs.map(job => (
-                  <tr key={job.id} className="hover:bg-slate-50 transition">
-                    <td className="px-6 py-4 font-bold text-slate-800 flex items-center gap-3">
-                      <div className="p-2 bg-slate-100 rounded-lg text-primary-600">
-                        <job.icon className="w-4 h-4" />
-                      </div>
-                      {job.name}
-                    </td>
-                    <td className="px-6 py-4 font-mono text-xs text-slate-500">{job.type}</td>
-                    <td className="px-6 py-4">
-                      <span className="bg-primary-50 text-primary-600 px-2 py-1 rounded text-xs font-bold">{job.schedule}</span>
-                    </td>
-                    <td className="px-6 py-4 text-slate-500 font-mono text-xs">{job.lastRun}</td>
-                    <td className="px-6 py-4 text-center">
-                      <button onClick={() => toggleStatus(job.id)} className="text-slate-400 hover:text-primary-600 transition">
-                        {job.status === 'active' ? (
-                          <ToggleRight className="w-8 h-8 text-emerald-500" />
-                        ) : (
-                          <ToggleLeft className="w-8 h-8 text-slate-300" />
-                        )}
-                      </button>
-                    </td>
-                    <td className="px-6 py-4 text-end">
-                      <button 
-                        onClick={() => triggerJob(job.name)}
-                        className="text-primary-600 hover:bg-primary-50 px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1 ms-auto"
-                      >
-                        <PlayCircle className="w-4 h-4" /> تشغيل الآن
-                      </button>
-                    </td>
+
+          {/* Table */}
+          <div className="bg-white rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] border-0 overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full text-start">
+                <thead className="bg-slate-50/50">
+                  <tr>
+                    <th className="px-6 py-5 text-start text-xs font-bold text-slate-500 uppercase tracking-wider">المهمة (Task)</th>
+                    <th className="px-6 py-5 text-start text-xs font-bold text-slate-500 uppercase tracking-wider">الجدول الزمني</th>
+                    <th className="px-6 py-5 text-start text-xs font-bold text-slate-500 uppercase tracking-wider">آخر تشغيل</th>
+                    <th className="px-6 py-5 text-start text-xs font-bold text-slate-500 uppercase tracking-wider">التشغيل القادم</th>
+                    <th className="px-6 py-5 text-center text-xs font-bold text-slate-500 uppercase tracking-wider">الحالة</th>
+                    <th className="px-6 py-5 text-end text-xs font-bold text-slate-500 uppercase tracking-wider">إجراء يدوي</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody className="divide-y divide-slate-100">
+                  {filteredJobs.length > 0 ? (
+                     filteredJobs.map(job => (
+                       <tr key={job.id} className="hover:bg-slate-50/80 transition-colors group">
+                         <td className="px-6 py-4">
+                           <div className="flex items-center gap-3">
+                             <div className="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center text-slate-500 group-hover:bg-primary-50 group-hover:text-primary-600 transition-colors">
+                               <job.icon className="w-5 h-5" />
+                             </div>
+                             <div>
+                               <div className="font-bold text-slate-800">{job.name}</div>
+                               <div className="font-mono text-xs text-slate-400 mt-0.5">{job.type}</div>
+                             </div>
+                           </div>
+                         </td>
+                         <td className="px-6 py-4">
+                           <span className="bg-slate-100 text-slate-600 px-3 py-1.5 rounded-lg text-xs font-bold border border-slate-200/60">
+                             {job.schedule}
+                           </span>
+                         </td>
+                         <td className="px-6 py-4">
+                           <div className="flex items-center gap-2">
+                              {job.lastStatus === 'success' && <div className="w-2 h-2 rounded-full bg-emerald-500" title="تم بنجاح"></div>}
+                              {job.lastStatus === 'failed' && <div className="w-2 h-2 rounded-full bg-rose-500 animate-pulse" title="فشل"></div>}
+                              {job.lastStatus === 'pending' && <div className="w-2 h-2 rounded-full bg-slate-300" title="لم يعمل بعد"></div>}
+                              <span className="font-mono text-slate-500 text-xs">{job.lastRun}</span>
+                           </div>
+                         </td>
+                         <td className="px-6 py-4 font-mono text-slate-500 text-xs bg-slate-50/50 rounded-lg group-hover:bg-white transition-colors">
+                           {job.nextRun}
+                         </td>
+                         <td className="px-6 py-4 text-center">
+                           <button onClick={() => toggleStatus(job.id)} className="transition hover:scale-105 active:scale-95 inline-flex">
+                             {job.status === 'active' ? (
+                               <ToggleRight className="w-10 h-10 text-emerald-500" />
+                             ) : (
+                               <ToggleLeft className="w-10 h-10 text-slate-300" />
+                             )}
+                           </button>
+                         </td>
+                         <td className="px-6 py-4 text-end">
+                           <button 
+                             onClick={() => triggerJob(job.name)}
+                             className="text-primary-600 bg-primary-50 hover:bg-primary-100 px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 ms-auto"
+                           >
+                             <PlayCircle className="w-4 h-4" /> تشغيل الآن
+                           </button>
+                         </td>
+                       </tr>
+                     ))
+                  ) : (
+                     <tr>
+                        <td colSpan={6} className="px-6 py-20 text-center">
+                          <div className="flex flex-col items-center justify-center text-slate-400 space-y-4">
+                            <Search className="w-12 h-12 opacity-20" />
+                            <span className="font-bold text-lg">لا توجد مهام مطابقة للبحث أو الفلترة</span>
+                          </div>
+                        </td>
+                     </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       )}
 
       {activeTab === 'settings' && (
-        <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-          <p className="text-slate-500 text-sm">إعدادات متقدمة للتحكم في قواعد الأتمتة وصلاحيات إرسال التنبيهات.</p>
-          <div className="mt-6 space-y-4 max-w-md">
-            <div>
-              <label className="block text-sm font-bold text-slate-700 mb-1">البريد الإلكتروني للإشعارات</label>
-              <input type="email" value={email} onChange={e => setEmail(e.target.value)} className="w-full border border-slate-200 rounded-xl px-4 py-2 outline-none focus:border-primary-500 bg-slate-50 text-left dir-ltr" />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 animate-in slide-in-from-bottom-4 duration-500">
+          <div className="bg-white p-8 rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] border-0 space-y-6">
+            <h3 className="font-black text-xl text-slate-800 mb-2">إعدادات الإشعارات والتنبيهات</h3>
+            <p className="text-slate-500 text-sm font-medium mb-6">تحكم في من يتلقى التنبيهات في حال فشل أي مهمة مجدولة.</p>
+            
+            <div className="space-y-6">
+              <div>
+                <label className="block text-sm font-bold text-slate-700 mb-2">البريد الإلكتروني للإشعارات</label>
+                <input 
+                  type="email" 
+                  value={email} 
+                  onChange={e => setEmail(e.target.value)} 
+                  className="w-full border border-slate-200 rounded-2xl px-5 py-3.5 outline-none focus:border-primary-500 bg-slate-50 text-left dir-ltr font-medium text-slate-700 transition-colors" 
+                />
+              </div>
+              
+              <div className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-100">
+                <div>
+                  <span className="block text-sm font-bold text-slate-700">تنبيهات المهام الفاشلة</span>
+                  <span className="block text-xs font-medium text-slate-500 mt-1">إرسال تقرير فور فشل أي مهمة (مثل تعذر النسخ الاحتياطي).</span>
+                </div>
+                <button onClick={() => setSendReport(!sendReport)} className="transition hover:scale-105 active:scale-95 shrink-0">
+                  {sendReport ? <ToggleRight className="w-10 h-10 text-emerald-500" /> : <ToggleLeft className="w-10 h-10 text-slate-300" />}
+                </button>
+              </div>
+              
+              <div className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-100">
+                <div>
+                  <span className="block text-sm font-bold text-slate-700">سجل المهام (Log Retention)</span>
+                  <span className="block text-xs font-medium text-slate-500 mt-1">الاحتفاظ بسجلات المهام القديمة لمدة 30 يوماً.</span>
+                </div>
+                <button onClick={() => setKeepLogs(!keepLogs)} className="transition hover:scale-105 active:scale-95 shrink-0">
+                  {keepLogs ? <ToggleRight className="w-10 h-10 text-emerald-500" /> : <ToggleLeft className="w-10 h-10 text-slate-300" />}
+                </button>
+              </div>
             </div>
-            <div className="flex items-center gap-3">
-              <button onClick={() => setSendReport(!sendReport)} className="text-slate-400 hover:text-primary-600 transition">
-                {sendReport ? <ToggleRight className="w-8 h-8 text-emerald-500" /> : <ToggleLeft className="w-8 h-8 text-slate-300" />}
+            
+            <div className="pt-6 border-t border-slate-100 mt-8">
+              <button 
+                onClick={() => showToast('تم حفظ إعدادات الأتمتة بنجاح')} 
+                className="w-full bg-slate-900 text-white font-bold py-4 px-6 rounded-2xl hover:bg-slate-800 transition shadow-lg shadow-slate-900/20"
+              >
+                حفظ التغييرات
               </button>
-              <span className="text-sm font-bold text-slate-700 cursor-pointer select-none" onClick={() => setSendReport(!sendReport)}>إرسال تقرير بالمهام الفاشلة فوراً</span>
-            </div>
-            <div className="flex items-center gap-3">
-              <button onClick={() => setKeepLogs(!keepLogs)} className="text-slate-400 hover:text-primary-600 transition">
-                {keepLogs ? <ToggleRight className="w-8 h-8 text-emerald-500" /> : <ToggleLeft className="w-8 h-8 text-slate-300" />}
-              </button>
-              <span className="text-sm font-bold text-slate-700 cursor-pointer select-none" onClick={() => setKeepLogs(!keepLogs)}>الاحتفاظ بسجلات المهام لمدة 30 يوماً</span>
             </div>
           </div>
-          <div className="mt-6 flex items-center gap-4 border-t border-slate-100 pt-6">
-            <button onClick={() => showToast('تم حفظ إعدادات الأتمتة بنجاح ')} className="bg-primary-600 text-white font-bold py-2 px-6 rounded-xl hover:bg-primary-700 transition">حفظ التغييرات</button>
+          
+          <div className="bg-slate-50 p-8 rounded-3xl border border-slate-200/60 flex flex-col items-center justify-center text-center space-y-4">
+             <div className="w-20 h-20 bg-primary-100 text-primary-600 rounded-full flex items-center justify-center mb-2">
+               <Settings className="w-10 h-10 animate-[spin_6s_linear_infinite]" />
+             </div>
+             <h3 className="font-black text-xl text-slate-800">جاهزية النظام (System Health)</h3>
+             <p className="text-slate-500 text-sm font-medium leading-relaxed max-w-sm">
+               خدمة الجدولة تعمل بكفاءة على الخادم، وجميع الإعدادات يتم مراقبتها لحظياً لضمان عدم تعطل أي عملية أتمتة دورية.
+             </p>
+             <div className="mt-4 px-4 py-2 bg-emerald-100 text-emerald-700 rounded-xl text-xs font-bold flex items-center gap-2">
+               <CheckCircle2 className="w-4 h-4" /> الأتمتة تعمل بنسبة 100%
+             </div>
           </div>
         </div>
       )}
 
       {showAddModal && (
-        <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-900/50 backdrop-blur-sm text-center p-4 sm:p-0">
-          <span className="hidden sm:inline-block sm:h-screen sm:align-middle" aria-hidden="true">&#8203;</span>
-          <div className="inline-block align-bottom bg-white rounded-2xl text-start overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle w-full max-w-md">
-            <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50">
-              <h3 className="font-bold text-xl text-slate-800">إضافة مهمة مجدولة جديدة</h3>
+         <div className="fixed inset-0 z-[999] overflow-y-auto bg-slate-900/60 backdrop-blur-sm text-center p-4 flex items-center justify-center animate-in fade-in duration-200">
+          <div className="bg-white rounded-3xl text-start overflow-visible shadow-2xl w-full max-w-md animate-in zoom-in-95 duration-200">
+            <div className="p-6 border-b border-slate-50 flex justify-between items-center bg-slate-50/50">
+              <h3 className="font-black text-xl text-slate-800 flex items-center gap-3">
+                <div className="w-10 h-10 bg-primary-100 text-primary-600 rounded-xl flex items-center justify-center">
+                  <Plus className="w-5 h-5" />
+                </div>
+                إضافة مهمة مجدولة جديدة
+              </h3>
             </div>
-            <form onSubmit={handleAddJob} className="p-6 space-y-4">
+            <form onSubmit={handleAddJob} className="p-6 space-y-5">
               <div>
-                <label className="block text-sm font-bold text-slate-700 mb-1">اسم المهمة</label>
-                <input required type="text" value={newTaskName} onChange={e => setNewTaskName(e.target.value)} placeholder="مثال: إرسال تقارير المبيعات" className="w-full border border-slate-200 rounded-xl px-4 py-2.5 outline-none focus:border-primary-500 bg-slate-50" />
+                <label className="block text-sm font-bold text-slate-700 mb-2">اسم المهمة (Task Name)</label>
+                <input 
+                  required 
+                  type="text" 
+                  value={newTaskName} 
+                  onChange={e => setNewTaskName(e.target.value)} 
+                  placeholder="مثال: إرسال تقارير المبيعات" 
+                  className="w-full border border-slate-200 rounded-2xl px-5 py-3.5 outline-none focus:border-primary-500 bg-slate-50 font-medium transition-colors" 
+                />
               </div>
               <div>
-                <label className="block text-sm font-bold text-slate-700 mb-1">نوع المهمة (البرمجية)</label>
-                <input required type="text" value={newTaskType} onChange={e => setNewTaskType(e.target.value)} placeholder="مثال: Sales Report Email" className="w-full border border-slate-200 rounded-xl px-4 py-2.5 outline-none focus:border-primary-500 bg-slate-50 dir-ltr text-left" />
+                <label className="block text-sm font-bold text-slate-700 mb-2">نوع المهمة البرمجية (Script / Type)</label>
+                <input 
+                  required 
+                  type="text" 
+                  value={newTaskType} 
+                  onChange={e => setNewTaskType(e.target.value)} 
+                  placeholder="مثال: Sales Report Email" 
+                  className="w-full border border-slate-200 rounded-2xl px-5 py-3.5 outline-none focus:border-primary-500 bg-slate-50 dir-ltr text-left font-mono text-sm transition-colors" 
+                />
               </div>
-              <div>
-                <label className="block text-sm font-bold text-slate-700 mb-1">الجدول الزمني (Cron)</label>
-                <select value={newTaskSchedule} onChange={e => setNewTaskSchedule(e.target.value)} className="w-full border border-slate-200 rounded-xl px-4 py-2.5 outline-none focus:border-primary-500 bg-slate-50 font-bold">
-                  <option value="كل ساعة (00:00)">كل ساعة (00:00)</option>
-                  <option value="يومياً (00:00)">يومياً (00:00)</option>
-                  <option value="أسبوعياً (الأحد)">أسبوعياً (الأحد)</option>
-                  <option value="شهرياً (يوم 1)">شهرياً (يوم 1)</option>
-                  <option value="عند الطلب فقط">عند الطلب فقط (On Demand)</option>
-                </select>
+              <div className="relative z-50">
+                <label className="block text-sm font-bold text-slate-700 mb-2">الجدول الزمني (Schedule)</label>
+                <SearchableSelect 
+                  value={newTaskSchedule}
+                  onChange={setNewTaskSchedule}
+                  options={[
+                    { value: 'كل ساعة (00:00)', label: 'كل ساعة (00:00)' },
+                    { value: 'يومياً (00:00)', label: 'يومياً (00:00)' },
+                    { value: 'أسبوعياً (الأحد)', label: 'أسبوعياً (الأحد)' },
+                    { value: 'شهرياً (يوم 1)', label: 'شهرياً (يوم 1)' },
+                    { value: 'عند الطلب فقط', label: 'عند الطلب فقط (On Demand)' },
+                  ]}
+                  allowCreate={true}
+                  className="w-full"
+                />
               </div>
-              <div className="pt-4 flex gap-3">
-                <button type="button" onClick={() => setShowAddModal(false)} className="flex-1 py-3 px-4 rounded-xl font-bold border border-slate-200 text-slate-600 hover:bg-slate-50 transition">إلغاء</button>
-                <button type="submit" className="flex-1 py-3 px-4 rounded-xl font-bold bg-primary-600 text-white hover:bg-primary-700 transition">
+              <div className="pt-6 flex gap-3">
+                <button type="button" onClick={() => setShowAddModal(false)} className="flex-1 py-4 px-4 rounded-2xl font-bold border border-slate-200 text-slate-600 hover:bg-slate-50 transition">إلغاء</button>
+                <button type="submit" className="flex-1 py-4 px-4 rounded-2xl font-bold bg-primary-600 text-white hover:bg-primary-700 transition shadow-lg shadow-primary-600/20">
                   إضافة المهمة
                 </button>
               </div>
@@ -222,8 +418,8 @@ export function AutomationPage() {
       )}
 
       {toastMsg && (
-        <div className="fixed bottom-10 start-1/2 -translate-x-1/2 bg-slate-900 text-white px-6 py-3 rounded-xl text-sm font-bold shadow-2xl z-[9999] whitespace-nowrap flex items-center gap-2">
-          <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></div>
+        <div className="fixed bottom-10 start-1/2 -translate-x-1/2 bg-slate-900 text-white px-6 py-4 rounded-2xl text-sm font-bold shadow-2xl z-[9999] whitespace-nowrap flex items-center gap-3 animate-in slide-in-from-bottom-5">
+          <div className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></div>
           {toastMsg}
         </div>
       )}
