@@ -747,7 +747,7 @@ export function SettingsPage() {
                 localStorage.setItem(getCompanyKey('mock_users'), JSON.stringify(nextUsers));
                 setIsUserModalOpen(false);
               }} 
-              className="p-6 space-y-5"
+              className="p-6 space-y-5 max-h-[75vh] overflow-y-auto"
             >
               <div>
                 <label className="block text-sm font-bold text-slate-700 mb-2">الاسم بالكامل</label>
@@ -844,7 +844,7 @@ export function SettingsPage() {
                 </button>
                 <button 
                   type="submit"
-                  className="flex-2 bg-emerald-600 text-white py-3.5 px-6 rounded-2xl text-sm font-bold hover:bg-emerald-700 shadow-lg shadow-emerald-600/20 active:scale-95 transition-all"
+                  className="flex-[2] bg-emerald-600 text-white py-3.5 px-6 rounded-2xl text-sm font-bold hover:bg-emerald-700 shadow-lg shadow-emerald-600/20 active:scale-95 transition-all"
                 >
                   {editingUserId ? 'حفظ التعديلات' : 'حفظ وإضافة المستخدم'}
                 </button>
