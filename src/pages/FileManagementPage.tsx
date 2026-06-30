@@ -1,11 +1,17 @@
 import { toast } from 'react-hot-toast';
 import { useState, useRef } from "react";
-import { FolderOpen, FileText, UploadCloud, File, Download, Link as LinkIcon, Trash2, Search, Filter } from "lucide-react";
+import { 
+  FolderOpen, FileText, UploadCloud, File, Download, Link as LinkIcon, 
+  Trash2, Search, ShieldCheck, HardDrive, Files, Paperclip, 
+  FileImage, FileSpreadsheet
+} from "lucide-react";
 import { clsx } from "clsx";
+import { SearchableSelect } from "../components/ui/SearchableSelect";
 
 export function FileManagementPage() {
   const [activeTab, setActiveTab] = useState<'all' | 'invoices' | 'reports' | 'employees'>('all');
   const [searchQuery, setSearchQuery] = useState('');
+  const [typeFilter, setTypeFilter] = useState('all');
   const [toastMsg, setToastMsg] = useState('');
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -15,19 +21,27 @@ export function FileManagementPage() {
   };
 
   const [files, setFiles] = useState([
-    { id: 1, name: 'Invoice_1024.pdf', type: 'Invoice PDFs', size: '2.4 MB', date: '2026-06-16', linkedTo: 'فاتورة #1024', tab: 'invoices' },
-    { id: 2, name: 'Q1_Financial_Report.xlsx', type: 'Report Exports', size: '1.1 MB', date: '2026-06-15', linkedTo: '-', tab: 'reports' },
-    { id: 3, name: 'Employee_Contract_Ahmed.pdf', type: 'Employee Documents', size: '3.5 MB', date: '2026-06-10', linkedTo: 'أحمد محمود', tab: 'employees' },
-    { id: 4, name: 'Receipt_0051.jpg', type: 'Attachments', size: '800 KB', date: '2026-06-09', linkedTo: 'مصروفات مكتبية', tab: 'all' },
+    { id: 1, name: 'Invoice_1024.pdf', type: 'Invoice PDFs', format: 'pdf', size: '2.4 MB', date: '2026-06-16', linkedTo: 'فاتورة #1024', tab: 'invoices' },
+    { id: 2, name: 'Q1_Financial_Report.xlsx', type: 'Report Exports', format: 'excel', size: '1.1 MB', date: '2026-06-15', linkedTo: '-', tab: 'reports' },
+    { id: 3, name: 'Employee_Contract_Ahmed.pdf', type: 'Employee Documents', format: 'pdf', size: '3.5 MB', date: '2026-06-10', linkedTo: 'أحمد محمود', tab: 'employees' },
+    { id: 4, name: 'Receipt_0051.jpg', type: 'Attachments', format: 'image', size: '800 KB', date: '2026-06-09', linkedTo: 'مصروفات مكتبية', tab: 'all' },
   ]);
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      // Determine format based on extension
+      const ext = file.name.split('.').pop()?.toLowerCase();
+      let format = 'document';
+      if (['pdf'].includes(ext || '')) format = 'pdf';
+      if (['jpg', 'jpeg', 'png'].includes(ext || '')) format = 'image';
+      if (['xlsx', 'xls', 'csv'].includes(ext || '')) format = 'excel';
+
       const newFile = {
         id: Date.now(),
         name: file.name,
         type: 'Attachments',
+        format,
         size: `${(file.size / 1024 / 1024).toFixed(2)} MB`,
         date: new Date().toISOString().split('T')[0],
         linkedTo: '-',
@@ -72,7 +86,7 @@ Exported On  : ${new Date().toLocaleString('ar-EG')}
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `${file.name}.txt`;
+    a.download = `${file.name}.txt`; // Mock download
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -83,23 +97,54 @@ Exported On  : ${new Date().toLocaleString('ar-EG')}
 
   const filteredFiles = files.filter(f => {
     const matchesTab = activeTab === 'all' ? true : f.tab === activeTab;
+    const matchesType = typeFilter === 'all' ? true : f.type === typeFilter;
     const matchesSearch = normalizeText(f.name).includes(normalizeText(searchQuery)) || normalizeText(f.linkedTo).includes(normalizeText(searchQuery));
-    return matchesTab && matchesSearch;
+    return matchesTab && matchesType && matchesSearch;
   });
 
   const tabs = [
-    { id: 'all', name: 'كل الملفات (Attachments)', icon: FolderOpen },
-    { id: 'invoices', name: 'فواتير (Invoice PDFs)', icon: FileText },
-    { id: 'reports', name: 'تقارير (Report Exports)', icon: File },
+    { id: 'all', name: 'كل الملفات', icon: FolderOpen },
+    { id: 'invoices', name: 'الفواتير', icon: FileText },
+    { id: 'reports', name: 'التقارير', icon: FileSpreadsheet },
     { id: 'employees', name: 'مستندات الموظفين', icon: File },
   ] as const;
 
+  const getFileIcon = (format: string) => {
+    switch (format) {
+      case 'pdf': return <FileText className="w-5 h-5 text-rose-500" />;
+      case 'excel': return <FileSpreadsheet className="w-5 h-5 text-emerald-500" />;
+      case 'image': return <FileImage className="w-5 h-5 text-sky-500" />;
+      default: return <File className="w-5 h-5 text-slate-400" />;
+    }
+  };
+
+  const getFileIconBg = (format: string) => {
+    switch (format) {
+      case 'pdf': return "bg-rose-50 group-hover:bg-rose-100 text-rose-600";
+      case 'excel': return "bg-emerald-50 group-hover:bg-emerald-100 text-emerald-600";
+      case 'image': return "bg-sky-50 group-hover:bg-sky-100 text-sky-600";
+      default: return "bg-slate-50 group-hover:bg-slate-100 text-slate-500";
+    }
+  };
+
+  // Metrics Calculations
+  const totalFiles = files.length;
+  const linkedFilesCount = files.filter(f => f.linkedTo !== '-').length;
+  const linkedPercentage = totalFiles === 0 ? 0 : Math.round((linkedFilesCount / totalFiles) * 100);
+
   return (
-    <div className="space-y-6">
-      <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-        <div>
-          <h2 className="font-bold text-slate-800 text-2xl flex items-center gap-2"><FolderOpen className="w-7 h-7 text-primary-600"/> إدارة الملفات (File Management)</h2>
-          <p className="text-slate-500 mt-1">إدارة المرفقات، المستندات، التقارير المصدرة، والسجلات المرتبطة (Linked Records).</p>
+    <div className="space-y-6 animate-in fade-in duration-500">
+      
+      {/* Header */}
+      <div className="bg-white rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] border-0 p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 relative overflow-hidden">
+        <div className="absolute top-0 start-0 w-2 h-full bg-primary-500"></div>
+        <div className="ps-2">
+          <h2 className="font-black text-slate-800 text-2xl flex items-center gap-3">
+            <FolderOpen className="w-8 h-8 text-primary-600"/> 
+            إدارة الملفات 
+            <span className="text-slate-400 font-medium text-lg hidden sm:inline-block">/ File Management</span>
+          </h2>
+          <p className="text-slate-500 mt-2 font-medium">الأرشيف الرقمي والمستندات المرتبطة بالقيود والفواتير.</p>
         </div>
         <div>
           <input 
@@ -110,107 +155,185 @@ Exported On  : ${new Date().toLocaleString('ar-EG')}
           />
           <button 
              onClick={() => fileInputRef.current?.click()}
-             className="bg-primary-600 text-white font-bold py-2 px-6 rounded-xl flex items-center gap-2 hover:bg-primary-700 transition shadow-sm"
+             className="bg-primary-600 text-white font-bold py-3.5 px-6 rounded-2xl flex items-center gap-2 hover:bg-primary-700 transition shadow-lg shadow-primary-600/20 whitespace-nowrap"
           >
-             <UploadCloud className="w-5 h-5"/> رفع ملف (Upload Files)
+             <UploadCloud className="w-5 h-5"/> رفع ملف جديد
           </button>
         </div>
       </div>
 
-      <div className="flex bg-slate-100 p-1 rounded-xl w-max overflow-x-auto">
-        {tabs.map(tab => (
-           <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={clsx(
-                 "px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-2 transition whitespace-nowrap",
-                 activeTab === tab.id ? "bg-white text-primary-700 shadow-sm" : "text-slate-500 hover:text-slate-700"
-              )}
-           >
-              <tab.icon className="w-4 h-4"/> {tab.name}
-           </button>
-        ))}
-      </div>
-
-      <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-        <div className="p-4 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
-          <div className="relative w-full max-w-md">
-            <Search className="w-5 h-5 absolute end-3 top-1/2 -translate-y-1/2 text-slate-400" />
-            <input 
-              type="text" 
-              value={searchQuery}
-              onChange={e => setSearchQuery(e.target.value)}
-              placeholder="بحث باسم الملف أو السجل المرتبط..." 
-              className="w-full bg-white border border-slate-200 rounded-xl pe-10 ps-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all text-sm"
-            />
+      {/* Storage Metrics */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 animate-in slide-in-from-bottom-4 duration-500 delay-75">
+        <div className="bg-white rounded-3xl p-5 shadow-[0_4px_24px_rgb(0,0,0,0.02)] border border-slate-100 flex items-center gap-4">
+          <div className="w-12 h-12 bg-indigo-50 rounded-2xl flex items-center justify-center shrink-0">
+            <HardDrive className="w-6 h-6 text-indigo-600" />
           </div>
-          <button 
-            onClick={() => toast.success('تم تطبيق الفلتر بنجاح')} 
-            className="p-2 border border-slate-200 bg-white rounded-xl text-slate-500 hover:bg-slate-50 transition ms-2"
-          >
-            <Filter className="w-5 h-5" />
-          </button>
+          <div>
+            <p className="text-sm text-slate-500 font-bold">المساحة المستخدمة</p>
+            <p className="text-2xl font-black text-slate-800">7.8 <span className="text-sm text-slate-400">GB</span></p>
+          </div>
+        </div>
+        
+        <div className="bg-white rounded-3xl p-5 shadow-[0_4px_24px_rgb(0,0,0,0.02)] border border-slate-100 flex items-center gap-4">
+          <div className="w-12 h-12 bg-sky-50 rounded-2xl flex items-center justify-center shrink-0">
+            <Files className="w-6 h-6 text-sky-600" />
+          </div>
+          <div>
+            <p className="text-sm text-slate-500 font-bold">إجمالي الملفات</p>
+            <p className="text-2xl font-black text-slate-800">{totalFiles}</p>
+          </div>
         </div>
 
-        <div className="overflow-x-auto">
-          <table className="w-full text-start text-sm">
-            <thead className="bg-slate-50 text-slate-400 font-bold uppercase text-[10px] border-b border-slate-100">
-              <tr>
-                <th className="px-6 py-4 text-start">اسم الملف</th>
-                <th className="px-6 py-4 text-start">النوع</th>
-                <th className="px-6 py-4 text-start">الحجم</th>
-                <th className="px-6 py-4 text-start">تاريخ الرفع</th>
-                <th className="px-6 py-4 text-start">مرتبط بـ (Linked Records)</th>
-                <th className="px-6 py-4 text-end">الإجراءات</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-100">
-              {filteredFiles.map(file => (
-                <tr key={file.id} className="hover:bg-slate-50 transition">
-                  <td className="px-6 py-4 font-bold text-slate-800 flex items-center gap-3">
-                    <FileText className="w-5 h-5 text-primary-400" />
-                    {file.name}
-                  </td>
-                  <td className="px-6 py-4">
-                    <span className="bg-slate-100 text-slate-600 px-2 py-1 rounded text-xs font-bold">{file.type}</span>
-                  </td>
-                  <td className="px-6 py-4 text-slate-500 font-mono text-xs">{file.size}</td>
-                  <td className="px-6 py-4 text-slate-500 font-mono text-xs">{file.date}</td>
-                  <td className="px-6 py-4">
-                    {file.linkedTo !== '-' ? (
-                      <span className="inline-flex items-center gap-1 text-primary-600 bg-primary-50 px-2 py-1 rounded text-xs font-bold cursor-pointer hover:underline">
-                        <LinkIcon className="w-3 h-3" /> {file.linkedTo}
-                      </span>
-                    ) : (
-                      <span className="text-slate-400">-</span>
-                    )}
-                  </td>
-                  <td className="px-6 py-4 text-end">
-                    <div className="flex items-center justify-end gap-2">
-                      <button 
-                        onClick={() => handleDownload(file)}
-                        className="p-1.5 text-slate-400 hover:text-primary-600 hover:bg-primary-50 rounded transition" title="تحميل"
-                      >
-                        <Download className="w-4 h-4" />
-                      </button>
-                      <button 
-                        onClick={() => handleDelete(file.id, file.name)}
-                        className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded transition" title="حذف"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
-                    </div>
-                  </td>
+        <div className="bg-white rounded-3xl p-5 shadow-[0_4px_24px_rgb(0,0,0,0.02)] border border-slate-100 flex items-center gap-4 group hover:border-primary-200 transition-colors">
+          <div className="w-12 h-12 bg-primary-50 rounded-2xl flex items-center justify-center shrink-0 group-hover:bg-primary-100 transition-colors">
+            <Paperclip className="w-6 h-6 text-primary-600" />
+          </div>
+          <div>
+            <p className="text-sm text-slate-500 font-bold">نسبة الملفات المرتبطة</p>
+            <p className="text-2xl font-black text-primary-600">{linkedPercentage}%</p>
+          </div>
+        </div>
+
+        <div className="bg-white rounded-3xl p-5 shadow-[0_4px_24px_rgb(0,0,0,0.02)] border border-slate-100 flex items-center gap-4">
+          <div className="w-12 h-12 bg-emerald-50 rounded-2xl flex items-center justify-center shrink-0">
+            <ShieldCheck className="w-6 h-6 text-emerald-600" />
+          </div>
+          <div>
+            <p className="text-sm text-slate-500 font-bold">حالة الأمان</p>
+            <p className="text-sm font-black text-slate-800 mt-1 truncate">ملفات مشفرة وآمنة</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Tabs and Filters */}
+      <div className="space-y-4 animate-in slide-in-from-bottom-4 duration-500 delay-150">
+        
+        {/* Tabs */}
+        <div className="flex bg-slate-100 p-1.5 rounded-2xl w-max overflow-x-auto">
+          {tabs.map(tab => (
+             <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={clsx(
+                   "px-6 py-2.5 rounded-xl text-sm font-bold flex items-center justify-center gap-2 transition-all whitespace-nowrap",
+                   activeTab === tab.id ? "bg-white text-primary-700 shadow-sm" : "text-slate-500 hover:text-slate-700 hover:bg-slate-200/50"
+                )}
+             >
+                <tab.icon className="w-4 h-4"/> {tab.name}
+             </button>
+          ))}
+        </div>
+
+        {/* Filters Bar */}
+        <div className="flex flex-col xl:flex-row justify-between items-stretch xl:items-center bg-white p-5 rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] border-0 gap-4">
+          <div className="flex flex-col md:flex-row items-center gap-4 w-full xl:max-w-3xl">
+            <div className="relative flex-1 w-full">
+              <Search className="w-5 h-5 absolute end-4 top-1/2 -translate-y-1/2 text-slate-400" />
+              <input 
+                type="text" 
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="بحث باسم الملف أو السجل المرتبط..." 
+                className="w-full bg-slate-50 border border-slate-100 rounded-2xl pe-12 ps-5 py-3.5 focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all font-medium text-slate-700"
+              />
+            </div>
+            <div className="w-full md:w-64 z-50">
+               <SearchableSelect 
+                 value={typeFilter}
+                 onChange={setTypeFilter}
+                 options={[
+                   { value: 'all', label: 'كل الأنواع' },
+                   { value: 'Invoice PDFs', label: 'فواتير (Invoice PDFs)' },
+                   { value: 'Report Exports', label: 'تقارير (Report Exports)' },
+                   { value: 'Employee Documents', label: 'مستندات موظفين' },
+                   { value: 'Attachments', label: 'مرفقات عامة (Attachments)' }
+                 ]}
+                 allowCreate={false}
+                 className="w-full"
+               />
+            </div>
+          </div>
+        </div>
+
+        {/* Table */}
+        <div className="bg-white rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] border-0 overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="w-full text-start text-sm">
+              <thead className="bg-slate-50/50">
+                <tr>
+                  <th className="px-6 py-5 text-start text-xs font-bold text-slate-500 uppercase tracking-wider">اسم الملف</th>
+                  <th className="px-6 py-5 text-start text-xs font-bold text-slate-500 uppercase tracking-wider">النوع</th>
+                  <th className="px-6 py-5 text-start text-xs font-bold text-slate-500 uppercase tracking-wider">تاريخ الرفع</th>
+                  <th className="px-6 py-5 text-start text-xs font-bold text-slate-500 uppercase tracking-wider">الحجم</th>
+                  <th className="px-6 py-5 text-start text-xs font-bold text-slate-500 uppercase tracking-wider">مرتبط بـ (Linked Records)</th>
+                  <th className="px-6 py-5 text-end text-xs font-bold text-slate-500 uppercase tracking-wider">الإجراءات</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="divide-y divide-slate-100">
+                {filteredFiles.length > 0 ? (
+                  filteredFiles.map(file => (
+                    <tr key={file.id} className="hover:bg-slate-50/80 transition-colors group">
+                      <td className="px-6 py-4">
+                        <div className="flex items-center gap-3">
+                          <div className={clsx("w-10 h-10 rounded-xl flex items-center justify-center transition-colors", getFileIconBg(file.format))}>
+                            {getFileIcon(file.format)}
+                          </div>
+                          <span className="font-bold text-slate-800">{file.name}</span>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <span className="bg-slate-100 text-slate-600 px-3 py-1.5 rounded-lg text-xs font-bold border border-slate-200/60">
+                          {file.type}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 text-slate-500 font-mono text-xs">{file.date}</td>
+                      <td className="px-6 py-4 text-slate-500 font-mono text-xs">{file.size}</td>
+                      <td className="px-6 py-4">
+                        {file.linkedTo !== '-' ? (
+                          <span className="inline-flex items-center gap-1.5 text-primary-600 bg-primary-50 hover:bg-primary-100 px-3 py-1.5 rounded-lg text-xs font-bold cursor-pointer transition-colors">
+                            <LinkIcon className="w-3.5 h-3.5" /> {file.linkedTo}
+                          </span>
+                        ) : (
+                          <span className="text-slate-400 font-bold">-</span>
+                        )}
+                      </td>
+                      <td className="px-6 py-4 text-end">
+                        <div className="flex items-center justify-end gap-2">
+                          <button 
+                            onClick={() => handleDownload(file)}
+                            className="p-2 text-slate-400 hover:text-primary-600 hover:bg-primary-50 rounded-xl transition-all" title="تحميل"
+                          >
+                            <Download className="w-5 h-5" />
+                          </button>
+                          <button 
+                            onClick={() => handleDelete(file.id, file.name)}
+                            className="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-xl transition-all" title="حذف"
+                          >
+                            <Trash2 className="w-5 h-5" />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan={6} className="px-6 py-20 text-center">
+                      <div className="flex flex-col items-center justify-center text-slate-400 space-y-4">
+                        <Search className="w-12 h-12 opacity-20" />
+                        <span className="font-bold text-lg">لا توجد ملفات مطابقة للبحث أو الفلترة</span>
+                      </div>
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
 
       {toastMsg && (
-        <div className="fixed bottom-10 start-1/2 -translate-x-1/2 bg-slate-900 text-white px-6 py-3 rounded-xl text-sm font-bold shadow-2xl z-[9999] whitespace-nowrap flex items-center gap-2">
-          <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></div>
+        <div className="fixed bottom-10 start-1/2 -translate-x-1/2 bg-slate-900 text-white px-6 py-4 rounded-2xl text-sm font-bold shadow-2xl z-[9999] whitespace-nowrap flex items-center gap-3 animate-in slide-in-from-bottom-5">
+          <div className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></div>
           {toastMsg}
         </div>
       )}
