@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
 import { type StandardReportMeta } from "../types";
 import { clsx } from "clsx";
-import { FileBarChart, Scale, TrendingUp, Building, Banknote, BookOpen, LayoutDashboard, Calendar, Clock, Target, FolderKanban, Network, FileDown, Eye, X } from "lucide-react";
+import { FileBarChart, Scale, TrendingUp, Building, Banknote, BookOpen, LayoutDashboard, Calendar, Clock, Target, FolderKanban, Network, FileDown, Eye, X, Plus } from "lucide-react";
+import { getCompanyKey } from '../utils/storage';
+import { SearchableSelect } from '../components/ui/SearchableSelect';
 
 const getIcon = (iconType: string) => {
   switch(iconType) {
@@ -26,6 +28,9 @@ export function ReportsPage() {
   const [activeReport, setActiveReport] = useState<string | null>(null);
   const [reportData, setReportData] = useState<any>(null);
 
+  const [isAddReportOpen, setIsAddReportOpen] = useState(false);
+  const [newReportForm, setNewReportForm] = useState({ title: '', description: '', category: 'financial', iconType: 'file-bar-chart' });
+
   useEffect(() => {
     fetch("/api/reports/standard")
       .then(res => {
@@ -34,14 +39,38 @@ export function ReportsPage() {
       })
       .then(data => setReports(data.data))
       .catch(() => {
-        const defaultReports = [
-          { id: "trial_balance", title: "ميزان المراجعة (Trial Balance)", description: "يعرض أرصدة جميع الحسابات (مدينة ودائنة) في فترة محددة للتأكد من توازن الحسابات.", category: "financial", iconType: "scale" },
-          { id: "income_statement", title: "قائمة الدخل (Income Statement)", description: "يُلخص الإيرادات والمصروفات لتحديد صافي الربح أو الخسارة.", category: "financial", iconType: "trending-up" },
-          { id: "balance_sheet", title: "الميزانية العمومية (Balance Sheet)", description: "يوضح المركز المالي للشركة (الأصول، الخصوم، حقوق الملكية).", category: "financial", iconType: "building" }
-        ];
-        setReports(defaultReports);
+        const local = localStorage.getItem(getCompanyKey('mock_reports'));
+        if (local) {
+          setReports(JSON.parse(local));
+        } else {
+          const defaultReports = [
+            { id: "trial_balance", title: "ميزان المراجعة (Trial Balance)", description: "يعرض أرصدة جميع الحسابات (مدينة ودائنة) في فترة محددة للتأكد من توازن الحسابات.", category: "financial", iconType: "scale" },
+            { id: "income_statement", title: "قائمة الدخل (Income Statement)", description: "يُلخص الإيرادات والمصروفات لتحديد صافي الربح أو الخسارة.", category: "financial", iconType: "trending-up" },
+            { id: "balance_sheet", title: "الميزانية العمومية (Balance Sheet)", description: "يوضح المركز المالي للشركة (الأصول، الخصوم، حقوق الملكية).", category: "financial", iconType: "building" }
+          ];
+          localStorage.setItem(getCompanyKey('mock_reports'), JSON.stringify(defaultReports));
+          setReports(defaultReports);
+        }
       });
   }, []);
+
+  const handleAddReport = () => {
+    if (!newReportForm.title) return;
+    
+    const newReport: StandardReportMeta = {
+      id: `custom_${Date.now()}`,
+      title: newReportForm.title,
+      description: newReportForm.description || 'تقرير مخصص تمت إضافته يدوياً',
+      category: newReportForm.category,
+      iconType: newReportForm.iconType
+    };
+
+    const updatedReports = [...reports, newReport];
+    setReports(updatedReports);
+    localStorage.setItem(getCompanyKey('mock_reports'), JSON.stringify(updatedReports));
+    setIsAddReportOpen(false);
+    setNewReportForm({ title: '', description: '', category: 'financial', iconType: 'file-bar-chart' });
+  };
 
   const openReport = async (reportId: string) => {
     setActiveReport(reportId);
@@ -159,21 +188,28 @@ export function ReportsPage() {
           <h2 className="font-bold text-slate-800 text-2xl flex items-center gap-2"><FileBarChart className="w-7 h-7 text-primary-600"/> التقارير المحاسبية القياسية</h2>
           <p className="text-slate-500 mt-1">تقارير مالية، إدارية، تشغيلية، ومجمعة جاهزة للاستخدام الفوري.</p>
         </div>
-        <div className="flex bg-slate-100 p-1 rounded-xl flex-wrap">
-           {['all', 'financial', 'management', 'operational', 'consolidated'].map(cat => (
-              <button
-                 key={cat}
-                 onClick={() => setActiveCategory(cat)}
-                 className={clsx(
-                    "px-4 py-2 rounded-lg text-sm font-bold capitalize transition",
-                    activeCategory === cat ? "bg-white text-primary-700 shadow-sm" : "text-slate-500 hover:text-slate-700"
-                 )}
-              >
-                 {cat === 'all' ? 'الكل' : cat === 'financial' ? 'مالية' : cat === 'management' ? 'إدارية' : cat === 'operational' ? 'تشغيلية' : 'مجمعة'}
-              </button>
-           ))}
+        <div className="flex flex-col sm:flex-row items-center gap-4">
+           <div className="flex bg-slate-100 p-1 rounded-xl flex-wrap">
+              {['all', 'financial', 'management', 'operational', 'consolidated'].map(cat => (
+                 <button
+                    key={cat}
+                    onClick={() => setActiveCategory(cat)}
+                    className={clsx(
+                       "px-4 py-2 rounded-lg text-sm font-bold capitalize transition",
+                       activeCategory === cat ? "bg-white text-primary-700 shadow-sm" : "text-slate-500 hover:text-slate-700"
+                    )}
+                 >
+                    {cat === 'all' ? 'الكل' : cat === 'financial' ? 'مالية' : cat === 'management' ? 'إدارية' : cat === 'operational' ? 'تشغيلية' : 'مجمعة'}
+                 </button>
+              ))}
+           </div>
+           <button onClick={() => setIsAddReportOpen(true)} className="bg-primary hover:bg-primary/90 text-white px-5 py-2.5 rounded-xl text-sm font-bold flex items-center gap-2 transition-all shadow-sm hover:shadow-md shrink-0">
+              <Plus className="w-5 h-5" />
+              إضافة تقرير جديد
+           </button>
         </div>
       </div>
+
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
          {filteredReports.map(report => (
@@ -253,6 +289,75 @@ export function ReportsPage() {
                      </table>
                   </div>
                )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {isAddReportOpen && (
+        <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-900/50 backdrop-blur-sm text-center p-4 sm:p-0">
+          <span className="hidden sm:inline-block sm:h-screen sm:align-middle" aria-hidden="true">&#8203;</span>
+          <div className="inline-block align-bottom bg-white rounded-2xl text-start overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle w-full max-w-lg">
+            <div className="flex items-center justify-between p-6 border-b border-slate-100">
+              <h3 className="text-lg font-bold text-slate-800">إضافة تقرير جديد</h3>
+              <button onClick={() => setIsAddReportOpen(false)} className="text-slate-400 hover:text-slate-500"><X className="w-5 h-5"/></button>
+            </div>
+            <div className="p-6 space-y-4">
+               <div>
+                 <label className="block text-sm font-medium text-slate-700 mb-2">اسم التقرير</label>
+                 <input 
+                   type="text" 
+                   value={newReportForm.title} 
+                   onChange={(e) => setNewReportForm({...newReportForm, title: e.target.value})} 
+                   className="w-full bg-white border border-slate-200 text-slate-900 font-bold rounded-xl px-4 py-2.5 outline-none focus:border-primary-500" 
+                   placeholder="مثال: تقرير المبيعات الربع سنوي"
+                 />
+               </div>
+               <div>
+                 <label className="block text-sm font-medium text-slate-700 mb-2">التصنيف (Category)</label>
+                 <SearchableSelect 
+                   value={newReportForm.category} 
+                   onChange={(val) => setNewReportForm({...newReportForm, category: val})}
+                   options={[
+                     { value: 'financial', label: 'مالية' },
+                     { value: 'management', label: 'إدارية' },
+                     { value: 'operational', label: 'تشغيلية' },
+                     { value: 'consolidated', label: 'مجمعة' }
+                   ]}
+                   placeholder="اختر أو اكتب تصنيف جديد..."
+                 />
+               </div>
+               <div>
+                 <label className="block text-sm font-medium text-slate-700 mb-2">أيقونة التقرير (Icon)</label>
+                 <SearchableSelect 
+                   value={newReportForm.iconType} 
+                   onChange={(val) => setNewReportForm({...newReportForm, iconType: val})}
+                   options={[
+                     { value: 'scale', label: 'ميزان (Scale)' },
+                     { value: 'trending-up', label: 'مؤشر صعود (Trending Up)' },
+                     { value: 'building', label: 'مبنى / ميزانية (Building)' },
+                     { value: 'banknote', label: 'أموال (Banknote)' },
+                     { value: 'book-open', label: 'كتاب مفتوح (Book)' },
+                     { value: 'target', label: 'هدف (Target)' },
+                     { value: 'file-bar-chart', label: 'تقرير افتراضي (Default)' }
+                   ]}
+                   placeholder="اختر أيقونة للتقرير..."
+                 />
+               </div>
+               <div>
+                 <label className="block text-sm font-medium text-slate-700 mb-2">وصف التقرير (Description)</label>
+                 <textarea 
+                   value={newReportForm.description} 
+                   onChange={(e) => setNewReportForm({...newReportForm, description: e.target.value})} 
+                   className="w-full bg-white border border-slate-200 text-slate-900 rounded-xl px-4 py-2.5 outline-none focus:border-primary-500 resize-none h-24" 
+                   placeholder="اكتب وصفاً مختصراً للتقرير..."
+                 />
+               </div>
+              <div className="pt-4">
+                 <button onClick={handleAddReport} disabled={!newReportForm.title} className="w-full bg-primary hover:bg-primary/90 text-white font-bold py-3 text-sm rounded-xl transition disabled:opacity-50">
+                   حفظ وإضافة التقرير
+                 </button>
+              </div>
             </div>
           </div>
         </div>
