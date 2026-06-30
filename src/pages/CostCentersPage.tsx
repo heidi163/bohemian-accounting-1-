@@ -169,7 +169,7 @@ export function CostCentersPage() {
   };
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
           <h2 className="font-bold text-slate-800 text-2xl tracking-tight">مراكز التكلفة (Cost Centers)</h2>
@@ -234,7 +234,7 @@ export function CostCentersPage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
          {/* Hierarchy Tree */}
          <div className="lg:col-span-2 bg-white rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] border-0 overflow-hidden flex flex-col">
             <div className="p-6 border-b border-slate-50 flex items-center justify-between bg-white">
@@ -252,13 +252,13 @@ export function CostCentersPage() {
             <h3 className="font-bold text-slate-900 text-lg flex items-center gap-2 mb-6"><Target className="w-5 h-5 text-primary-500" /> أداء المراكز الفرعية</h3>
             <div className="flex-1 min-h-[300px]" style={{ direction: 'ltr' }}>
                <ResponsiveContainer width="100%" height="100%">
-                 <BarChart data={chartData} layout="vertical" margin={{ top: 0, right: 0, left: -20, bottom: 0 }}>
+                 <BarChart data={chartData} layout="horizontal" margin={{ top: 10, right: 0, left: 10, bottom: 0 }}>
                    <CartesianGrid strokeDasharray="3 3" horizontal={true} vertical={false} stroke="#f1f5f9" opacity={0.5} />
-                   <XAxis type="number" axisLine={false} tickLine={false} tick={{ fill: '#94a3b8', fontSize: 10, fontWeight: 600 }} tickFormatter={(value) => new Intl.NumberFormat('en-US', { notation: 'compact' }).format(value)} />
-                   <YAxis type="category" dataKey="name" axisLine={false} tickLine={false} tick={{ fill: '#475569', fontSize: 11, fontWeight: 700 }} width={80} />
+                   <XAxis type="category" dataKey="name" axisLine={false} tickLine={false} tick={{ fill: '#475569', fontSize: 11, fontWeight: 700 }} />
+                   <YAxis type="number" axisLine={false} tickLine={false} tick={{ fill: '#94a3b8', fontSize: 10, fontWeight: 600 }} tickFormatter={(value) => new Intl.NumberFormat('en-US', { notation: 'compact' }).format(value)} width={40} />
                    <Tooltip cursor={{ fill: '#f8fafc', radius: 8 }} contentStyle={{ borderRadius: '1rem', border: 'none', boxShadow: '0 10px 25px -5px rgb(0 0 0 / 0.1)', textAlign: 'right' }} formatter={(value: number) => new Intl.NumberFormat('ar-EG').format(value)} />
-                   <Bar dataKey="التكلفة" fill="#f43f5e" radius={[0, 4, 4, 0]} barSize={12} name="التكلفة الفعلية" />
-                   <Bar dataKey="الإيرادات" fill="var(--color-primary-500)" radius={[0, 4, 4, 0]} barSize={12} name="الإيرادات" />
+                   <Bar dataKey="التكلفة" fill="#f43f5e" radius={[4, 4, 0, 0]} barSize={24} name="التكلفة الفعلية" />
+                   <Bar dataKey="الإيرادات" fill="var(--color-primary-500)" radius={[4, 4, 0, 0]} barSize={24} name="الإيرادات" />
                  </BarChart>
                </ResponsiveContainer>
             </div>
