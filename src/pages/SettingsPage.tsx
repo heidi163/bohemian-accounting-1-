@@ -650,15 +650,15 @@ export function SettingsPage() {
                             )}
                           ></button>
                         ))}
-                        <div className="relative overflow-hidden w-12 h-12 rounded-2xl border-4 border-transparent hover:scale-110 transition-all shadow-sm group">
+                        <div className="relative overflow-hidden w-12 h-12 rounded-2xl border-4 border-transparent hover:scale-110 transition-all shadow-sm group" title="لون مخصص">
                           <input 
                             type="color" 
                             value={primaryColor}
                             onChange={(e) => { setPrimaryColor(e.target.value); setHasChanges(true); }}
                             className="absolute -top-4 -left-4 w-20 h-20 cursor-pointer"
                           />
-                          <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-0 group-hover:opacity-100 bg-black/20 transition-opacity text-white text-xs font-bold font-mono">
-                            مخصص
+                          <div className="absolute inset-0 flex items-center justify-center pointer-events-none bg-black/10 text-white drop-shadow-md transition-all group-hover:bg-black/20">
+                            <Edit2 className="w-5 h-5 opacity-90 group-hover:scale-110 transition-transform" />
                           </div>
                         </div>
                       </div>
@@ -679,15 +679,15 @@ export function SettingsPage() {
                             )}
                           ></button>
                         ))}
-                        <div className="relative overflow-hidden w-12 h-12 rounded-2xl border-4 border-transparent hover:scale-110 transition-all shadow-sm group">
+                        <div className="relative overflow-hidden w-12 h-12 rounded-2xl border-4 border-transparent hover:scale-110 transition-all shadow-sm group" title="لون مخصص">
                           <input 
                             type="color" 
                             value={secondaryColor}
                             onChange={(e) => { setSecondaryColor(e.target.value); setHasChanges(true); }}
                             className="absolute -top-4 -left-4 w-20 h-20 cursor-pointer"
                           />
-                          <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-0 group-hover:opacity-100 bg-black/20 transition-opacity text-white text-xs font-bold font-mono">
-                            مخصص
+                          <div className="absolute inset-0 flex items-center justify-center pointer-events-none bg-black/10 text-white drop-shadow-md transition-all group-hover:bg-black/20">
+                            <Edit2 className="w-5 h-5 opacity-90 group-hover:scale-110 transition-transform" />
                           </div>
                         </div>
                       </div>
