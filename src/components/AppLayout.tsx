@@ -15,7 +15,7 @@ export function AppLayout() {
   const navigate = useNavigate();
   const [showCompanyMenu, setShowCompanyMenu] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const { activeCompany, setActiveCompany, primaryColor, logoUrl } = useTheme();
+  const { activeCompany, setActiveCompany, primaryColor, secondaryColor, logoUrl } = useTheme();
 
   // Close mobile menu on route change
   useEffect(() => {
@@ -88,11 +88,15 @@ export function AppLayout() {
 
       {/* Sidebar */}
       <aside className={clsx(
-        "fixed inset-y-0 start-0 z-50 w-72 md:w-64 bg-gradient-to-b from-[#1D2D44] to-[#152233] text-white flex flex-col border-e border-slate-800/50 shrink-0 transition-transform duration-300 md:relative md:translate-x-0",
+        "fixed inset-y-0 start-0 z-50 w-72 md:w-64 text-white flex flex-col border-e border-slate-800/50 shrink-0 transition-transform duration-300 md:relative md:translate-x-0 overflow-hidden",
         isMobileMenuOpen ? "translate-x-0" : "translate-x-full md:translate-x-0"
       )}>
+        {/* Dynamic Background */}
+        <div className="absolute inset-0 z-0 pointer-events-none" style={{ backgroundColor: secondaryColor }} />
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/30 z-0 pointer-events-none" />
+
         {/* Logo */}
-        <div className="p-4 flex items-center justify-between border-b border-white/5 h-14 shrink-0">
+        <div className="p-4 flex items-center justify-between border-b border-white/5 h-14 shrink-0 relative z-10">
           <div className="flex items-center gap-3">
             {logoUrl ? (
               <img src={logoUrl} alt="Logo" className="w-8 h-8 rounded-lg object-cover shrink-0 bg-white" />
@@ -109,7 +113,7 @@ export function AppLayout() {
         </div>
 
         {/* Company Switcher */}
-        <div className="px-3 py-2 border-b border-white/5 relative">
+        <div className="px-3 py-2 border-b border-white/5 relative z-10">
           <button
             onClick={() => setShowCompanyMenu(!showCompanyMenu)}
             className="w-full flex items-center justify-between bg-white/5 hover:bg-white/10 transition px-3 py-2 rounded-lg"
@@ -144,7 +148,7 @@ export function AppLayout() {
         </div>
 
         {/* Nav */}
-        <nav className="flex-1 px-2 py-3 overflow-y-auto space-y-4">
+        <nav className="flex-1 px-2 py-3 overflow-y-auto space-y-4 relative z-10">
           {navigation.map((group) => (
             <div key={group.group}>
               <div className="text-[9px] font-bold text-slate-500 uppercase tracking-widest px-2 mb-1">{group.group}</div>
@@ -173,7 +177,7 @@ export function AppLayout() {
         </nav>
 
         {/* User Footer */}
-        <div className="p-3 border-t border-white/5 flex items-center gap-2">
+        <div className="p-3 border-t border-white/5 flex items-center gap-2 relative z-10">
           <div className="w-8 h-8 rounded-full flex items-center justify-center font-bold text-white text-sm shrink-0" style={{ backgroundColor: primaryColor }}>أ</div>
           <div className="flex-1 min-w-0">
             <div className="text-sm font-bold text-white truncate">أحمد صلاح</div>
