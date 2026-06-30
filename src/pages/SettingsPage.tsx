@@ -675,23 +675,23 @@ export function SettingsPage() {
 
       {/* Floating Save Bar */}
       <div className={clsx(
-        "fixed bottom-8 end-8 bg-white/95 backdrop-blur-xl border border-slate-200 p-4 rounded-2xl flex flex-col sm:flex-row items-center gap-4 sm:gap-6 shadow-[0_20px_40px_rgb(0,0,0,0.12)] z-50 transition-all duration-500",
-        hasChanges ? "translate-y-0 opacity-100 scale-100" : "translate-y-12 opacity-0 scale-95 pointer-events-none"
+        "fixed bottom-0 start-0 lg:start-64 right-0 bg-white/80 backdrop-blur-md border-t border-slate-200/60 p-4 flex items-center justify-between lg:justify-end gap-4 shadow-[0_-10px_30px_rgb(0,0,0,0.05)] z-40 transition-transform duration-500",
+        hasChanges ? "translate-y-0" : "translate-y-full"
       )}>
-        <div className="hidden sm:flex items-center gap-2">
-          <span className="font-bold text-slate-800 text-sm">لديك تغييرات غير محفوظة!</span>
+        <div className="hidden sm:block text-slate-600 font-bold text-sm">
+          لديك تغييرات غير محفوظة!
         </div>
         <div className="flex gap-3 w-full sm:w-auto">
           <button 
             onClick={() => setHasChanges(false)}
-            className="flex-1 sm:flex-none px-6 py-2.5 rounded-xl text-sm font-bold bg-slate-100 text-slate-600 hover:bg-slate-200 transition-colors"
+            className="flex-1 sm:flex-none px-6 py-3 rounded-2xl text-sm font-bold bg-slate-100 text-slate-600 hover:bg-slate-200 transition-colors"
           >
             تجاهل
           </button>
           <button 
             onClick={handleSave}
             disabled={isSaving}
-            className="flex-2 sm:flex-none px-8 py-2.5 rounded-xl text-sm font-bold bg-emerald-600 text-white hover:bg-emerald-700 shadow-lg shadow-emerald-600/20 active:scale-95 transition-all flex items-center justify-center gap-2 min-w-[160px]"
+            className="flex-2 sm:flex-none px-8 py-3 rounded-2xl text-sm font-bold bg-emerald-600 text-white hover:bg-emerald-700 shadow-lg shadow-emerald-600/20 active:scale-95 transition-all flex items-center justify-center gap-2 min-w-[160px]"
           >
             {isSaving ? (
               <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
