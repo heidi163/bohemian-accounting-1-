@@ -2,13 +2,24 @@ import { toast } from 'react-hot-toast';
 import { useEffect, useState } from "react";
 import { type Loan, type LoanInstallment } from "../types";
 import { clsx } from "clsx";
-import { Landmark, Calendar, Banknote, ShieldAlert, CheckCircle, Clock, ChevronDown, ChevronUp, X } from "lucide-react";
 import { getCompanyKey } from '../utils/storage';
+import { SearchableSelect } from '../components/ui/SearchableSelect';
 
 export function LoansPage() {
   const [loans, setLoans] = useState<Loan[]>([]);
   const [expandedLoan, setExpandedLoan] = useState<number | null>(null);
   const [activeModal, setActiveModal] = useState<{ loanId: number, installment: LoanInstallment } | null>(null);
+  
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [newLoanForm, setNewLoanForm] = useState({
+    type: 'bank',
+    lender_name: '',
+    principal: 100000,
+    interest_rate: 15,
+    months: 12,
+    start_date: new Date().toISOString().split('T')[0]
+  });
 
   const fetchLoans = () => {
     fetch("/api/loans")
@@ -18,7 +29,7 @@ export function LoansPage() {
       })
       .then((data) => setLoans(data.data))
       .catch(() => {
-        const localLoans = JSON.parse(localStorage.getItem(getCompanyKey('mock_loans')) || '[]');
+        const localLoans = JSON.parse(localStorage.getItem(getCompanyKey('mock_loans_v2')) || '[]');
         if (localLoans.length > 0) {
           setLoans(localLoans);
         } else {
@@ -38,7 +49,7 @@ export function LoansPage() {
               ]
             }
           ];
-          localStorage.setItem(getCompanyKey('mock_loans'), JSON.stringify(defaults));
+          localStorage.setItem(getCompanyKey('mock_loans_v2'), JSON.stringify(defaults));
           setLoans(defaults);
         }
       });
@@ -51,7 +62,7 @@ export function LoansPage() {
   const handlePayInstallment = async () => {
     if (!activeModal) return;
     setTimeout(() => {
-      const localLoans = JSON.parse(localStorage.getItem(getCompanyKey('mock_loans')) || '[]');
+      const localLoans = JSON.parse(localStorage.getItem(getCompanyKey('mock_loans_v2')) || '[]');
       const updatedLoans = localLoans.map((loan: any) => {
         if (loan.id === activeModal.loanId) {
           const updatedInstallments = loan.installments.map((inst: any) => {
@@ -68,22 +79,102 @@ export function LoansPage() {
         }
         return loan;
       });
-      localStorage.setItem(getCompanyKey('mock_loans'), JSON.stringify(updatedLoans));
+      localStorage.setItem(getCompanyKey('mock_loans_v2'), JSON.stringify(updatedLoans));
       setLoans(updatedLoans);
       setActiveModal(null);
       toast.success('تم سداد القسط بنجاح');
     }, 500);
   };
 
+  const handleAddLoanSubmit = () => {
+    setIsSubmitting(true);
+    setTimeout(() => {
+      const principal = newLoanForm.principal;
+      const rate = newLoanForm.interest_rate / 100 / 12; // Monthly rate
+      const months = newLoanForm.months;
+      
+      let monthlyPayment = 0;
+      let interestTotal = 0;
+      
+      if (rate > 0) {
+        monthlyPayment = principal * (rate * Math.pow(1 + rate, months)) / (Math.pow(1 + rate, months) - 1);
+        interestTotal = (monthlyPayment * months) - principal;
+      } else {
+        monthlyPayment = principal / months;
+      }
+      
+      const installments = Array.from({ length: months }).map((_, idx) => {
+        const dueDate = new Date(newLoanForm.start_date);
+        dueDate.setMonth(dueDate.getMonth() + idx + 1);
+        
+        // Simple amortization breakdown
+        const interestAmount = (principal - (monthlyPayment - (interestTotal/months)) * idx) * rate;
+        const principalAmount = monthlyPayment - interestAmount;
+
+        return {
+          id: Date.now() + idx,
+          due_date: dueDate.toISOString().split('T')[0],
+          principal_amount: principalAmount,
+          interest_amount: interestAmount,
+          total_amount: monthlyPayment,
+          status: 'pending' as const
+        };
+      });
+
+      const end_date = installments[installments.length - 1].due_date;
+
+      const newLoan: Loan = {
+        id: Date.now(),
+        type: newLoanForm.type as 'bank' | 'personal',
+        lender_name: newLoanForm.lender_name,
+        total_amount: principal + interestTotal,
+        remaining_principal: principal,
+        interest_rate: newLoanForm.interest_rate,
+        start_date: newLoanForm.start_date,
+        end_date,
+        installments
+      };
+
+      const localLoans = JSON.parse(localStorage.getItem(getCompanyKey('mock_loans_v2')) || '[]');
+      const updatedLoans = [newLoan, ...localLoans];
+      
+      localStorage.setItem(getCompanyKey('mock_loans_v2'), JSON.stringify(updatedLoans));
+      setLoans(updatedLoans);
+      
+      setIsSubmitting(false);
+      setIsAddModalOpen(false);
+      toast.success('تمت إضافة القرض بنجاح');
+      
+      // Reset form
+      setNewLoanForm({
+        type: 'bank',
+        lender_name: '',
+        principal: 100000,
+        interest_rate: 15,
+        months: 12,
+        start_date: new Date().toISOString().split('T')[0]
+      });
+    }, 600);
+  };
+
   const totalRemainingPrincipal = loans.reduce((sum, loan) => sum + loan.remaining_principal, 0);
 
   return (
     <div className="space-y-6">
-      <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h2 className="font-bold text-slate-800 text-2xl">إدارة القروض (Loans Management)</h2>
-          <p className="text-slate-500 mt-1">تتبع القروض البنكية والشخصية، الفوائد، وجداول السداد.</p>
+          <h1 className="text-2xl font-bold text-slate-800 flex items-center gap-3">
+            <div className="p-2.5 bg-primary/10 text-primary rounded-xl">
+              <Landmark className="w-6 h-6" />
+            </div>
+            إدارة القروض (Loans Management)
+          </h1>
+          <p className="text-slate-500 mt-1 text-sm">تتبع القروض البنكية والشخصية، الفوائد، وجداول السداد.</p>
         </div>
+        <button onClick={() => setIsAddModalOpen(true)} className="bg-primary hover:bg-primary/90 text-white px-5 py-2.5 rounded-xl text-sm font-bold flex items-center gap-2 transition-all shadow-sm hover:shadow-md">
+           <Plus className="w-5 h-5" />
+           إضافة قرض جديد
+        </button>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
@@ -149,9 +240,9 @@ export function LoansPage() {
                         {loan.installments.map(inst => (
                            <tr key={inst.id} className="border-t border-slate-100">
                               <td className="px-4 py-3 font-mono text-slate-600">{inst.due_date}</td>
-                              <td className="px-4 py-3 text-end font-mono" dir="ltr">{new Intl.NumberFormat('ar-EG').format(inst.principal_amount)}</td>
-                              <td className="px-4 py-3 text-end font-mono text-rose-500" dir="ltr">{new Intl.NumberFormat('ar-EG').format(inst.interest_amount)}</td>
-                              <td className="px-4 py-3 text-end font-mono font-bold text-slate-900" dir="ltr">{new Intl.NumberFormat('ar-EG').format(inst.total_amount)}</td>
+                              <td className="px-4 py-3 text-end font-mono">{new Intl.NumberFormat('ar-EG').format(inst.principal_amount)}</td>
+                              <td className="px-4 py-3 text-end font-mono text-rose-500">{new Intl.NumberFormat('ar-EG').format(inst.interest_amount)}</td>
+                              <td className="px-4 py-3 text-end font-mono font-bold text-slate-900">{new Intl.NumberFormat('ar-EG').format(inst.total_amount)}</td>
                               <td className="px-4 py-3 text-center">
                                  <span className={clsx('inline-flex items-center rounded-md px-2 py-1 text-xs font-bold', inst.status === 'paid' ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700')}>
                                     {inst.status === 'paid' ? 'مسدد' : 'مستحق'}
@@ -212,6 +303,99 @@ export function LoansPage() {
                    تأكيد السداد وتحديث الرصيد
                  </button>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {isAddModalOpen && (
+        <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-900/50 backdrop-blur-sm text-center p-4 sm:p-0">
+          <span className="hidden sm:inline-block sm:h-screen sm:align-middle" aria-hidden="true">&#8203;</span>
+          <div className="inline-block align-bottom bg-white rounded-2xl text-start overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle w-full max-w-lg">
+            <div className="flex items-center justify-between p-6 border-b border-slate-100">
+              <h3 className="text-lg font-bold text-slate-800">إضافة قرض جديد</h3>
+              <button onClick={() => setIsAddModalOpen(false)} className="text-slate-400 hover:text-slate-500 transition"><X className="w-5 h-5"/></button>
+            </div>
+            <div className="p-6 space-y-4">
+               
+               <div>
+                 <label className="block text-sm font-bold text-slate-700 mb-2">نوع القرض</label>
+                 <SearchableSelect 
+                   value={newLoanForm.type} 
+                   onChange={(value) => setNewLoanForm({...newLoanForm, type: value})} 
+                   options={[
+                     { value: 'bank', label: 'قرض بنكي' },
+                     { value: 'personal', label: 'قرض شخصي' }
+                   ]}
+                 />
+               </div>
+
+               <div>
+                 <label className="block text-sm font-bold text-slate-700 mb-2">المُقرض (اسم البنك/الشخص)</label>
+                 <SearchableSelect 
+                   value={newLoanForm.lender_name} 
+                   onChange={(value) => setNewLoanForm({...newLoanForm, lender_name: value})} 
+                   options={[
+                     { value: 'البنك الأهلي المصري', label: 'البنك الأهلي المصري' },
+                     { value: 'بنك مصر', label: 'بنك مصر' },
+                     { value: 'CIB', label: 'CIB' }
+                   ]}
+                   allowCreate={true}
+                   placeholder="اختر أو اكتب اسم المُقرض..."
+                 />
+               </div>
+
+               <div className="grid grid-cols-2 gap-4">
+                 <div>
+                   <label className="block text-sm font-bold text-slate-700 mb-2">قيمة القرض (Principal)</label>
+                   <input 
+                     type="number" 
+                     value={newLoanForm.principal || ''} 
+                     onChange={(e) => setNewLoanForm({...newLoanForm, principal: Number(e.target.value)})} 
+                     className="w-full bg-white border border-slate-200 text-slate-900 text-sm font-mono font-bold rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-right" 
+                   />
+                 </div>
+                 <div>
+                   <label className="block text-sm font-bold text-slate-700 mb-2">الفائدة السنوية (%)</label>
+                   <input 
+                     type="number" 
+                     value={newLoanForm.interest_rate || ''} 
+                     onChange={(e) => setNewLoanForm({...newLoanForm, interest_rate: Number(e.target.value)})} 
+                     className="w-full bg-white border border-slate-200 text-slate-900 text-sm font-mono rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-right" 
+                   />
+                 </div>
+               </div>
+
+               <div className="grid grid-cols-2 gap-4">
+                 <div>
+                   <label className="block text-sm font-bold text-slate-700 mb-2">عدد الأشهر (Months)</label>
+                   <input 
+                     type="number" 
+                     value={newLoanForm.months || ''} 
+                     onChange={(e) => setNewLoanForm({...newLoanForm, months: Number(e.target.value)})} 
+                     className="w-full bg-white border border-slate-200 text-slate-900 text-sm font-mono rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-right" 
+                   />
+                 </div>
+                 <div>
+                   <label className="block text-sm font-bold text-slate-700 mb-2">تاريخ البدء</label>
+                   <input 
+                     type="date" 
+                     value={newLoanForm.start_date} 
+                     onChange={(e) => setNewLoanForm({...newLoanForm, start_date: e.target.value})} 
+                     className="w-full bg-white border border-slate-200 text-slate-900 text-sm font-mono rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all" 
+                   />
+                 </div>
+               </div>
+
+               <div className="pt-4">
+                 <button 
+                   onClick={handleAddLoanSubmit}
+                   disabled={isSubmitting || !newLoanForm.lender_name}
+                   className="w-full bg-primary-600 text-white font-bold py-3 text-sm rounded-xl hover:bg-primary-700 transition disabled:opacity-50"
+                 >
+                   {isSubmitting ? 'جاري الحفظ...' : 'حفظ وإضافة'}
+                 </button>
+               </div>
             </div>
           </div>
         </div>
