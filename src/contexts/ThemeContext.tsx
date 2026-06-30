@@ -31,8 +31,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     return initial;
   });
   const [secondaryColor, setSecondaryColorState] = useState(() => {
-    const defaultSecondary = activeCompany === 'BGK' ? '#1A293F' : '#0f172a';
-    const initial = localStorage.getItem(`theme_secondary_${activeCompany}`) || defaultSecondary;
+    const initial = '#1A293F';
     if (typeof window !== 'undefined') document.documentElement.style.setProperty('--theme-secondary', initial);
     return initial;
   });
@@ -48,11 +47,11 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   // Sync colors when activeCompany changes
   useEffect(() => {
     const defaultPrimary = activeCompany === 'BGK' ? '#2563eb' : '#e11d48';
-    const defaultSecondary = activeCompany === 'BGK' ? '#1A293F' : '#0f172a';
+    const defaultSecondary = '#1A293F';
     const defaultAccent = activeCompany === 'BGK' ? '#f59e0b' : '#3b82f6';
 
     const pColor = localStorage.getItem(`theme_primary_${activeCompany}`) || defaultPrimary;
-    const sColor = localStorage.getItem(`theme_secondary_${activeCompany}`) || defaultSecondary;
+    const sColor = '#1A293F'; // Force dark blue universally
     const aColor = localStorage.getItem(`theme_accent_${activeCompany}`) || defaultAccent;
     const lUrl = localStorage.getItem(`theme_logo_${activeCompany}`) || null;
 
