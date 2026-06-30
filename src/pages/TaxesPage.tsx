@@ -227,14 +227,19 @@ export function TaxesPage() {
 
   return (
     <div className="space-y-6">
-      <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h2 className="font-bold text-slate-800 text-2xl">الضرائب (Taxes)</h2>
-          <p className="text-slate-500 mt-1">إدارة الالتزامات الضريبية والمدفوعات والإقرارات.</p>
+          <h1 className="text-2xl font-bold text-slate-800 flex items-center gap-3">
+            <div className="p-2.5 bg-primary/10 text-primary rounded-xl">
+              <Receipt className="w-6 h-6" />
+            </div>
+            الضرائب (Taxes)
+          </h1>
+          <p className="text-slate-500 mt-1 text-sm">إدارة الالتزامات الضريبية والمدفوعات والإقرارات.</p>
         </div>
-        <button onClick={() => setIsAddModalOpen(true)} className="flex items-center gap-2 bg-slate-900 text-white px-4 py-2.5 rounded-xl hover:bg-slate-800 transition font-bold text-sm">
+        <button onClick={() => setIsAddModalOpen(true)} className="bg-primary hover:bg-primary/90 text-white px-5 py-2.5 rounded-xl text-sm font-bold flex items-center gap-2 transition-all shadow-sm hover:shadow-md">
            <Plus className="w-5 h-5" />
-           باند ضريبي جديد
+           إضافة ضريبة جديدة
         </button>
       </div>
 
