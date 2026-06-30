@@ -258,16 +258,15 @@ export function AutomationPage() {
                            {job.nextRun}
                          </td>
                          <td className="px-6 py-4 text-center">
-                           <button onClick={() => toggleStatus(job.id)} className="transition hover:scale-105 active:scale-95 inline-flex focus:outline-none">
+                           <button onClick={() => toggleStatus(job.id)} className="relative inline-flex items-center w-10 h-6 focus:outline-none transition hover:scale-105 active:scale-95">
                              <div className={clsx(
-                               "w-12 h-7 rounded-full transition-colors duration-300 ease-in-out relative border border-black/5",
-                               job.status === 'active' ? "bg-emerald-500" : "bg-slate-200"
-                             )}>
-                               <div className={clsx(
-                                 "w-5 h-5 rounded-full bg-white shadow-md transition-all duration-300 absolute top-1",
-                                 job.status === 'active' ? "start-6" : "start-1"
-                               )}></div>
-                             </div>
+                               "w-10 h-1.5 rounded-full transition-colors duration-300",
+                               job.status === 'active' ? "bg-emerald-200" : "bg-slate-200"
+                             )}></div>
+                             <div className={clsx(
+                               "absolute top-1 w-4 h-4 rounded-full shadow-md transition-all duration-300",
+                               job.status === 'active' ? "bg-emerald-500 start-6" : "bg-white border border-slate-200 start-0"
+                             )}></div>
                            </button>
                          </td>
                          <td className="px-6 py-4 text-end">
@@ -319,16 +318,15 @@ export function AutomationPage() {
                   <span className="block text-sm font-bold text-slate-700">تنبيهات المهام الفاشلة</span>
                   <span className="block text-xs font-medium text-slate-500 mt-1">إرسال تقرير فور فشل أي مهمة (مثل تعذر النسخ الاحتياطي).</span>
                 </div>
-                <button onClick={() => setSendReport(!sendReport)} className="transition hover:scale-105 active:scale-95 shrink-0 focus:outline-none">
+                <button onClick={() => setSendReport(!sendReport)} className="relative inline-flex items-center w-10 h-6 focus:outline-none transition hover:scale-105 active:scale-95 shrink-0">
                   <div className={clsx(
-                    "w-12 h-7 rounded-full transition-colors duration-300 ease-in-out relative border border-black/5",
-                    sendReport ? "bg-emerald-500" : "bg-slate-200"
-                  )}>
-                    <div className={clsx(
-                      "w-5 h-5 rounded-full bg-white shadow-md transition-all duration-300 absolute top-1",
-                      sendReport ? "start-6" : "start-1"
-                    )}></div>
-                  </div>
+                    "w-10 h-1.5 rounded-full transition-colors duration-300",
+                    sendReport ? "bg-emerald-200" : "bg-slate-200"
+                  )}></div>
+                  <div className={clsx(
+                    "absolute top-1 w-4 h-4 rounded-full shadow-md transition-all duration-300",
+                    sendReport ? "bg-emerald-500 start-6" : "bg-white border border-slate-200 start-0"
+                  )}></div>
                 </button>
               </div>
               
@@ -337,16 +335,15 @@ export function AutomationPage() {
                   <span className="block text-sm font-bold text-slate-700">سجل المهام (Log Retention)</span>
                   <span className="block text-xs font-medium text-slate-500 mt-1">الاحتفاظ بسجلات المهام القديمة لمدة 30 يوماً.</span>
                 </div>
-                <button onClick={() => setKeepLogs(!keepLogs)} className="transition hover:scale-105 active:scale-95 shrink-0 focus:outline-none">
+                <button onClick={() => setKeepLogs(!keepLogs)} className="relative inline-flex items-center w-10 h-6 focus:outline-none transition hover:scale-105 active:scale-95 shrink-0">
                   <div className={clsx(
-                    "w-12 h-7 rounded-full transition-colors duration-300 ease-in-out relative border border-black/5",
-                    keepLogs ? "bg-emerald-500" : "bg-slate-200"
-                  )}>
-                    <div className={clsx(
-                      "w-5 h-5 rounded-full bg-white shadow-md transition-all duration-300 absolute top-1",
-                      keepLogs ? "start-6" : "start-1"
-                    )}></div>
-                  </div>
+                    "w-10 h-1.5 rounded-full transition-colors duration-300",
+                    keepLogs ? "bg-emerald-200" : "bg-slate-200"
+                  )}></div>
+                  <div className={clsx(
+                    "absolute top-1 w-4 h-4 rounded-full shadow-md transition-all duration-300",
+                    keepLogs ? "bg-emerald-500 start-6" : "bg-white border border-slate-200 start-0"
+                  )}></div>
                 </button>
               </div>
             </div>
