@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import { ArrowRight, Save } from "lucide-react";
+import { SearchableSelect } from "../components/ui/SearchableSelect";
 import { getCompanyKey } from '../utils/storage';
 
 export function AssetCreatePage() {
@@ -73,20 +74,18 @@ export function AssetCreatePage() {
              </div>
              <div>
                <label className="block text-sm font-medium text-slate-700 mb-2">تصنيف الأصل (Category)</label>
-               <input 
-                 type="text"
-                 list="asset-categories"
+               <SearchableSelect
                  value={form.category} 
-                 onChange={e => setForm({...form, category: e.target.value})} 
+                 onChange={val => setForm({...form, category: val})} 
                  placeholder="اختر أو اكتب التصنيف..."
-                 className="w-full bg-white border border-slate-200 text-slate-900 text-sm rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-primary-500/20 outline-none transition-all"
+                 allowCreate={true}
+                 options={[
+                   { value: "أجهزة حاسب وملحقاتها", label: "أجهزة حاسب وملحقاتها" },
+                   { value: "سيارات ومركبات", label: "سيارات ومركبات" },
+                   { value: "معدات وآلات", label: "معدات وآلات" },
+                   { value: "أثاث ومفروشات", label: "أثاث ومفروشات" }
+                 ]}
                />
-               <datalist id="asset-categories">
-                 <option value="أجهزة حاسب وملحقاتها" />
-                 <option value="سيارات ومركبات" />
-                 <option value="معدات وآلات" />
-                 <option value="أثاث ومفروشات" />
-               </datalist>
              </div>
              <div>
                <label className="block text-sm font-medium text-slate-700 mb-2">كود الأصل الداخلي (Asset Code)</label>

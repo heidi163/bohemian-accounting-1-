@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import { ArrowRight, Save, UserPlus } from "lucide-react";
+import { SearchableSelect } from "../components/ui/SearchableSelect";
 import { getCompanyKey } from '../utils/storage';
 
 export function EmployeeCreatePage() {
@@ -83,21 +84,19 @@ export function EmployeeCreatePage() {
           </div>
           <div>
             <label className="block text-sm font-medium text-slate-700 mb-2">القسم</label>
-            <input 
-              type="text"
-              list="departments-list"
+            <SearchableSelect
               value={formData.department} 
-              onChange={e => setFormData({...formData, department: e.target.value})} 
+              onChange={val => setFormData({...formData, department: val})} 
               placeholder="اختر أو اكتب القسم..."
-              className="w-full bg-slate-50 border border-slate-200 text-slate-900 text-sm rounded-xl px-4 py-2.5 focus:bg-white focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 outline-none transition-all"
+              allowCreate={true}
+              options={[
+                { value: "الهندسة (Engineering)", label: "الهندسة (Engineering)" },
+                { value: "المبيعات (Sales)", label: "المبيعات (Sales)" },
+                { value: "التسويق (Marketing)", label: "التسويق (Marketing)" },
+                { value: "الموارد البشرية (HR)", label: "الموارد البشرية (HR)" },
+                { value: "المالية (Finance)", label: "المالية (Finance)" }
+              ]}
             />
-            <datalist id="departments-list">
-              <option value="الهندسة (Engineering)" />
-              <option value="المبيعات (Sales)" />
-              <option value="التسويق (Marketing)" />
-              <option value="الموارد البشرية (HR)" />
-              <option value="المالية (Finance)" />
-            </datalist>
           </div>
           <div>
             <label className="block text-sm font-medium text-slate-700 mb-2">المسمى الوظيفي</label>
