@@ -668,14 +668,14 @@ export function SettingsPage() {
                     <div>
                       <label className="block text-sm font-bold text-slate-700 mb-3">اللون الثانوي (Secondary)</label>
                       <div className="flex flex-wrap items-center gap-3">
-                        {['#0f172a', '#1e293b', '#334155', '#475569', '#172554', '#064e3b'].map(color => (
+                        {['#1A293F', '#0f172a', '#1e293b', '#334155', '#475569', '#172554', '#064e3b'].map(color => (
                           <button 
                             key={color} 
                             onClick={() => { setSecondaryColor(color); setHasChanges(true); }}
                             style={{ backgroundColor: color }}
                             className={clsx(
                               "w-12 h-12 rounded-2xl border-4 transition-all shadow-sm",
-                              secondaryColor === color ? "border-white ring-2 ring-slate-800 scale-110" : "border-transparent hover:scale-110"
+                              secondaryColor.toLowerCase() === color.toLowerCase() ? "border-white ring-2 ring-slate-800 scale-110" : "border-transparent hover:scale-110"
                             )}
                           ></button>
                         ))}
