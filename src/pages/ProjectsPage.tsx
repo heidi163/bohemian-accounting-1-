@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { type Project, type ProjectAnalysis } from "../types";
 import { clsx } from "clsx";
-import { FolderKanban, TrendingUp, AlertTriangle, CheckCircle, PieChart, BarChart3, Activity } from "lucide-react";
+import { FolderKanban, TrendingUp, AlertTriangle, CheckCircle, PieChart, BarChart3, Activity, Wallet, Clock, Search, Filter, CalendarDays } from "lucide-react";
 
 export function ProjectsPage() {
   const [projects, setProjects] = useState<Project[]>([]);
@@ -11,6 +11,9 @@ export function ProjectsPage() {
     id: '', name: '', project_code: '', customer_name: '', start_date: '', end_date: '', 
     status: 'in_progress', budget_revenue: 0, budget_cost: 0 
   });
+  
+  const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
 
   const fetchData = async () => {
     try {
@@ -35,7 +38,7 @@ export function ProjectsPage() {
         setAnalysis(localAnalysis);
       } else {
         const defaultProjects = [
-          { id: 'proj_1', name: 'تطوير تطبيق موبايل', project_code: 'PRJ-001', customer_name: 'شركة الأفق', start_date: '2026-01-10', end_date: '2026-06-30', status: 'in_progress', budget_revenue: 150000, actual_revenue: 100000, budget_cost: 90000, actual_cost: 65000 },
+          { id: 'proj_1', name: 'تطوير تطبيق موبايل', project_code: 'PRJ-001', customer_name: 'شركة الأفق', start_date: '2026-01-10', end_date: '2026-12-30', status: 'in_progress', budget_revenue: 150000, actual_revenue: 100000, budget_cost: 90000, actual_cost: 65000 },
           { id: 'proj_2', name: 'تصميم هوية بصرية', project_code: 'PRJ-002', customer_name: 'مؤسسة الرواد', start_date: '2026-03-01', end_date: '2026-04-15', status: 'completed', budget_revenue: 45000, actual_revenue: 45000, budget_cost: 15000, actual_cost: 12000 }
         ];
         const defaultAnalysis = [
@@ -99,21 +102,137 @@ export function ProjectsPage() {
     setNewProject({ id: '', name: '', project_code: '', customer_name: '', start_date: '', end_date: '', status: 'in_progress', budget_revenue: 0, budget_cost: 0 });
   };
 
+  // Compute Dashboard Metrics
+  const activeProjectsCount = projects.filter(p => p.status === 'in_progress').length;
+  const totalBudgetRevenue = projects.reduce((sum, p) => sum + p.budget_revenue, 0);
+  const totalActualCost = projects.reduce((sum, p) => sum + p.actual_cost, 0);
+  const totalExpectedProfit = analysis.reduce((sum, a) => sum + a.gross_profit, 0);
+
+  // Filter Projects
+  const filteredProjects = projects.filter(p => {
+    const searchLower = searchTerm.toLowerCase();
+    const matchSearch = p.name.toLowerCase().includes(searchLower) || p.project_code.toLowerCase().includes(searchLower) || p.customer_name.toLowerCase().includes(searchLower);
+    const matchStatus = statusFilter === 'all' || p.status === statusFilter;
+    return matchSearch && matchStatus;
+  });
+
+  // Calculate Progress and Burn Rate
+  const calculateTimeProgress = (start: string, end: string) => {
+    const startDate = new Date(start).getTime();
+    const endDate = new Date(end).getTime();
+    const now = new Date().getTime();
+    if (now > endDate) return 100;
+    if (now < startDate) return 0;
+    return Math.round(((now - startDate) / (endDate - startDate)) * 100);
+  };
+
+  const calculateBudgetConsumed = (actual: number, budget: number) => {
+    if (budget === 0) return 0;
+    return Math.min(Math.round((actual / budget) * 100), 100);
+  };
+
   return (
     <div className="space-y-6">
       <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
           <h2 className="font-bold text-slate-800 text-2xl tracking-tight">حسابات المشاريع</h2>
-          <p className="text-slate-500 mt-2 text-sm font-medium">إدارة موازنات المشاريع وتحليل الأرباح والخسائر والتباين.</p>
+          <p className="text-slate-500 mt-2 text-sm font-medium">إدارة موازنات المشاريع وتحليل الأرباح والخسائر ومعدل الحرق.</p>
         </div>
         <button onClick={() => setIsModalOpen(true)} className="bg-primary-600 text-white px-5 py-3 rounded-2xl text-sm font-bold hover:bg-primary-700 transition shadow-sm hover:shadow-md hover:-translate-y-0.5">
           + إضافة مشروع
         </button>
       </div>
 
+      {/* Overview Dashboard */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <div className="bg-white p-6 rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] border-0 flex flex-col justify-between hover:-translate-y-1 transition-transform duration-300 min-h-[140px]">
+          <div className="text-sm font-bold text-slate-500 mb-4 flex justify-between items-center">
+            <span>المشاريع النشطة</span>
+            <div className="w-10 h-10 rounded-2xl bg-blue-50 flex items-center justify-center text-blue-500"><FolderKanban className="w-5 h-5"/></div>
+          </div>
+          <div>
+            <div className="text-3xl font-black text-slate-900 tracking-tight" dir="ltr">{activeProjectsCount}</div>
+            <div className="text-xs font-bold text-slate-500 mt-2 bg-slate-50 inline-block px-2 py-1 rounded-lg">مشروع قيد التنفيذ</div>
+          </div>
+        </div>
+
+        <div className="bg-white p-6 rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] border-0 flex flex-col justify-between hover:-translate-y-1 transition-transform duration-300 min-h-[140px]">
+          <div className="text-sm font-bold text-slate-500 mb-4 flex justify-between items-center">
+            <span>إجمالي الإيرادات المتوقعة</span>
+            <div className="w-10 h-10 rounded-2xl bg-primary-50 flex items-center justify-center text-primary-600"><Wallet className="w-5 h-5"/></div>
+          </div>
+          <div>
+            <div className="text-3xl font-black text-slate-900 tracking-tight" dir="ltr">
+               {new Intl.NumberFormat('ar-EG', { style: 'currency', currency: 'EGP', maximumSignificantDigits: 4 }).format(totalBudgetRevenue)}
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-white p-6 rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] border-0 flex flex-col justify-between hover:-translate-y-1 transition-transform duration-300 min-h-[140px]">
+          <div className="text-sm font-bold text-slate-500 mb-4 flex justify-between items-center">
+            <span>إجمالي التكاليف الفعلية</span>
+            <div className="w-10 h-10 rounded-2xl bg-rose-50 flex items-center justify-center text-rose-500"><Activity className="w-5 h-5"/></div>
+          </div>
+          <div>
+            <div className="text-3xl font-black text-slate-900 tracking-tight" dir="ltr">
+               {new Intl.NumberFormat('ar-EG', { style: 'currency', currency: 'EGP', maximumSignificantDigits: 4 }).format(totalActualCost)}
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-white p-6 rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] border-0 flex flex-col justify-between hover:-translate-y-1 transition-transform duration-300 min-h-[140px]">
+          <div className="text-sm font-bold text-slate-500 mb-4 flex justify-between items-center">
+            <span>إجمالي الأرباح</span>
+            <div className="w-10 h-10 rounded-2xl bg-emerald-50 flex items-center justify-center text-emerald-600"><TrendingUp className="w-5 h-5"/></div>
+          </div>
+          <div>
+            <div className="text-3xl font-black text-emerald-600 tracking-tight" dir="ltr">
+               {new Intl.NumberFormat('ar-EG', { style: 'currency', currency: 'EGP', maximumSignificantDigits: 4 }).format(totalExpectedProfit)}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Search and Filters */}
+      <div className="flex flex-col md:flex-row gap-4">
+         <div className="relative flex-1">
+            <Search className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+            <input 
+               type="text" 
+               placeholder="البحث باسم المشروع أو العميل أو الكود..." 
+               value={searchTerm}
+               onChange={(e) => setSearchTerm(e.target.value)}
+               className="w-full bg-white border border-slate-200 text-slate-900 text-sm rounded-2xl pr-12 pl-4 py-3 outline-none focus:border-primary-500 shadow-sm"
+            />
+         </div>
+         <div className="relative min-w-[200px]">
+            <Filter className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+            <select 
+               value={statusFilter}
+               onChange={(e) => setStatusFilter(e.target.value)}
+               className="w-full bg-white border border-slate-200 text-slate-900 text-sm rounded-2xl pr-12 pl-4 py-3 outline-none focus:border-primary-500 shadow-sm appearance-none"
+            >
+               <option value="all">جميع الحالات</option>
+               <option value="in_progress">قيد التنفيذ</option>
+               <option value="completed">مكتمل</option>
+               <option value="planned">مخطط</option>
+            </select>
+         </div>
+      </div>
+
+      {/* Projects List */}
       <div className="space-y-6">
-        {projects.map(project => {
+        {filteredProjects.length === 0 ? (
+           <div className="text-center py-12 bg-white rounded-3xl border-0 shadow-sm">
+              <FolderKanban className="w-12 h-12 text-slate-300 mx-auto mb-4" />
+              <h3 className="text-lg font-bold text-slate-700">لا توجد مشاريع</h3>
+              <p className="text-slate-500 mt-1">جرب تغيير كلمات البحث أو الفلاتر المستعملة.</p>
+           </div>
+        ) : filteredProjects.map(project => {
            const metrics = getAnalysis(project.id);
+           const timeProgress = calculateTimeProgress(project.start_date, project.end_date);
+           const costProgress = calculateBudgetConsumed(project.actual_cost, project.budget_cost);
+           const isOverBudget = costProgress > timeProgress && costProgress > 50;
            
            return (
               <div key={project.id} className="bg-white rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] border-0 overflow-hidden">
@@ -129,11 +248,30 @@ export function ProjectsPage() {
                           </h3>
                           <div className="text-sm text-slate-500 mt-1 flex items-center gap-4 font-medium">
                              <span>العميل: {project.customer_name}</span>
-                             <span>المدة: {project.start_date} إلى {project.end_date}</span>
+                             <span className="flex items-center gap-1.5"><CalendarDays className="w-3.5 h-3.5"/> {project.start_date} إلى {project.end_date}</span>
                           </div>
                        </div>
                     </div>
-                    <div>
+                    <div className="flex items-center gap-6">
+                       {/* Burn Rate Preview */}
+                       <div className="hidden md:block w-48 space-y-2">
+                          <div className="flex justify-between text-[10px] font-bold text-slate-500 uppercase tracking-wider">
+                             <span>استهلاك الميزانية</span>
+                             <span className={clsx(isOverBudget ? 'text-rose-500' : 'text-slate-600')}>{costProgress}%</span>
+                          </div>
+                          <div className="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
+                             <div className={clsx("h-full transition-all duration-500", isOverBudget ? 'bg-rose-500' : 'bg-primary-500')} style={{ width: `${costProgress}%` }}></div>
+                          </div>
+                          
+                          <div className="flex justify-between text-[10px] font-bold text-slate-500 uppercase tracking-wider">
+                             <span>الوقت المنقضي</span>
+                             <span>{timeProgress}%</span>
+                          </div>
+                          <div className="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
+                             <div className="h-full bg-slate-400 transition-all duration-500" style={{ width: `${timeProgress}%` }}></div>
+                          </div>
+                       </div>
+
                        <span className={clsx('inline-flex items-center rounded-lg px-3 py-1.5 text-xs font-bold tracking-wide', 
                           project.status === 'in_progress' ? 'bg-primary-100 text-primary-700' :
                           project.status === 'completed' ? 'bg-emerald-100 text-emerald-700' :
