@@ -99,7 +99,7 @@ export function AutomationPage() {
 
   return (
     <div className="space-y-6 animate-in fade-in duration-500">
-      <div className="bg-white rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] border-0 p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 relative overflow-hidden">
+      <div className="bg-white rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] hover:-translate-y-1 hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all duration-300 group border-0 p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 relative overflow-hidden">
         <div className="absolute top-0 start-0 w-2 h-full bg-primary-500"></div>
         <div className="ps-2">
           <h2 className="font-black text-slate-800 text-2xl flex items-center gap-3">
@@ -136,7 +136,7 @@ export function AutomationPage() {
           
           {/* Metrics Dashboard */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <div className="bg-white rounded-3xl p-5 shadow-[0_4px_24px_rgb(0,0,0,0.02)] border border-slate-100 flex items-center gap-4">
+            <div className="bg-white rounded-3xl p-5 shadow-[0_4px_24px_rgb(0,0,0,0.02)] hover:-translate-y-1 hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all duration-300 group border border-slate-100 flex items-center gap-4">
               <div className="w-12 h-12 bg-primary-50 rounded-2xl flex items-center justify-center shrink-0">
                 <Activity className="w-6 h-6 text-primary-600" />
               </div>
@@ -146,7 +146,7 @@ export function AutomationPage() {
               </div>
             </div>
             
-            <div className="bg-white rounded-3xl p-5 shadow-[0_4px_24px_rgb(0,0,0,0.02)] border border-slate-100 flex items-center gap-4 group hover:border-rose-200 transition-colors">
+            <div className="bg-white rounded-3xl p-5 shadow-[0_4px_24px_rgb(0,0,0,0.02)] hover:-translate-y-1 hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all duration-300 group border border-slate-100 flex items-center gap-4 group hover:border-rose-200 transition-colors">
               <div className="w-12 h-12 bg-rose-50 rounded-2xl flex items-center justify-center shrink-0 group-hover:bg-rose-100 transition-colors">
                 <ShieldAlert className="w-6 h-6 text-rose-600" />
               </div>
@@ -156,7 +156,7 @@ export function AutomationPage() {
               </div>
             </div>
 
-            <div className="bg-white rounded-3xl p-5 shadow-[0_4px_24px_rgb(0,0,0,0.02)] border border-slate-100 flex items-center gap-4">
+            <div className="bg-white rounded-3xl p-5 shadow-[0_4px_24px_rgb(0,0,0,0.02)] hover:-translate-y-1 hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all duration-300 group border border-slate-100 flex items-center gap-4">
               <div className="w-12 h-12 bg-amber-50 rounded-2xl flex items-center justify-center shrink-0">
                 <Clock className="w-6 h-6 text-amber-600" />
               </div>
@@ -166,7 +166,7 @@ export function AutomationPage() {
               </div>
             </div>
 
-            <div className="bg-white rounded-3xl p-5 shadow-[0_4px_24px_rgb(0,0,0,0.02)] border border-slate-100 flex items-center gap-4">
+            <div className="bg-white rounded-3xl p-5 shadow-[0_4px_24px_rgb(0,0,0,0.02)] hover:-translate-y-1 hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all duration-300 group border border-slate-100 flex items-center gap-4">
               <div className="w-12 h-12 bg-emerald-50 rounded-2xl flex items-center justify-center shrink-0">
                 <TrendingUp className="w-6 h-6 text-emerald-600" />
               </div>
@@ -178,7 +178,7 @@ export function AutomationPage() {
           </div>
 
           {/* Filters Bar */}
-          <div className="flex flex-col xl:flex-row justify-between items-stretch xl:items-center bg-white p-5 rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] border-0 gap-4">
+          <div className="flex flex-col xl:flex-row justify-between items-stretch xl:items-center bg-white p-5 rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] hover:-translate-y-1 hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all duration-300 group border-0 gap-4">
             <div className="flex flex-col md:flex-row items-center gap-4 w-full xl:max-w-2xl">
               <div className="relative flex-1 w-full">
                 <Search className="w-5 h-5 absolute end-4 top-1/2 -translate-y-1/2 text-slate-400" />
@@ -213,7 +213,7 @@ export function AutomationPage() {
           </div>
 
           {/* Table */}
-          <div className="bg-white rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] border-0 overflow-hidden">
+          <div className="bg-white rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] hover:-translate-y-1 hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all duration-300 group border-0 overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full text-start">
                 <thead className="bg-slate-50/50">
@@ -298,7 +298,7 @@ export function AutomationPage() {
 
       {activeTab === 'settings' && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 animate-in slide-in-from-bottom-4 duration-500">
-          <div className="bg-white p-8 rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] border-0 space-y-6">
+          <div className="bg-white p-8 rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] hover:-translate-y-1 hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all duration-300 group border-0 space-y-6">
             <h3 className="font-black text-xl text-slate-800 mb-2">إعدادات الإشعارات والتنبيهات</h3>
             <p className="text-slate-500 text-sm font-medium mb-6">تحكم في من يتلقى التنبيهات في حال فشل أي مهمة مجدولة.</p>
             

@@ -263,7 +263,7 @@ export function FileManagementPage() {
       {mainTab === 'archive' && (
         <div className="space-y-6 animate-in slide-in-from-right-4 duration-300">
           {/* Header */}
-          <div className="bg-white rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] border-0 p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 relative overflow-hidden">
+          <div className="bg-white rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] hover:-translate-y-1 hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all duration-300 group border-0 p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 relative overflow-hidden">
             <div className="absolute top-0 start-0 w-2 h-full bg-primary-500"></div>
             <div className="ps-2">
               <h2 className="font-black text-slate-800 text-2xl flex items-center gap-3">
@@ -283,7 +283,7 @@ export function FileManagementPage() {
 
           {/* Storage Metrics */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <div className="bg-white rounded-3xl p-5 shadow-[0_4px_24px_rgb(0,0,0,0.02)] border border-slate-100 flex items-center gap-4">
+            <div className="bg-white rounded-3xl p-5 shadow-[0_4px_24px_rgb(0,0,0,0.02)] hover:-translate-y-1 hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all duration-300 group border border-slate-100 flex items-center gap-4">
               <div className="w-12 h-12 bg-indigo-50 rounded-2xl flex items-center justify-center shrink-0">
                 <HardDrive className="w-6 h-6 text-indigo-600" />
               </div>
@@ -293,7 +293,7 @@ export function FileManagementPage() {
               </div>
             </div>
             
-            <div className="bg-white rounded-3xl p-5 shadow-[0_4px_24px_rgb(0,0,0,0.02)] border border-slate-100 flex items-center gap-4">
+            <div className="bg-white rounded-3xl p-5 shadow-[0_4px_24px_rgb(0,0,0,0.02)] hover:-translate-y-1 hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all duration-300 group border border-slate-100 flex items-center gap-4">
               <div className="w-12 h-12 bg-sky-50 rounded-2xl flex items-center justify-center shrink-0">
                 <Files className="w-6 h-6 text-sky-600" />
               </div>
@@ -303,7 +303,7 @@ export function FileManagementPage() {
               </div>
             </div>
 
-            <div className="bg-white rounded-3xl p-5 shadow-[0_4px_24px_rgb(0,0,0,0.02)] border border-slate-100 flex items-center gap-4">
+            <div className="bg-white rounded-3xl p-5 shadow-[0_4px_24px_rgb(0,0,0,0.02)] hover:-translate-y-1 hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all duration-300 group border border-slate-100 flex items-center gap-4">
               <div className="w-12 h-12 bg-primary-50 rounded-2xl flex items-center justify-center shrink-0">
                 <Paperclip className="w-6 h-6 text-primary-600" />
               </div>
@@ -313,7 +313,7 @@ export function FileManagementPage() {
               </div>
             </div>
 
-            <div className="bg-white rounded-3xl p-5 shadow-[0_4px_24px_rgb(0,0,0,0.02)] border border-slate-100 flex items-center gap-4">
+            <div className="bg-white rounded-3xl p-5 shadow-[0_4px_24px_rgb(0,0,0,0.02)] hover:-translate-y-1 hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all duration-300 group border border-slate-100 flex items-center gap-4">
               <div className="w-12 h-12 bg-emerald-50 rounded-2xl flex items-center justify-center shrink-0">
                 <ShieldCheck className="w-6 h-6 text-emerald-600" />
               </div>
@@ -325,7 +325,7 @@ export function FileManagementPage() {
           </div>
 
           {/* Filters Bar */}
-          <div className="flex flex-col xl:flex-row justify-between items-stretch xl:items-center bg-white p-5 rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] border-0 gap-4">
+          <div className="flex flex-col xl:flex-row justify-between items-stretch xl:items-center bg-white p-5 rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] hover:-translate-y-1 hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all duration-300 group border-0 gap-4">
             
             <div className="flex bg-slate-100 p-1.5 rounded-2xl w-max overflow-x-auto shrink-0">
               {tabs.map(tab => (
@@ -365,7 +365,7 @@ export function FileManagementPage() {
           </div>
 
           {/* Table */}
-          <div className="bg-white rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] border-0 overflow-hidden">
+          <div className="bg-white rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] hover:-translate-y-1 hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all duration-300 group border-0 overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full text-start text-sm">
                 <thead className="bg-slate-50/50">
@@ -435,7 +435,7 @@ export function FileManagementPage() {
 
       {mainTab === 'migration' && (
         <div className="space-y-6 animate-in slide-in-from-left-4 duration-300">
-          <div className="bg-white rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] border-0 p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 relative overflow-hidden">
+          <div className="bg-white rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] hover:-translate-y-1 hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all duration-300 group border-0 p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 relative overflow-hidden">
             <div className="absolute top-0 start-0 w-2 h-full bg-emerald-500"></div>
             <div className="ps-2">
               <h2 className="font-black text-slate-800 text-2xl flex items-center gap-3">
@@ -486,7 +486,7 @@ export function FileManagementPage() {
                   </p>
                 </div>
               ) : (
-                <div className="bg-white rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] border border-slate-100 p-8 animate-in zoom-in-95 duration-300">
+                <div className="bg-white rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] hover:-translate-y-1 hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all duration-300 group border border-slate-100 p-8 animate-in zoom-in-95 duration-300">
                   <div className="flex flex-col md:flex-row items-center gap-6">
                     <div className="w-16 h-16 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center shrink-0">
                       <FileSpreadsheet className="w-8 h-8" />
@@ -531,7 +531,7 @@ export function FileManagementPage() {
               )}
 
               {recentImports.length > 0 && (
-                <div className="bg-white rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] border-0 p-6">
+                <div className="bg-white rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] hover:-translate-y-1 hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all duration-300 group border-0 p-6">
                   <h3 className="font-bold text-slate-800 text-lg mb-5 flex items-center gap-2">
                     <UploadCloud className="w-5 h-5 text-emerald-600" /> العمليات المنفذة حديثاً
                   </h3>

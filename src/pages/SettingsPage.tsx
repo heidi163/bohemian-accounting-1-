@@ -138,7 +138,7 @@ export function SettingsPage() {
     <div className="space-y-6 pb-24 animate-in fade-in duration-500">
       
       {/* Header */}
-      <div className="bg-white rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] border-0 p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 relative overflow-hidden">
+      <div className="bg-white rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] hover:-translate-y-1 hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all duration-300 group border-0 p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 relative overflow-hidden">
         <div className="absolute top-0 start-0 w-2 h-full bg-emerald-500"></div>
         <div className="ps-2">
           <h2 className="font-black text-slate-800 text-2xl flex items-center gap-3">
@@ -152,7 +152,7 @@ export function SettingsPage() {
 
       <div className="flex flex-col lg:flex-row gap-6">
         {/* Navigation Sidebar */}
-        <div className="w-full lg:w-72 bg-white rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] border-0 p-4 shrink-0 h-max sticky top-6">
+        <div className="w-full lg:w-72 bg-white rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] hover:-translate-y-1 hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all duration-300 group border-0 p-4 shrink-0 h-max sticky top-6">
           <nav className="space-y-1.5">
             {navItems.map(item => (
               <button 
@@ -178,7 +178,7 @@ export function SettingsPage() {
         </div>
 
         {/* Content Area */}
-        <div className="flex-1 bg-white rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] border-0 p-6 sm:p-8 min-h-[600px]">
+        <div className="flex-1 bg-white rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] hover:-translate-y-1 hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all duration-300 group border-0 p-6 sm:p-8 min-h-[600px]">
           
           {/* 1. Company Profile */}
           {activeTab === 'company' && (

@@ -236,7 +236,7 @@ export function CostCentersPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
          {/* Hierarchy Tree */}
-         <div className="lg:col-span-2 bg-white rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] border-0 overflow-hidden flex flex-col">
+         <div className="lg:col-span-2 bg-white rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] hover:-translate-y-1 hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all duration-300 group border-0 overflow-hidden flex flex-col">
             <div className="p-6 border-b border-slate-50 flex items-center justify-between bg-white">
                <h3 className="font-bold text-slate-900 text-lg flex items-center gap-2"><FolderTree className="w-5 h-5 text-primary-500" /> الهيكل الشجري للمراكز</h3>
             </div>
@@ -248,7 +248,7 @@ export function CostCentersPage() {
          </div>
 
          {/* Chart Widget */}
-         <div className="lg:col-span-1 bg-white rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] border-0 p-6 flex flex-col">
+         <div className="lg:col-span-1 bg-white rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] hover:-translate-y-1 hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all duration-300 group border-0 p-6 flex flex-col">
             <h3 className="font-bold text-slate-900 text-lg flex items-center gap-2 mb-6"><Target className="w-5 h-5 text-primary-500" /> أداء المراكز الفرعية</h3>
             <div className="flex-1 min-h-[300px]" style={{ direction: 'ltr' }}>
                <ResponsiveContainer width="100%" height="100%">

@@ -167,7 +167,7 @@ export function DashboardPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Sales Chart */}
-        <div className="lg:col-span-8 bg-white rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] border-0 flex flex-col min-h-[400px]">
+        <div className="lg:col-span-8 bg-white rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] hover:-translate-y-1 hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all duration-300 group border-0 flex flex-col min-h-[400px]">
           <div className="p-6 md:p-8 flex items-center justify-between">
             <h2 className="text-lg font-bold text-slate-900 tracking-tight">حركة المبيعات والتدفقات</h2>
             <select className="bg-slate-50 border-0 text-sm font-medium rounded-full px-4 py-1.5 text-slate-600 outline-none cursor-pointer focus:ring-2 focus:ring-primary/20 transition-all hover:bg-slate-100">
@@ -188,7 +188,7 @@ export function DashboardPage() {
         </div>
 
         {/* Expenses Doughnut */}
-        <div className="lg:col-span-4 bg-white rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] border-0 flex flex-col">
+        <div className="lg:col-span-4 bg-white rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] hover:-translate-y-1 hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all duration-300 group border-0 flex flex-col">
           <div className="p-6 pb-2 border-b border-slate-50 flex flex-col">
              <h2 className="text-lg font-bold text-slate-900 tracking-tight">هيكل المصروفات</h2>
              <p className="text-sm text-slate-500 mt-1">توزيع أكبر المصروفات للعام الحالي</p>
@@ -255,7 +255,7 @@ export function DashboardPage() {
           </div>
 
           {/* Top Debtors Table */}
-          <div className="bg-white rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] border-0 flex flex-col flex-1">
+          <div className="bg-white rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] hover:-translate-y-1 hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all duration-300 group border-0 flex flex-col flex-1">
             <div className="p-6 border-b border-slate-50 flex items-center justify-between">
               <div>
                 <h2 className="text-lg font-bold text-slate-900 tracking-tight">أهم المديونيات المتأخرة</h2>
@@ -305,7 +305,7 @@ export function DashboardPage() {
         <div className="lg:col-span-4 flex flex-col gap-6">
           
           {/* Bank Balances */}
-          <div className="bg-white rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] border-0 flex flex-col">
+          <div className="bg-white rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] hover:-translate-y-1 hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all duration-300 group border-0 flex flex-col">
             <div className="p-6 pb-4 border-b border-slate-50">
               <h2 className="text-lg font-bold text-slate-900 tracking-tight flex items-center gap-2">
                 <Landmark className="w-5 h-5 text-slate-400" /> البنوك والخزائن
@@ -332,7 +332,7 @@ export function DashboardPage() {
           </div>
 
           {/* Upcoming Checks */}
-          <div className="bg-white rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] border-0 flex flex-col">
+          <div className="bg-white rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] hover:-translate-y-1 hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all duration-300 group border-0 flex flex-col">
             <div className="p-6 pb-4 border-b border-slate-50">
               <h2 className="text-lg font-bold text-slate-900 tracking-tight flex items-center gap-2">
                 <AlertCircle className="w-5 h-5 text-amber-500" /> شيكات مستحقة قريباً

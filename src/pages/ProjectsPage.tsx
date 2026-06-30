@@ -235,7 +235,7 @@ export function ProjectsPage() {
            const isOverBudget = costProgress > timeProgress && costProgress > 50;
            
            return (
-              <div key={project.id} className="bg-white rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] border-0 overflow-hidden">
+              <div key={project.id} className="bg-white rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] hover:-translate-y-1 hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all duration-300 group border-0 overflow-hidden">
                  <div className="p-6 border-b border-slate-50 flex flex-wrap gap-4 justify-between items-center bg-white">
                     <div className="flex items-center gap-4">
                        <div className="w-12 h-12 rounded-xl bg-primary-100 flex items-center justify-center text-primary-600">

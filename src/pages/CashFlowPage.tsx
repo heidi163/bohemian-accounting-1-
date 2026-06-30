@@ -161,7 +161,7 @@ export function CashFlowPage() {
         <div className="lg:col-span-2 space-y-6">
 
           {/* Area Chart */}
-          <div className="bg-white rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] border-0 p-6">
+          <div className="bg-white rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] hover:-translate-y-1 hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all duration-300 group border-0 p-6">
             <h3 className="font-bold text-slate-900 text-lg mb-6">مسار السيولة النقدية</h3>
             <div className="h-52" style={{ direction: 'ltr' }}>
               <ResponsiveContainer width="100%" height="100%">
@@ -201,7 +201,7 @@ export function CashFlowPage() {
           </div>
 
           {/* Table */}
-          <div className="bg-white rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] border-0 overflow-hidden">
+          <div className="bg-white rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] hover:-translate-y-1 hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all duration-300 group border-0 overflow-hidden">
             <div className="p-5 border-b border-slate-50 flex items-center gap-2">
               <h3 className="font-bold text-slate-900 text-lg">تفاصيل التوقعات الأسبوعية</h3>
               <span className="text-xs text-slate-400 font-bold bg-slate-50 px-2 py-1 rounded-lg">12 أسبوع</span>
@@ -245,7 +245,7 @@ export function CashFlowPage() {
         {/* Right sidebar: Alerts + Recommendations */}
         <div className="space-y-6">
           {/* Alerts */}
-          <div className="bg-white rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] border-0 overflow-hidden">
+          <div className="bg-white rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] hover:-translate-y-1 hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all duration-300 group border-0 overflow-hidden">
             <div className="p-5 border-b border-slate-50 flex items-center gap-2">
               <AlertTriangle className="w-5 h-5 text-rose-500" />
               <h3 className="font-bold text-slate-900">الإنذارات المبكرة</h3>
@@ -277,7 +277,7 @@ export function CashFlowPage() {
           </div>
 
           {/* Recommendations */}
-          <div className="bg-white rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] border-0 overflow-hidden">
+          <div className="bg-white rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] hover:-translate-y-1 hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all duration-300 group border-0 overflow-hidden">
             <div className="p-5 border-b border-slate-50 flex items-center gap-2">
               <Lightbulb className="w-5 h-5 text-amber-500" />
               <h3 className="font-bold text-slate-900">توصيات السيولة</h3>

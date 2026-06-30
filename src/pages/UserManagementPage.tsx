@@ -181,7 +181,7 @@ export function UserManagementPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="bg-white rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] border-0 p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+      <div className="bg-white rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] hover:-translate-y-1 hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all duration-300 group border-0 p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
           <h2 className="font-black text-slate-800 text-3xl flex items-center gap-3">
              <ShieldCheck className="w-8 h-8 text-primary-600"/> إدارة الوصول (RBAC)
@@ -248,7 +248,7 @@ export function UserManagementPage() {
             </div>
 
             {/* Search, Filter & Actions */}
-            <div className="flex flex-col md:flex-row gap-4 items-center justify-between bg-white p-4 rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)]">
+            <div className="flex flex-col md:flex-row gap-4 items-center justify-between bg-white p-4 rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] hover:-translate-y-1 hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all duration-300 group">
                <div className="flex flex-1 w-full gap-4 items-center">
                   <div className="relative flex-1 max-w-md">
                      <div className="absolute inset-y-0 start-0 flex items-center ps-4 pointer-events-none">
@@ -285,7 +285,7 @@ export function UserManagementPage() {
             </div>
 
             {/* Users Table */}
-            <div className="bg-white rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] overflow-hidden">
+            <div className="bg-white rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] hover:-translate-y-1 hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all duration-300 group overflow-hidden">
                {filteredUsers.length === 0 ? (
                   <div className="p-12 text-center text-slate-400">
                      <Search className="w-12 h-12 mx-auto mb-4 opacity-20" />
@@ -362,7 +362,7 @@ export function UserManagementPage() {
       {activeTab === 'roles' && (
          <div className="grid grid-cols-1 xl:grid-cols-4 gap-6">
             {/* Roles Sidebar */}
-            <div className="xl:col-span-1 space-y-4 bg-white p-5 rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] max-h-[800px] overflow-y-auto custom-scrollbar border-0">
+            <div className="xl:col-span-1 space-y-4 bg-white p-5 rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] hover:-translate-y-1 hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all duration-300 group max-h-[800px] overflow-y-auto custom-scrollbar border-0">
                <h3 className="font-bold text-slate-800 px-2 flex items-center gap-2 mb-2">
                   <ShieldCheck className="w-5 h-5 text-primary-600" /> مجموعات الصلاحيات
                </h3>
@@ -397,7 +397,7 @@ export function UserManagementPage() {
             
             {/* Permission Matrix Main Panel */}
             <div className="xl:col-span-3">
-               <div className="bg-white rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] border-0 overflow-hidden h-full flex flex-col">
+               <div className="bg-white rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] hover:-translate-y-1 hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all duration-300 group border-0 overflow-hidden h-full flex flex-col">
                   <div className="p-8 border-b border-slate-50 flex flex-col md:flex-row justify-between md:items-center gap-4">
                      <div>
                         <h3 className="font-black text-2xl text-slate-800">مصفوفة التحكم الدقيق</h3>

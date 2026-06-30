@@ -177,7 +177,7 @@ export function PeriodClosingPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
          {/* Sidebar: Periods List */}
-         <div className="lg:col-span-1 bg-white rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] border-0 overflow-hidden flex flex-col max-h-[800px]">
+         <div className="lg:col-span-1 bg-white rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] hover:-translate-y-1 hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all duration-300 group border-0 overflow-hidden flex flex-col max-h-[800px]">
             <div className="p-5 border-b border-slate-50 bg-slate-50/50">
                <h3 className="font-bold text-slate-800 flex items-center gap-2">
                   <LayoutDashboard className="w-4 h-4 text-primary-600"/> السنة المالية 2026
@@ -224,7 +224,7 @@ export function PeriodClosingPage() {
          {/* Main Panel: Active Period Control */}
          <div className="lg:col-span-2">
             {!activePeriod ? (
-               <div className="bg-white rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] border-0 h-full flex flex-col items-center justify-center text-slate-400 p-12 text-center min-h-[500px]">
+               <div className="bg-white rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] hover:-translate-y-1 hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all duration-300 group border-0 h-full flex flex-col items-center justify-center text-slate-400 p-12 text-center min-h-[500px]">
                   <div className="w-24 h-24 rounded-full bg-slate-50 flex items-center justify-center mb-6">
                      <Calendar className="w-10 h-10 text-slate-300" />
                   </div>
@@ -232,7 +232,7 @@ export function PeriodClosingPage() {
                   <p className="text-slate-500 mt-2 max-w-sm">قم باختيار أحد الشهور من القائمة الجانبية لعرض قائمة مهام الإغلاق والتحكم في حالة الفترة.</p>
                </div>
             ) : (
-               <div className="bg-white rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] border-0 overflow-hidden flex flex-col h-full">
+               <div className="bg-white rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] hover:-translate-y-1 hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all duration-300 group border-0 overflow-hidden flex flex-col h-full">
                   
                   {/* Status Banner */}
                   <div className={clsx(

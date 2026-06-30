@@ -177,7 +177,7 @@ export function EmailTemplatesPage() {
     <div className="space-y-6 animate-in fade-in duration-500">
       
       {/* Header */}
-      <div className="bg-white rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] border-0 p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 relative overflow-hidden">
+      <div className="bg-white rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] hover:-translate-y-1 hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all duration-300 group border-0 p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 relative overflow-hidden">
         <div className="absolute top-0 start-0 w-2 h-full bg-emerald-500"></div>
         <div className="ps-2">
           <h2 className="font-black text-slate-800 text-2xl flex items-center gap-3">
@@ -191,7 +191,7 @@ export function EmailTemplatesPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
         {/* Templates Sidebar */}
-        <div className="space-y-4 bg-white rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] border-0 p-5 lg:h-[calc(100vh-13rem)] lg:overflow-y-auto">
+        <div className="space-y-4 bg-white rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] hover:-translate-y-1 hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all duration-300 group border-0 p-5 lg:h-[calc(100vh-13rem)] lg:overflow-y-auto">
           <h3 className="font-black text-slate-800 text-lg px-2 mb-2 flex items-center gap-2">
             <FileText className="w-5 h-5 text-slate-400" /> الرسائل المتاحة
           </h3>
@@ -217,7 +217,7 @@ export function EmailTemplatesPage() {
         </div>
 
         {/* Editor Main Area */}
-        <div className="lg:col-span-3 bg-white rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] border-0 overflow-hidden flex flex-col lg:h-[calc(100vh-13rem)]">
+        <div className="lg:col-span-3 bg-white rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] hover:-translate-y-1 hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all duration-300 group border-0 overflow-hidden flex flex-col lg:h-[calc(100vh-13rem)]">
           
           {/* Editor Header */}
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center p-6 border-b border-slate-100/60 bg-white gap-4 shrink-0">

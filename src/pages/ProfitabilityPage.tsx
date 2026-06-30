@@ -97,7 +97,7 @@ export function ProfitabilityPage() {
             
             <div className="flex flex-col gap-4">
               {topClients.map((client, idx) => (
-                <div key={client.client_id} className="p-5 rounded-3xl bg-white shadow-[0_4px_24px_rgb(0,0,0,0.02)] border-0 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-5 hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:-translate-y-0.5 transition-all group">
+                <div key={client.client_id} className="p-5 rounded-3xl bg-white shadow-[0_4px_24px_rgb(0,0,0,0.02)] hover:-translate-y-1 hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all duration-300 group border-0 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-5 hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:-translate-y-0.5 transition-all group">
                    <div className="flex items-center gap-4">
                       <div className="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-black font-mono text-lg shrink-0">
                          #{idx + 1}
@@ -134,7 +134,7 @@ export function ProfitabilityPage() {
                   </h3>
                   <div className="flex flex-col gap-4">
                     {unprofitableClients.map((client) => (
-                      <div key={client.client_id} className="p-5 rounded-3xl bg-white shadow-[0_4px_24px_rgb(0,0,0,0.02)] border border-rose-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-5">
+                      <div key={client.client_id} className="p-5 rounded-3xl bg-white shadow-[0_4px_24px_rgb(0,0,0,0.02)] hover:-translate-y-1 hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all duration-300 group border border-rose-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-5">
                          <div>
                             <h4 className="font-bold text-slate-900 text-lg">{client.client_name}</h4>
                             <div className="text-sm font-semibold text-slate-500 mt-1 flex gap-2">
@@ -163,7 +163,7 @@ export function ProfitabilityPage() {
             
             <div className="flex flex-col gap-4">
                {topProjects.map((project, idx) => (
-                  <div key={project.id} className="p-6 rounded-3xl bg-white shadow-[0_4px_24px_rgb(0,0,0,0.02)] border-0 flex flex-col gap-6 hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:-translate-y-0.5 transition-all group">
+                  <div key={project.id} className="p-6 rounded-3xl bg-white shadow-[0_4px_24px_rgb(0,0,0,0.02)] hover:-translate-y-1 hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all duration-300 group border-0 flex flex-col gap-6 hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:-translate-y-0.5 transition-all group">
                      <div className="flex justify-between items-start">
                         <div className="flex items-start gap-4">
                            <div className="w-12 h-12 rounded-2xl bg-primary-50 text-primary-600 flex items-center justify-center shrink-0">
