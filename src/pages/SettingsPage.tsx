@@ -88,6 +88,9 @@ export function SettingsPage() {
     themeMode, setThemeMode
   } = useTheme();
 
+  const [stampUrl, setStampUrl] = useState(() => localStorage.getItem('company_stamp') || null);
+  const [signatureUrl, setSignatureUrl] = useState(() => localStorage.getItem('company_signature') || null);
+
   const handleFieldChange = () => setHasChanges(true);
 
   const handleSave = () => {
@@ -96,6 +99,8 @@ export function SettingsPage() {
       setIsSaving(false);
       setShowSuccess(true);
       setHasChanges(false);
+      if (stampUrl) localStorage.setItem('company_stamp', stampUrl);
+      if (signatureUrl) localStorage.setItem('company_signature', signatureUrl);
       toast.success("تم حفظ جميع التعديلات بنجاح");
       setTimeout(() => setShowSuccess(false), 3000);
     }, 800);
@@ -229,24 +234,64 @@ export function SettingsPage() {
               <div>
                 <h4 className="text-lg font-black text-slate-800 mb-4">أختام وتوقيعات الشركة</h4>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="bg-slate-50 border border-slate-200 rounded-2xl p-5 flex items-center gap-5">
-                    <div className="w-16 h-16 bg-white border border-slate-200 rounded-full flex items-center justify-center shrink-0">
-                      <ShieldCheck className="w-8 h-8 text-emerald-600" />
+                  <div className="bg-slate-50 border border-slate-200 rounded-2xl p-5 flex items-center gap-5 relative overflow-hidden">
+                    <div className="w-16 h-16 bg-white border border-slate-200 rounded-full flex items-center justify-center shrink-0 overflow-hidden relative">
+                      {stampUrl ? (
+                         <img src={stampUrl} alt="Stamp" className="w-full h-full object-contain p-2" />
+                      ) : (
+                         <ShieldCheck className="w-8 h-8 text-emerald-600" />
+                      )}
                     </div>
                     <div>
                       <h5 className="font-bold text-slate-800 text-sm mb-1">ختم الشركة المعتمد</h5>
                       <p className="text-xs text-slate-500 font-medium mb-3">سيظهر على الفواتير وعروض الأسعار.</p>
-                      <button onClick={handleFieldChange} className="text-xs font-bold text-emerald-600 bg-emerald-50 hover:bg-emerald-100 px-3 py-1.5 rounded-lg transition-colors border border-emerald-100">رفع صورة הختم</button>
+                      
+                      <input type="file" className="hidden" id="stamp-upload" accept="image/*" onChange={(e) => {
+                         if(e.target.files && e.target.files[0]) {
+                           const file = e.target.files[0];
+                           if (file.size > 2 * 1024 * 1024) {
+                             toast.error('حجم الصورة كبير جداً. أقصى حجم هو 2MB');
+                             return;
+                           }
+                           const reader = new FileReader();
+                           reader.onloadend = () => {
+                             setStampUrl(reader.result as string);
+                             setHasChanges(true);
+                           };
+                           reader.readAsDataURL(file);
+                         }
+                      }} />
+                      <label htmlFor="stamp-upload" className="text-xs font-bold text-emerald-600 bg-emerald-50 hover:bg-emerald-100 px-3 py-1.5 rounded-lg transition-colors border border-emerald-100 cursor-pointer inline-block">رفع صورة الختم</label>
                     </div>
                   </div>
-                  <div className="bg-slate-50 border border-slate-200 rounded-2xl p-5 flex items-center gap-5">
-                    <div className="w-16 h-16 bg-white border border-slate-200 rounded-2xl flex items-center justify-center shrink-0">
-                      <Edit2 className="w-8 h-8 text-slate-400" />
+                  <div className="bg-slate-50 border border-slate-200 rounded-2xl p-5 flex items-center gap-5 relative overflow-hidden">
+                    <div className="w-16 h-16 bg-white border border-slate-200 rounded-2xl flex items-center justify-center shrink-0 overflow-hidden relative">
+                      {signatureUrl ? (
+                         <img src={signatureUrl} alt="Signature" className="w-full h-full object-contain p-2" />
+                      ) : (
+                         <Edit2 className="w-8 h-8 text-slate-400" />
+                      )}
                     </div>
                     <div>
                       <h5 className="font-bold text-slate-800 text-sm mb-1">توقيع المدير المالي</h5>
                       <p className="text-xs text-slate-500 font-medium mb-3">يستخدم لاعتماد المستندات تلقائياً.</p>
-                      <button onClick={handleFieldChange} className="text-xs font-bold text-emerald-600 bg-emerald-50 hover:bg-emerald-100 px-3 py-1.5 rounded-lg transition-colors border border-emerald-100">رفع صورة التوقيع</button>
+                      
+                      <input type="file" className="hidden" id="signature-upload" accept="image/*" onChange={(e) => {
+                         if(e.target.files && e.target.files[0]) {
+                           const file = e.target.files[0];
+                           if (file.size > 2 * 1024 * 1024) {
+                             toast.error('حجم الصورة كبير جداً. أقصى حجم هو 2MB');
+                             return;
+                           }
+                           const reader = new FileReader();
+                           reader.onloadend = () => {
+                             setSignatureUrl(reader.result as string);
+                             setHasChanges(true);
+                           };
+                           reader.readAsDataURL(file);
+                         }
+                      }} />
+                      <label htmlFor="signature-upload" className="text-xs font-bold text-emerald-600 bg-emerald-50 hover:bg-emerald-100 px-3 py-1.5 rounded-lg transition-colors border border-emerald-100 cursor-pointer inline-block">رفع صورة التوقيع</label>
                     </div>
                   </div>
                 </div>
