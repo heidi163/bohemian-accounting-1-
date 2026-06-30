@@ -4,6 +4,7 @@ import { ArrowUpRight, ArrowDownRight, Users, Receipt, DollarSign, Percent, Cloc
 import { type DashboardData } from "../types";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from "recharts";
 import { getActiveCompany } from "../utils/storage";
+import apiClient from "../api/client";
 
 const data = [
   { name: 'يناير', إيرادات: 400000, مصروفات: 240000 },
@@ -29,34 +30,39 @@ export function DashboardPage() {
   const [stats, setStats] = useState<DashboardData | null>(null);
 
   useEffect(() => {
-    fetch("/api/dashboard")
-      .then((res) => res.json())
-      .then((data) => setStats(data.data))
+    const company = getActiveCompany();
+    const companyId = company === "BGK" ? 1 : 2;
+
+    apiClient.get(`/dashboard/metrics?company_id=${companyId}`)
+      .then((res) => {
+        const m = res.data.data.metrics;
+        setStats({ 
+          totalCash: m.net_profit + 500000, // Temp mock for cash
+          receivables: m.pending_invoices_amount + m.overdue_invoices_amount, 
+          payables: m.total_expenses * 0.2, // Temp mock for payables
+          netProfit: m.net_profit,
+          revenue: m.total_revenue,
+          expenses: m.total_expenses
+        });
+      })
       .catch(() => {
-        const company = getActiveCompany();
+        // Fallback if API is unreachable
         if (company === "BGK") {
-          setStats({ totalCash: 1250000, receivables: 450000, payables: 200000, netProfit: 150000 });
+          setStats({ totalCash: 1250000, receivables: 450000, payables: 200000, netProfit: 150000, revenue: 1606000, expenses: 944600 });
         } else {
-          setStats({ totalCash: 350000, receivables: 120000, payables: 60000, netProfit: 45000 });
+          setStats({ totalCash: 350000, receivables: 120000, payables: 60000, netProfit: 45000, revenue: 600000, expenses: 250000 });
         }
       });
   }, []);
 
   if (!stats) return <div className="animate-pulse p-8 shadow-sm rounded-3xl bg-white border border-slate-100">جاري التحميل...</div>;
 
-  const company = getActiveCompany();
-  const kpis = company === "BGK" ? {
-    revenue: 1606000,
-    expenses: 944600,
-    margin: 41.1,
-    dso: 45,
-    dpo: 30,
-  } : {
-    revenue: 600000,
-    expenses: 250000,
-    margin: 58.3,
-    dso: 20,
-    dpo: 45,
+  const kpis = {
+    revenue: stats.revenue || 0,
+    expenses: stats.expenses || 0,
+    margin: stats.revenue ? ((stats.netProfit / stats.revenue) * 100) : 0,
+    dso: company === "BGK" ? 45 : 20,
+    dpo: company === "BGK" ? 30 : 45,
   };
 
   const topExpenses = [

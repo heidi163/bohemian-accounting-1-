@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { ShieldCheck, Eye, EyeOff, Loader2 } from "lucide-react";
 import { useNavigate } from "react-router";
+import apiClient from "../api/client";
 
 export function LoginPage() {
   const navigate = useNavigate();
@@ -10,7 +11,7 @@ export function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
     if (!email || !password) {
@@ -18,16 +19,22 @@ export function LoginPage() {
       return;
     }
     setLoading(true);
-    // Simulate auth
-    setTimeout(() => {
+    
+    try {
+      const response = await apiClient.post('/auth/login', { email, password });
+      const { token, user } = response.data.data;
+      
+      localStorage.setItem("auth_token", token);
+      localStorage.setItem("auth_user", JSON.stringify(user));
+      
+      // Update global context if necessary or just redirect
+      navigate("/");
+    } catch (err: any) {
+      const errorMessage = err.response?.data?.message || "بيانات الدخول غير صحيحة. حاول مرة أخرى.";
+      setError(errorMessage);
+    } finally {
       setLoading(false);
-      if (email === "admin@bohemiangeeks.com" && password === "Admin@12345") {
-        localStorage.setItem("auth_user", JSON.stringify({ name: "أحمد صلاح", role: "Super Admin", email }));
-        navigate("/");
-      } else {
-        setError("بيانات الدخول غير صحيحة. حاول مرة أخرى.");
-      }
-    }, 1200);
+    }
   };
 
   return (

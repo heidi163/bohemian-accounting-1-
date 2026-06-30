@@ -3,6 +3,8 @@ export interface DashboardData {
   receivables: number;
   payables: number;
   netProfit: number;
+  revenue?: number;
+  expenses?: number;
 }
 
 export interface Invoice {

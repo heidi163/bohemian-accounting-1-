@@ -16,6 +16,8 @@ $router->group(['prefix' => '/api', 'middleware' => [\App\Core\Middleware\AuthMi
     $router->post('/invoices', [\App\Controllers\InvoiceController::class, 'store']);
     $router->post('/invoices/{id}/approve', [\App\Controllers\InvoiceController::class, 'approve']);
     $router->post('/invoices/{id}/pay', [\App\Controllers\InvoiceController::class, 'recordPayment']);
+    // Dashboard
+    $router->get('/dashboard/metrics', [\App\Controllers\DashboardController::class, 'metrics']);
     
     // Accounts
     $router->get('/accounts', [\App\Controllers\AccountController::class, 'index']);
