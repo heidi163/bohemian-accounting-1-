@@ -21,6 +21,13 @@ export function TaxesPage() {
   const [paymentAmount, setPaymentAmount] = useState<number>(0);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [newTaxForm, setNewTaxForm] = useState({
+    type: 'vat',
+    period: '',
+    liability_amount: 0,
+    due_date: ''
+  });
 
   const fetchTaxes = async () => {
     try {
@@ -168,6 +175,56 @@ export function TaxesPage() {
     }
   };
 
+  const handleAddTaxSubmit = async () => {
+    if (!newTaxForm.period || !newTaxForm.due_date || newTaxForm.liability_amount <= 0) {
+      toast.error('الرجاء تعبئة جميع الحقول بشكل صحيح');
+      return;
+    }
+    setIsSubmitting(true);
+
+    const executeFallback = () => {
+      try {
+        const localRecords = JSON.parse(localStorage.getItem(getCompanyKey('mock_taxes_records_v2')) || '[]');
+        const localSummary = JSON.parse(localStorage.getItem(getCompanyKey('mock_taxes_summary_v2')) || 'null');
+
+        const newId = localRecords.length > 0 ? Math.max(...localRecords.map((r: any) => r.id)) + 1 : 1;
+        const newRecord = {
+          id: newId,
+          type: newTaxForm.type,
+          period: newTaxForm.period,
+          liability_amount: newTaxForm.liability_amount,
+          paid_amount: 0,
+          due_date: newTaxForm.due_date,
+          status: 'pending'
+        };
+
+        localRecords.push(newRecord);
+
+        if (localSummary) {
+          if (newTaxForm.type === 'vat') localSummary.vat_liability += newTaxForm.liability_amount;
+          if (newTaxForm.type === 'income') localSummary.income_liability += newTaxForm.liability_amount;
+          if (newTaxForm.type === 'withholding') localSummary.withholding_liability += newTaxForm.liability_amount;
+          if (newTaxForm.type === 'payroll') localSummary.payroll_liability += newTaxForm.liability_amount;
+        }
+
+        localStorage.setItem(getCompanyKey('mock_taxes_records_v2'), JSON.stringify(localRecords));
+        localStorage.setItem(getCompanyKey('mock_taxes_summary_v2'), JSON.stringify(localSummary));
+
+        toast.success('تم إضافة الفترة الضريبية بنجاح');
+        setIsAddModalOpen(false);
+        setNewTaxForm({ type: 'vat', period: '', liability_amount: 0, due_date: '' });
+        fetchTaxes();
+      } catch (e) {
+        toast.error("فشل في إضافة البيانات محلياً");
+      } finally {
+        setIsSubmitting(false);
+      }
+    };
+
+    // Since backend isn't ready for this yet, we just execute fallback immediately for demo
+    setTimeout(executeFallback, 300);
+  };
+
   return (
     <div className="space-y-6">
       <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
@@ -175,6 +232,10 @@ export function TaxesPage() {
           <h2 className="font-bold text-slate-800 text-2xl">الضرائب (Taxes)</h2>
           <p className="text-slate-500 mt-1">إدارة الالتزامات الضريبية والمدفوعات والإقرارات.</p>
         </div>
+        <button onClick={() => setIsAddModalOpen(true)} className="flex items-center gap-2 bg-slate-900 text-white px-4 py-2.5 rounded-xl hover:bg-slate-800 transition font-bold text-sm">
+           <Plus className="w-5 h-5" />
+           باند ضريبي جديد
+        </button>
       </div>
 
       {summary && (
@@ -317,6 +378,72 @@ export function TaxesPage() {
         </div>
       )}
 
+      {isAddModalOpen && (
+        <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-900/50 backdrop-blur-sm text-center p-4 sm:p-0">
+          <span className="hidden sm:inline-block sm:h-screen sm:align-middle" aria-hidden="true">&#8203;</span>
+          <div className="inline-block align-bottom bg-white rounded-2xl text-start overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle w-full max-w-lg">
+            <div className="flex items-center justify-between p-6 border-b border-slate-100">
+              <h3 className="text-lg font-bold text-slate-800">إضافة فترة ضريبية جديدة</h3>
+              <button onClick={() => setIsAddModalOpen(false)} className="text-slate-400 hover:text-slate-500"><X className="w-5 h-5"/></button>
+            </div>
+            <div className="p-6 space-y-4">
+               <div>
+                 <label className="block text-sm font-bold text-slate-700 mb-2">نوع الضريبة</label>
+                 <select 
+                   value={newTaxForm.type} 
+                   onChange={(e) => setNewTaxForm({...newTaxForm, type: e.target.value})} 
+                   className="w-full bg-slate-50 border border-slate-200 text-slate-900 font-medium rounded-xl px-4 py-3 outline-none focus:border-slate-500"
+                 >
+                    {Object.entries(taxTypeTranslations).map(([val, label]) => (
+                      <option key={val} value={val}>{label}</option>
+                    ))}
+                 </select>
+               </div>
+
+               <div>
+                 <label className="block text-sm font-bold text-slate-700 mb-2">الفترة (Period)</label>
+                 <input 
+                   type="text" 
+                   placeholder="مثال: Q3-2026 أو شهر 8"
+                   value={newTaxForm.period} 
+                   onChange={(e) => setNewTaxForm({...newTaxForm, period: e.target.value})} 
+                   className="w-full bg-white border border-slate-200 text-slate-900 font-medium rounded-xl px-4 py-3 outline-none focus:border-slate-500" 
+                 />
+               </div>
+
+               <div>
+                 <label className="block text-sm font-bold text-slate-700 mb-2">مبلغ الالتزام (Liability)</label>
+                 <input 
+                   type="number" 
+                   value={newTaxForm.liability_amount || ''} 
+                   onChange={(e) => setNewTaxForm({...newTaxForm, liability_amount: Number(e.target.value)})} 
+                   className="w-full bg-white border border-slate-200 text-slate-900 font-mono font-bold text-lg rounded-xl px-4 py-3 outline-none focus:border-slate-500 text-right" dir="ltr" 
+                 />
+               </div>
+
+               <div>
+                 <label className="block text-sm font-bold text-slate-700 mb-2">تاريخ الاستحقاق (Due Date)</label>
+                 <input 
+                   type="date" 
+                   value={newTaxForm.due_date} 
+                   onChange={(e) => setNewTaxForm({...newTaxForm, due_date: e.target.value})} 
+                   className="w-full bg-white border border-slate-200 text-slate-900 font-mono font-medium rounded-xl px-4 py-3 outline-none focus:border-slate-500" 
+                 />
+               </div>
+
+               <div className="pt-4">
+                 <button 
+                   onClick={handleAddTaxSubmit}
+                   disabled={isSubmitting}
+                   className="w-full bg-slate-900 text-white font-bold py-3 text-sm rounded-xl hover:bg-slate-800 transition disabled:opacity-50"
+                 >
+                   {isSubmitting ? 'جاري الحفظ...' : 'حفظ وإضافة'}
+                 </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
