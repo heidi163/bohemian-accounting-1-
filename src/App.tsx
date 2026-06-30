@@ -40,7 +40,6 @@ import { AuditCompliancePage } from "./pages/AuditCompliancePage";
 import { FileManagementPage } from "./pages/FileManagementPage";
 import { AutomationPage } from "./pages/AutomationPage";
 import { MultiCurrencyPage } from "./pages/MultiCurrencyPage";
-import { ImportExportPage } from "./pages/ImportExportPage";
 import { LoginPage } from "./pages/LoginPage";
 import { ForgotPasswordPage } from "./pages/ForgotPasswordPage";
 import { EmployeeAdvancesPage } from "./pages/EmployeeAdvancesPage";
@@ -89,7 +88,6 @@ export default function App() {
             <Route path="file-management" element={<FileManagementPage />} />
             <Route path="automation" element={<AutomationPage />} />
             <Route path="multi-currency" element={<MultiCurrencyPage />} />
-            <Route path="import-export" element={<ImportExportPage />} />
             <Route path="email-templates" element={<EmailTemplatesPage />} />
             <Route path="journal" element={<JournalPage />} />
             <Route path="journal/new" element={<JournalCreatePage />} />
