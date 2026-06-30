@@ -5,6 +5,7 @@ import { clsx } from "clsx";
 import { Calculator, FileText, CheckCircle, Clock, AlertCircle, Plus, RefreshCcw, Landmark, Receipt, X } from "lucide-react";
 import apiClient from "../api/client";
 import { getCompanyKey } from '../utils/storage';
+import { SearchableSelect } from '../components/ui/SearchableSelect';
 
 const taxTypeTranslations: Record<string, string> = {
   vat: 'ضريبة القيمة المضافة',
@@ -394,15 +395,11 @@ export function TaxesPage() {
             <div className="p-6 space-y-4">
                <div>
                  <label className="block text-sm font-bold text-slate-700 mb-2">نوع الضريبة</label>
-                 <select 
+                 <SearchableSelect 
                    value={newTaxForm.type} 
-                   onChange={(e) => setNewTaxForm({...newTaxForm, type: e.target.value})} 
-                   className="w-full bg-white border border-slate-200 text-slate-900 text-sm rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
-                 >
-                    {Object.entries(taxTypeTranslations).map(([val, label]) => (
-                      <option key={val} value={val}>{label}</option>
-                    ))}
-                 </select>
+                   onChange={(value) => setNewTaxForm({...newTaxForm, type: value})} 
+                   options={Object.entries(taxTypeTranslations).map(([val, label]) => ({ value: val, label }))}
+                 />
                </div>
 
                <div>
