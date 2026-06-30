@@ -42,7 +42,7 @@ export function SettingsPage() {
   const [newUserStatus, setNewUserStatus] = useState('مفعل');
 
   const [is2FAModalOpen, setIs2FAModalOpen] = useState(false);
-  const [is2FAEnabled, setIs2FAEnabled] = useState(false);
+  const [is2FAEnabled, setIs2FAEnabled] = useState(() => localStorage.getItem('2fa_enabled') === 'true');
   const [twoFACode, setTwoFACode] = useState('');
 
   const handleDeleteUser = (id: number) => {
@@ -565,6 +565,7 @@ export function SettingsPage() {
                           <button onClick={() => {
                              if(window.confirm('هل أنت متأكد من إلغاء تفعيل المصادقة الثنائية؟')) {
                                setIs2FAEnabled(false);
+                               localStorage.removeItem('2fa_enabled');
                                toast.success("تم إيقاف المصادقة الثنائية");
                              }
                           }} className="text-rose-500 hover:text-rose-600 font-bold text-sm underline transition-colors">
@@ -934,11 +935,8 @@ export function SettingsPage() {
             </div>
             <div className="p-6 text-center space-y-5">
               <div className="bg-slate-50 p-4 rounded-2xl inline-block border border-slate-200 shadow-inner">
-                {/* Fake QR Code */}
-                <div className="w-40 h-40 bg-white grid grid-cols-5 gap-1 p-2">
-                  {Array.from({ length: 25 }).map((_, i) => (
-                    <div key={i} className={clsx("rounded-sm", Math.random() > 0.3 ? "bg-slate-800" : "bg-white")} />
-                  ))}
+                <div className="w-40 h-40 bg-white p-2 flex items-center justify-center rounded-xl border border-slate-100">
+                  <img src="https://quickchart.io/qr?text=otpauth%3A%2F%2Ftotp%2FO2Nation%3Aadmin%2540bohemiangeeks.com%3Fsecret%3DJBSWY3DPEHPK3PXP%26issuer%3DO2Nation&size=160&margin=0" alt="QR Code" className="w-full h-full object-contain" />
                 </div>
               </div>
               <p className="text-sm font-medium text-slate-600 leading-relaxed">
@@ -949,7 +947,14 @@ export function SettingsPage() {
                   type="text" 
                   maxLength={6}
                   value={twoFACode}
-                  onChange={(e) => setTwoFACode(e.target.value.replace(/\D/g, ''))}
+                  onChange={(e) => {
+                    let val = e.target.value;
+                    const arabicNumbers = ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩'];
+                    for (let i = 0; i < 10; i++) {
+                      val = val.replace(new RegExp(arabicNumbers[i], 'g'), i.toString());
+                    }
+                    setTwoFACode(val.replace(/\D/g, ''));
+                  }}
                   className="w-full bg-slate-50 border border-slate-200 text-slate-800 text-2xl tracking-[0.5em] text-center rounded-2xl px-5 py-3.5 focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 outline-none transition-all font-mono font-bold" 
                   placeholder="000000"
                 />
@@ -958,6 +963,7 @@ export function SettingsPage() {
                 onClick={() => {
                   if (twoFACode.length === 6) {
                     setIs2FAEnabled(true);
+                    localStorage.setItem('2fa_enabled', 'true');
                     setIs2FAModalOpen(false);
                     setTwoFACode('');
                     toast.success("تم تفعيل المصادقة الثنائية بنجاح!");
