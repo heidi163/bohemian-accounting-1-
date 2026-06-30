@@ -397,7 +397,7 @@ export function TaxesPage() {
                  <select 
                    value={newTaxForm.type} 
                    onChange={(e) => setNewTaxForm({...newTaxForm, type: e.target.value})} 
-                   className="w-full bg-slate-50 border border-slate-200 text-slate-900 font-medium rounded-xl px-4 py-3 outline-none focus:border-slate-500"
+                   className="w-full bg-white border border-slate-200 text-slate-900 text-sm rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
                  >
                     {Object.entries(taxTypeTranslations).map(([val, label]) => (
                       <option key={val} value={val}>{label}</option>
@@ -412,7 +412,7 @@ export function TaxesPage() {
                    placeholder="مثال: Q3-2026 أو شهر 8"
                    value={newTaxForm.period} 
                    onChange={(e) => setNewTaxForm({...newTaxForm, period: e.target.value})} 
-                   className="w-full bg-white border border-slate-200 text-slate-900 font-medium rounded-xl px-4 py-3 outline-none focus:border-slate-500" 
+                   className="w-full bg-white border border-slate-200 text-slate-900 text-sm rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all" 
                  />
                </div>
 
@@ -422,7 +422,7 @@ export function TaxesPage() {
                    type="number" 
                    value={newTaxForm.liability_amount || ''} 
                    onChange={(e) => setNewTaxForm({...newTaxForm, liability_amount: Number(e.target.value)})} 
-                   className="w-full bg-white border border-slate-200 text-slate-900 font-mono font-bold text-lg rounded-xl px-4 py-3 outline-none focus:border-slate-500 text-right" dir="ltr" 
+                   className="w-full bg-white border border-slate-200 text-slate-900 text-sm font-mono font-bold rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-right" dir="ltr" 
                  />
                </div>
 
@@ -432,7 +432,7 @@ export function TaxesPage() {
                    type="date" 
                    value={newTaxForm.due_date} 
                    onChange={(e) => setNewTaxForm({...newTaxForm, due_date: e.target.value})} 
-                   className="w-full bg-white border border-slate-200 text-slate-900 font-mono font-medium rounded-xl px-4 py-3 outline-none focus:border-slate-500" 
+                   className="w-full bg-white border border-slate-200 text-slate-900 text-sm font-mono rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all" 
                  />
                </div>
 
