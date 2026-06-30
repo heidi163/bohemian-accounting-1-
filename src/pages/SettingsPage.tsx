@@ -41,6 +41,10 @@ export function SettingsPage() {
   const [editingUserId, setEditingUserId] = useState<number | null>(null);
   const [newUserStatus, setNewUserStatus] = useState('مفعل');
 
+  const [is2FAModalOpen, setIs2FAModalOpen] = useState(false);
+  const [is2FAEnabled, setIs2FAEnabled] = useState(false);
+  const [twoFACode, setTwoFACode] = useState('');
+
   const handleDeleteUser = (id: number) => {
     if (window.confirm('هل أنت متأكد من حذف هذا المستخدم نهائياً؟')) {
       const nextUsers = usersList.filter(u => u.id !== id);
@@ -510,9 +514,23 @@ export function SettingsPage() {
                       </div>
                       <h5 className="font-black text-slate-800 text-lg mb-2">المصادقة الثنائية (2FA)</h5>
                       <p className="text-sm font-medium text-slate-500 mb-6 leading-relaxed">أضف طبقة حماية إضافية لحسابك. عند تفعيل هذه الميزة، ستحتاج إلى رمز مرور من هاتفك لتسجيل الدخول.</p>
-                      <button onClick={handleFieldChange} className="bg-white border border-slate-200 text-slate-800 font-bold px-6 py-2.5 rounded-xl hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-200 transition-colors shadow-sm">
-                        تفعيل الميزة (Setup 2FA)
-                      </button>
+                      {is2FAEnabled ? (
+                        <div className="flex items-center gap-3">
+                          <span className="bg-emerald-100 text-emerald-700 px-3 py-1 rounded-lg text-sm font-bold flex items-center gap-1"><CheckCircle2 className="w-4 h-4" /> مفعل</span>
+                          <button onClick={() => {
+                             if(window.confirm('هل أنت متأكد من إلغاء تفعيل المصادقة الثنائية؟')) {
+                               setIs2FAEnabled(false);
+                               toast.success("تم إيقاف المصادقة الثنائية");
+                             }
+                          }} className="text-rose-500 hover:text-rose-600 font-bold text-sm underline transition-colors">
+                            إيقاف الميزة
+                          </button>
+                        </div>
+                      ) : (
+                        <button onClick={() => setIs2FAModalOpen(true)} className="bg-white border border-slate-200 text-slate-800 font-bold px-6 py-2.5 rounded-xl hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-200 transition-colors shadow-sm">
+                          تفعيل الميزة (Setup 2FA)
+                        </button>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -832,6 +850,59 @@ export function SettingsPage() {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* 2FA Setup Modal */}
+      {is2FAModalOpen && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onClick={() => setIs2FAModalOpen(false)}></div>
+          <div className="relative bg-white rounded-3xl shadow-2xl w-full max-w-sm overflow-hidden animate-in zoom-in-95 duration-300">
+            <div className="flex items-center justify-between p-6 border-b border-slate-100">
+              <h3 className="text-xl font-black text-slate-800">إعداد المصادقة الثنائية</h3>
+              <button onClick={() => setIs2FAModalOpen(false)} className="text-slate-400 hover:text-slate-600 hover:bg-slate-100 p-2 rounded-xl transition">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="p-6 text-center space-y-5">
+              <div className="bg-slate-50 p-4 rounded-2xl inline-block border border-slate-200 shadow-inner">
+                {/* Fake QR Code */}
+                <div className="w-40 h-40 bg-white grid grid-cols-5 gap-1 p-2">
+                  {Array.from({ length: 25 }).map((_, i) => (
+                    <div key={i} className={clsx("rounded-sm", Math.random() > 0.3 ? "bg-slate-800" : "bg-white")} />
+                  ))}
+                </div>
+              </div>
+              <p className="text-sm font-medium text-slate-600 leading-relaxed">
+                قم بمسح الرمز ضوئياً باستخدام تطبيق <strong>Google Authenticator</strong> أو أي تطبيق مشابه، ثم أدخل الرمز المكون من 6 أرقام بالأسفل.
+              </p>
+              <div>
+                <input 
+                  type="text" 
+                  maxLength={6}
+                  value={twoFACode}
+                  onChange={(e) => setTwoFACode(e.target.value.replace(/\D/g, ''))}
+                  className="w-full bg-slate-50 border border-slate-200 text-slate-800 text-2xl tracking-[0.5em] text-center rounded-2xl px-5 py-3.5 focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 outline-none transition-all font-mono font-bold" 
+                  placeholder="000000"
+                />
+              </div>
+              <button 
+                onClick={() => {
+                  if (twoFACode.length === 6) {
+                    setIs2FAEnabled(true);
+                    setIs2FAModalOpen(false);
+                    setTwoFACode('');
+                    toast.success("تم تفعيل المصادقة الثنائية بنجاح!");
+                  } else {
+                    toast.error("برجاء إدخال الرمز المكون من 6 أرقام بشكل صحيح.");
+                  }
+                }}
+                className="w-full bg-emerald-600 text-white py-3.5 rounded-2xl text-sm font-bold hover:bg-emerald-700 shadow-lg shadow-emerald-600/20 active:scale-95 transition-all"
+              >
+                تأكيد وتفعيل
+              </button>
+            </div>
           </div>
         </div>
       )}
