@@ -253,25 +253,6 @@ export function ProjectsPage() {
                        </div>
                     </div>
                     <div className="flex items-center gap-6">
-                       {/* Burn Rate Preview */}
-                       <div className="hidden md:block w-48 space-y-2">
-                          <div className="flex justify-between text-[10px] font-bold text-slate-500 uppercase tracking-wider">
-                             <span>استهلاك الميزانية</span>
-                             <span className={clsx(isOverBudget ? 'text-rose-500' : 'text-slate-600')}>{costProgress}%</span>
-                          </div>
-                          <div className="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
-                             <div className={clsx("h-full transition-all duration-500", isOverBudget ? 'bg-rose-500' : 'bg-primary-500')} style={{ width: `${costProgress}%` }}></div>
-                          </div>
-                          
-                          <div className="flex justify-between text-[10px] font-bold text-slate-500 uppercase tracking-wider">
-                             <span>الوقت المنقضي</span>
-                             <span>{timeProgress}%</span>
-                          </div>
-                          <div className="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
-                             <div className="h-full bg-slate-400 transition-all duration-500" style={{ width: `${timeProgress}%` }}></div>
-                          </div>
-                       </div>
-
                        <span className={clsx('inline-flex items-center rounded-lg px-3 py-1.5 text-xs font-bold tracking-wide', 
                           project.status === 'in_progress' ? 'bg-primary-100 text-primary-700' :
                           project.status === 'completed' ? 'bg-emerald-100 text-emerald-700' :
@@ -354,6 +335,29 @@ export function ProjectsPage() {
                           </div>
                        </>
                     )}
+                 </div>
+
+                 {/* Burn Rate Full Width */}
+                 <div className="px-6 py-5 bg-slate-50/50 border-t border-slate-50 flex flex-col md:flex-row gap-8 items-center">
+                    <div className="flex-1 w-full space-y-2">
+                       <div className="flex justify-between text-xs font-bold text-slate-600 uppercase tracking-wider">
+                          <span className="flex items-center gap-1.5"><Wallet className="w-4 h-4 text-slate-400" /> استهلاك الميزانية</span>
+                          <span className={clsx(isOverBudget ? 'text-rose-600' : 'text-primary-600', "font-mono")}>{costProgress}%</span>
+                       </div>
+                       <div className="w-full bg-slate-200/60 h-2.5 rounded-full overflow-hidden">
+                          <div className={clsx("h-full transition-all duration-700", isOverBudget ? 'bg-rose-500' : 'bg-primary-500')} style={{ width: `${costProgress}%` }}></div>
+                       </div>
+                    </div>
+                    
+                    <div className="flex-1 w-full space-y-2">
+                       <div className="flex justify-between text-xs font-bold text-slate-600 uppercase tracking-wider">
+                          <span className="flex items-center gap-1.5"><Clock className="w-4 h-4 text-slate-400" /> الوقت المنقضي</span>
+                          <span className="text-slate-700 font-mono">{timeProgress}%</span>
+                       </div>
+                       <div className="w-full bg-slate-200/60 h-2.5 rounded-full overflow-hidden">
+                          <div className="h-full bg-slate-400 transition-all duration-700" style={{ width: `${timeProgress}%` }}></div>
+                       </div>
+                    </div>
                  </div>
               </div>
            )
