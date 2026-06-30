@@ -248,9 +248,9 @@ export function AutomationPage() {
                          </td>
                          <td className="px-6 py-4">
                            <div className="flex items-center gap-2">
-                              {job.lastStatus === 'success' && <div className="w-2 h-2 rounded-full bg-emerald-500" title="تم بنجاح"></div>}
-                              {job.lastStatus === 'failed' && <div className="w-2 h-2 rounded-full bg-rose-500 animate-pulse" title="فشل"></div>}
-                              {job.lastStatus === 'pending' && <div className="w-2 h-2 rounded-full bg-slate-300" title="لم يعمل بعد"></div>}
+                              {job.lastStatus === 'success' && <div className="w-2.5 h-2.5 rounded-full bg-emerald-500 shadow-sm shadow-emerald-500/50" title="تم بنجاح"></div>}
+                              {job.lastStatus === 'failed' && <div className="w-2.5 h-2.5 rounded-full bg-rose-500 shadow-sm shadow-rose-500/50 animate-pulse" title="فشل"></div>}
+                              {job.lastStatus === 'pending' && <div className="w-2.5 h-2.5 rounded-full bg-slate-300" title="لم يعمل بعد"></div>}
                               <span className="font-mono text-slate-500 text-xs">{job.lastRun}</span>
                            </div>
                          </td>
@@ -258,12 +258,16 @@ export function AutomationPage() {
                            {job.nextRun}
                          </td>
                          <td className="px-6 py-4 text-center">
-                           <button onClick={() => toggleStatus(job.id)} className="transition hover:scale-105 active:scale-95 inline-flex">
-                             {job.status === 'active' ? (
-                               <ToggleRight className="w-10 h-10 text-emerald-500" />
-                             ) : (
-                               <ToggleLeft className="w-10 h-10 text-slate-300" />
-                             )}
+                           <button onClick={() => toggleStatus(job.id)} className="transition hover:scale-105 active:scale-95 inline-flex focus:outline-none">
+                             <div className={clsx(
+                               "w-12 h-7 rounded-full transition-colors duration-300 ease-in-out relative border border-black/5",
+                               job.status === 'active' ? "bg-emerald-500" : "bg-slate-200"
+                             )}>
+                               <div className={clsx(
+                                 "w-5 h-5 rounded-full bg-white shadow-md transition-all duration-300 absolute top-1",
+                                 job.status === 'active' ? "start-6" : "start-1"
+                               )}></div>
+                             </div>
                            </button>
                          </td>
                          <td className="px-6 py-4 text-end">
@@ -315,8 +319,16 @@ export function AutomationPage() {
                   <span className="block text-sm font-bold text-slate-700">تنبيهات المهام الفاشلة</span>
                   <span className="block text-xs font-medium text-slate-500 mt-1">إرسال تقرير فور فشل أي مهمة (مثل تعذر النسخ الاحتياطي).</span>
                 </div>
-                <button onClick={() => setSendReport(!sendReport)} className="transition hover:scale-105 active:scale-95 shrink-0">
-                  {sendReport ? <ToggleRight className="w-10 h-10 text-emerald-500" /> : <ToggleLeft className="w-10 h-10 text-slate-300" />}
+                <button onClick={() => setSendReport(!sendReport)} className="transition hover:scale-105 active:scale-95 shrink-0 focus:outline-none">
+                  <div className={clsx(
+                    "w-12 h-7 rounded-full transition-colors duration-300 ease-in-out relative border border-black/5",
+                    sendReport ? "bg-emerald-500" : "bg-slate-200"
+                  )}>
+                    <div className={clsx(
+                      "w-5 h-5 rounded-full bg-white shadow-md transition-all duration-300 absolute top-1",
+                      sendReport ? "start-6" : "start-1"
+                    )}></div>
+                  </div>
                 </button>
               </div>
               
@@ -325,8 +337,16 @@ export function AutomationPage() {
                   <span className="block text-sm font-bold text-slate-700">سجل المهام (Log Retention)</span>
                   <span className="block text-xs font-medium text-slate-500 mt-1">الاحتفاظ بسجلات المهام القديمة لمدة 30 يوماً.</span>
                 </div>
-                <button onClick={() => setKeepLogs(!keepLogs)} className="transition hover:scale-105 active:scale-95 shrink-0">
-                  {keepLogs ? <ToggleRight className="w-10 h-10 text-emerald-500" /> : <ToggleLeft className="w-10 h-10 text-slate-300" />}
+                <button onClick={() => setKeepLogs(!keepLogs)} className="transition hover:scale-105 active:scale-95 shrink-0 focus:outline-none">
+                  <div className={clsx(
+                    "w-12 h-7 rounded-full transition-colors duration-300 ease-in-out relative border border-black/5",
+                    keepLogs ? "bg-emerald-500" : "bg-slate-200"
+                  )}>
+                    <div className={clsx(
+                      "w-5 h-5 rounded-full bg-white shadow-md transition-all duration-300 absolute top-1",
+                      keepLogs ? "start-6" : "start-1"
+                    )}></div>
+                  </div>
                 </button>
               </div>
             </div>
@@ -334,7 +354,7 @@ export function AutomationPage() {
             <div className="pt-6 border-t border-slate-100 mt-8">
               <button 
                 onClick={() => showToast('تم حفظ إعدادات الأتمتة بنجاح')} 
-                className="w-full bg-slate-900 text-white font-bold py-4 px-6 rounded-2xl hover:bg-slate-800 transition shadow-lg shadow-slate-900/20"
+                className="w-full bg-emerald-600 text-white font-bold py-4 px-6 rounded-2xl hover:bg-emerald-700 transition shadow-lg shadow-emerald-600/20"
               >
                 حفظ التغييرات
               </button>
