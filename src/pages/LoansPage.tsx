@@ -204,7 +204,7 @@ export function LoansPage() {
                     {loan.type === 'bank' ? <Landmark className="w-6 h-6"/> : <ShieldAlert className="w-6 h-6"/>}
                  </div>
                  <div>
-                    <h3 className="font-bold text-lg text-slate-900">{loan.lender_name} <span className="text-sm font-normal text-slate-500">({loan.type === 'bank' ? 'قرض بنكي' : 'قرض شخصي'})</span></h3>
+                    <h3 className="font-bold text-lg text-slate-900">{loan.lender_name} <span className="text-sm font-normal text-slate-500">({loan.type === 'bank' ? 'قرض بنكي' : loan.type === 'personal' ? 'قرض شخصي' : loan.type})</span></h3>
                     <div className="text-sm text-slate-500 mt-1 flex gap-4 font-mono">
                       <span>الفائدة: {loan.interest_rate}%</span>
                       <span>تاريخ الانتهاء: {loan.end_date}</span>
@@ -328,6 +328,7 @@ export function LoansPage() {
                      { value: 'bank', label: 'قرض بنكي' },
                      { value: 'personal', label: 'قرض شخصي' }
                    ]}
+                   allowCreate={true}
                  />
                </div>
 

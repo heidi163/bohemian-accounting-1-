@@ -17,7 +17,7 @@ interface SearchableSelectProps {
   allowCreate?: boolean;
 }
 
-export function SearchableSelect({ value, onChange, options, placeholder = "اختر...", className, disabled = false, allowCreate = false }: SearchableSelectProps) {
+export function SearchableSelect({ value, onChange, options, placeholder = "اختر...", className, disabled = false, allowCreate = true }: SearchableSelectProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const wrapperRef = useRef<HTMLDivElement>(null);
