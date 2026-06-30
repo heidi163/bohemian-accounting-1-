@@ -254,9 +254,9 @@ export function AuditCompliancePage() {
                 <thead className="bg-slate-50/50">
                   <tr>
                     <th className="px-6 py-5 text-start text-xs font-bold text-slate-500 uppercase tracking-wider">المستخدم</th>
-                    <th className="px-6 py-5 text-start text-xs font-bold text-slate-500 uppercase tracking-wider">عنوان الـ IP</th>
                     <th className="px-6 py-5 text-start text-xs font-bold text-slate-500 uppercase tracking-wider">الإجراء (Action)</th>
                     <th className="px-6 py-5 text-start text-xs font-bold text-slate-500 uppercase tracking-wider">النوع</th>
+                    <th className="px-6 py-5 text-start text-xs font-bold text-slate-500 uppercase tracking-wider">عنوان الـ IP</th>
                     <th className="px-6 py-5 text-start text-xs font-bold text-slate-500 uppercase tracking-wider">التاريخ والوقت</th>
                     <th className="px-6 py-5 text-start text-xs font-bold text-slate-500 uppercase tracking-wider">الحالة</th>
                   </tr>
@@ -266,7 +266,6 @@ export function AuditCompliancePage() {
                      filteredLogs.map(log => (
                        <tr key={log.id} className="hover:bg-slate-50/80 transition-colors group">
                          <td className="px-6 py-4 font-bold text-slate-600">{log.user}</td>
-                         <td className="px-6 py-4 font-mono text-slate-500 text-sm bg-slate-50/50 rounded-lg group-hover:bg-white transition-colors">{log.ip}</td>
                          <td className="px-6 py-4">
                            <span className="font-bold text-slate-800">{log.action}</span>
                          </td>
@@ -275,6 +274,7 @@ export function AuditCompliancePage() {
                              {log.type}
                            </span>
                          </td>
+                         <td className="px-6 py-4 font-mono text-slate-500 text-sm bg-slate-50/50 rounded-lg group-hover:bg-white transition-colors">{log.ip}</td>
                          <td className="px-6 py-4">
                            <div className="flex items-center gap-2 text-slate-500 text-sm font-medium">
                              <History className="w-4 h-4 text-slate-400" />
