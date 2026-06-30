@@ -24,9 +24,24 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     return (localStorage.getItem('active_company') as CompanyType) || "BGK";
   });
 
-  const [primaryColor, setPrimaryColorState] = useState('#4f46e5');
-  const [secondaryColor, setSecondaryColorState] = useState('#1e293b');
-  const [accentColor, setAccentColorState] = useState('#f59e0b');
+  const [primaryColor, setPrimaryColorState] = useState(() => {
+    const defaultPrimary = activeCompany === 'BGK' ? '#4f46e5' : '#e11d48';
+    const initial = localStorage.getItem(`theme_primary_${activeCompany}`) || defaultPrimary;
+    if (typeof window !== 'undefined') document.documentElement.style.setProperty('--theme-primary', initial);
+    return initial;
+  });
+  const [secondaryColor, setSecondaryColorState] = useState(() => {
+    const defaultSecondary = activeCompany === 'BGK' ? '#1e293b' : '#0f172a';
+    const initial = localStorage.getItem(`theme_secondary_${activeCompany}`) || defaultSecondary;
+    if (typeof window !== 'undefined') document.documentElement.style.setProperty('--theme-secondary', initial);
+    return initial;
+  });
+  const [accentColor, setAccentColorState] = useState(() => {
+    const defaultAccent = activeCompany === 'BGK' ? '#f59e0b' : '#3b82f6';
+    const initial = localStorage.getItem(`theme_accent_${activeCompany}`) || defaultAccent;
+    if (typeof window !== 'undefined') document.documentElement.style.setProperty('--theme-accent', initial);
+    return initial;
+  });
   const [logoUrl, setLogoUrlState] = useState<string | null>(null);
   const [themeMode, setThemeMode] = useState(() => localStorage.getItem('theme_mode') || 'light');
 
