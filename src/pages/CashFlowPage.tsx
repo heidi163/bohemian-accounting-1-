@@ -73,9 +73,9 @@ export function CashFlowPage() {
   const chartGradId = chartHasNegative ? 'gradRed' : 'gradGreen';
 
   const scenarios: { key: ScenarioType; label: string; icon: React.ReactNode }[] = [
-    { key: 'pessimistic', label: 'متشائم', icon: <CloudRain className="w-4 h-4" /> },
-    { key: 'realistic',   label: 'واقعي',   icon: <Cloud     className="w-4 h-4" /> },
-    { key: 'optimistic',  label: 'متفائل',  icon: <Sun       className="w-4 h-4" /> },
+    { key: 'pessimistic', label: 'الحالة الحرجة',      icon: <CloudRain className="w-4 h-4" /> },
+    { key: 'realistic',   label: 'السيناريو الأساسي', icon: <Cloud     className="w-4 h-4" /> },
+    { key: 'optimistic',  label: 'سيناريو النمو',     icon: <Sun       className="w-4 h-4" /> },
   ];
 
   return (
