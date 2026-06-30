@@ -2,6 +2,7 @@ import { toast } from 'react-hot-toast';
 import { useEffect, useState } from "react";
 import { type Loan, type LoanInstallment } from "../types";
 import { clsx } from "clsx";
+import { Landmark, Calendar, Banknote, ShieldAlert, CheckCircle, Clock, ChevronDown, ChevronUp, X, Plus } from "lucide-react";
 import { getCompanyKey } from '../utils/storage';
 import { SearchableSelect } from '../components/ui/SearchableSelect';
 
