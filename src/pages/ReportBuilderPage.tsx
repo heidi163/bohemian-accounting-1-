@@ -136,7 +136,7 @@ export function ReportBuilderPage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 h-[70vh]">
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 min-h-[800px] lg:h-[calc(100vh-140px)]">
          {/* Configuration Panel */}
          <div className="lg:col-span-1 bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col overflow-hidden">
             <div className="p-4 border-b border-slate-100 bg-slate-50 font-bold text-slate-700 flex items-center gap-2">
