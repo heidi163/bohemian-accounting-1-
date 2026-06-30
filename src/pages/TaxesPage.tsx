@@ -32,8 +32,8 @@ export function TaxesPage() {
       setRecords(res.data.records);
     } catch (error) {
       // Fallback to mock data for static Vercel deployment
-      const storedSummary = localStorage.getItem(getCompanyKey('mock_taxes_summary'));
-      const storedRecords = localStorage.getItem(getCompanyKey('mock_taxes_records'));
+      const storedSummary = localStorage.getItem(getCompanyKey('mock_taxes_summary_v2'));
+      const storedRecords = localStorage.getItem(getCompanyKey('mock_taxes_records_v2'));
       
       const localSummary = storedSummary ? JSON.parse(storedSummary) : {
         vat_liability: 150000, vat_paid: 100000,
@@ -42,16 +42,16 @@ export function TaxesPage() {
         payroll_liability: 45000, payroll_paid: 30000
       };
       
-      const localRecords = storedRecords && storedRecords !== '[]' ? JSON.parse(storedRecords) : [
+      const defaultRecords = [
         { id: 1, type: 'vat', period: '2026-Q1', liability_amount: 50000, paid_amount: 50000, due_date: '2026-04-30', status: 'paid' },
         { id: 2, type: 'vat', period: '2026-Q2', liability_amount: 60000, paid_amount: 20000, due_date: '2026-07-30', status: 'partial' },
         { id: 3, type: 'income', period: '2025', liability_amount: 500000, paid_amount: 200000, due_date: '2026-04-30', status: 'partial' }
       ];
+      const localRecords = storedRecords && storedRecords !== '[]' ? JSON.parse(storedRecords) : defaultRecords;
       
-      if (!localStorage.getItem(getCompanyKey('mock_taxes_summary'))) {
-        localStorage.setItem(getCompanyKey('mock_taxes_summary'), JSON.stringify(localSummary));
-        localStorage.setItem(getCompanyKey('mock_taxes_records'), JSON.stringify(localRecords));
-      }
+      // Force sync to storage to fix any corrupted state
+      localStorage.setItem(getCompanyKey('mock_taxes_summary_v2'), JSON.stringify(localSummary));
+      localStorage.setItem(getCompanyKey('mock_taxes_records_v2'), JSON.stringify(localRecords));
       
       setSummary(localSummary);
       setRecords(localRecords);
@@ -75,8 +75,15 @@ export function TaxesPage() {
     // Immediate fallback logic for demo/offline
     const executeFallback = () => {
       try {
-        const localRecords = JSON.parse(localStorage.getItem(getCompanyKey('mock_taxes_records')) || '[]');
-        const localSummary = JSON.parse(localStorage.getItem(getCompanyKey('mock_taxes_summary')) || 'null');
+        let localRecords = JSON.parse(localStorage.getItem(getCompanyKey('mock_taxes_records_v2')) || '[]');
+        if (localRecords.length === 0) {
+           localRecords = [
+            { id: 1, type: 'vat', period: '2026-Q1', liability_amount: 50000, paid_amount: 50000, due_date: '2026-04-30', status: 'paid' },
+            { id: 2, type: 'vat', period: '2026-Q2', liability_amount: 60000, paid_amount: 20000, due_date: '2026-07-30', status: 'partial' },
+            { id: 3, type: 'income', period: '2025', liability_amount: 500000, paid_amount: 200000, due_date: '2026-04-30', status: 'partial' }
+           ];
+        }
+        let localSummary = JSON.parse(localStorage.getItem(getCompanyKey('mock_taxes_summary_v2')) || 'null');
         
         const updatedRecords = localRecords.map((r: any) => {
           if (r.id === focusedRecord.id) {
@@ -93,8 +100,8 @@ export function TaxesPage() {
           if (focusedRecord.type === 'payroll') localSummary.payroll_paid += paymentAmount;
         }
         
-        localStorage.setItem(getCompanyKey('mock_taxes_records'), JSON.stringify(updatedRecords));
-        localStorage.setItem(getCompanyKey('mock_taxes_summary'), JSON.stringify(localSummary));
+        localStorage.setItem(getCompanyKey('mock_taxes_records_v2'), JSON.stringify(updatedRecords));
+        localStorage.setItem(getCompanyKey('mock_taxes_summary_v2'), JSON.stringify(localSummary));
         
         toast.success('تم تسجيل الدفعة بنجاح');
         setActiveModal(null);
@@ -133,11 +140,11 @@ export function TaxesPage() {
   const handlePostTax = async (record: TaxRecord) => {
     const executeFallback = () => {
       try {
-        const localRecords = JSON.parse(localStorage.getItem(getCompanyKey('mock_taxes_records')) || '[]');
+        const localRecords = JSON.parse(localStorage.getItem(getCompanyKey('mock_taxes_records_v2')) || '[]');
         const updatedRecords = localRecords.map((r: any) => 
           r.id === record.id ? { ...r, status: 'posted' } : r
         );
-        localStorage.setItem(getCompanyKey('mock_taxes_records'), JSON.stringify(updatedRecords));
+        localStorage.setItem(getCompanyKey('mock_taxes_records_v2'), JSON.stringify(updatedRecords));
         toast.success('تم ترحيل الضريبة وإغلاق الفترة بنجاح');
         fetchTaxes();
       } catch (e) {
