@@ -475,12 +475,12 @@ export function FileManagementPage() {
                   onDragOver={handleDragOver}
                   onDrop={handleDrop}
                   onClick={triggerUnifiedUpload}
-                  className="bg-slate-50/50 border-2 border-dashed border-emerald-200 hover:border-emerald-500 rounded-3xl p-12 text-center cursor-pointer transition-colors group"
+                  className="bg-slate-50/30 border-2 border-dashed border-emerald-200 hover:border-emerald-500 hover:bg-emerald-50/30 rounded-3xl py-8 px-6 text-center cursor-pointer transition-all group max-w-3xl mx-auto"
                 >
-                  <div className="w-20 h-20 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform">
-                    <UploadCloud className="w-10 h-10" />
+                  <div className="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
+                    <UploadCloud className="w-8 h-8" />
                   </div>
-                  <h3 className="text-xl font-bold text-slate-800 mb-2">اسحب وأفلت الملف هنا أو اضغط للاختيار</h3>
+                  <h3 className="text-lg font-bold text-slate-800 mb-1.5">اسحب وأفلت الملف هنا أو اضغط للاختيار</h3>
                   <p className="text-slate-500 font-medium">
                     يدعم ملفات العملاء، كشوف الحساب، الأرصدة الافتتاحية (Excel, CSV, QBO)
                   </p>
@@ -568,21 +568,26 @@ export function FileManagementPage() {
           {migrationTab === 'export' && (
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {exportModules.map(module => (
-                <div key={module.id} className="bg-white p-6 rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] border border-slate-100 hover:border-emerald-300 hover:shadow-lg transition-all duration-300 flex flex-col gap-5 group">
-                  <div className="w-14 h-14 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                <div key={module.id} className="bg-white p-6 rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.03)] border border-slate-100 hover:border-emerald-200 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col gap-5 group relative overflow-hidden">
+                  <div className="absolute top-0 end-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
+                    <module.icon className="w-32 h-32 text-emerald-900" />
+                  </div>
+                  <div className="relative z-10 w-14 h-14 bg-gradient-to-br from-emerald-50 to-emerald-100 text-emerald-600 rounded-2xl flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform duration-300">
                     <module.icon className="w-7 h-7" />
                   </div>
-                  <div>
+                  <div className="relative z-10">
                     <h3 className="font-bold text-slate-800 text-lg">{module.title}</h3>
                     <p className="text-sm font-medium text-slate-500 mt-1.5">تصدير الداتا بضغطة زر</p>
                   </div>
-                  <div className="mt-auto pt-5 border-t border-slate-100/60 flex gap-3">
+                  <div className="relative z-10 mt-auto pt-5 flex gap-3">
                     {module.formats.map(format => (
                       <button 
                         key={format}
                         onClick={() => triggerMigrationExport(module.title, format)}
-                        className="flex-1 bg-slate-50 text-slate-700 font-bold py-3.5 rounded-2xl flex items-center justify-center gap-2 hover:bg-emerald-50 hover:text-emerald-700 transition-colors text-sm"
+                        className="flex-1 bg-slate-50 border border-slate-100 text-slate-700 font-bold py-3 rounded-2xl flex items-center justify-center gap-2 hover:bg-emerald-50 hover:border-emerald-200 hover:text-emerald-700 hover:shadow-md hover:shadow-emerald-100 transition-all text-sm"
                       >
+                        {format === 'PDF' && <FileText className="w-4 h-4 text-rose-500" />}
+                        {format === 'Excel' && <FileSpreadsheet className="w-4 h-4 text-emerald-500" />}
                         تصدير {format}
                       </button>
                     ))}
