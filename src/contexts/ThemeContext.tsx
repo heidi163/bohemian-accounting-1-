@@ -25,7 +25,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   });
 
   const [primaryColor, setPrimaryColorState] = useState(() => {
-    const defaultPrimary = activeCompany === 'BGK' ? '#4f46e5' : '#e11d48';
+    const defaultPrimary = activeCompany === 'BGK' ? '#2563eb' : '#e11d48';
     const initial = localStorage.getItem(`theme_primary_${activeCompany}`) || defaultPrimary;
     if (typeof window !== 'undefined') document.documentElement.style.setProperty('--theme-primary', initial);
     return initial;
@@ -47,7 +47,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
   // Sync colors when activeCompany changes
   useEffect(() => {
-    const defaultPrimary = activeCompany === 'BGK' ? '#4f46e5' : '#e11d48';
+    const defaultPrimary = activeCompany === 'BGK' ? '#2563eb' : '#e11d48';
     const defaultSecondary = activeCompany === 'BGK' ? '#1A293F' : '#0f172a';
     const defaultAccent = activeCompany === 'BGK' ? '#f59e0b' : '#3b82f6';
 

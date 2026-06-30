@@ -639,7 +639,7 @@ export function SettingsPage() {
                     <div>
                       <label className="block text-sm font-bold text-slate-700 mb-3">اللون الأساسي (Primary)</label>
                       <div className="flex flex-wrap items-center gap-3">
-                        {['#10b981', '#3b82f6', '#8b5cf6', '#f43f5e', '#f59e0b', '#0f172a'].map(color => (
+                        {['#10b981', '#3b82f6', '#0ea5e9', '#f43f5e', '#f59e0b', '#0f172a'].map(color => (
                           <button 
                             key={color} 
                             onClick={() => { setPrimaryColor(color); setHasChanges(true); }}
