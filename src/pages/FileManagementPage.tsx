@@ -22,8 +22,11 @@ export function FileManagementPage() {
 
   // Migration States
   const migrationInputRef = useRef<HTMLInputElement>(null);
-  const [currentImportName, setCurrentImportName] = useState('');
   const [recentImports, setRecentImports] = useState<{id: number, name: string, module: string, time: string, dataUrl: string}[]>([]);
+  
+  // Unified Import States
+  const [selectedFileToImport, setSelectedFileToImport] = useState<File | null>(null);
+  const [selectedImportModule, setSelectedImportModule] = useState('');
 
   const showToast = (msg: string) => {
     setToastMsg(msg);
@@ -134,32 +137,59 @@ export function FileManagementPage() {
     { id: 'reports', title: 'التقارير المالية (Reports)', icon: FileDown, formats: ['PDF', 'Excel'] },
   ];
 
-  const triggerMigrationUpload = (name: string) => {
-    setCurrentImportName(name);
+  const triggerUnifiedUpload = () => {
     migrationInputRef.current?.click();
   };
 
-  const handleMigrationFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        const dataUrl = event.target?.result as string;
-        const newImport = {
-          id: Date.now(),
-          name: file.name,
-          module: currentImportName,
-          time: new Date().toLocaleTimeString('ar-EG'),
-          dataUrl: dataUrl
-        };
-        setRecentImports(prev => [newImport, ...prev]);
-        showToast(`تم رفع ملف ${file.name} بنجاح للقسم: ${currentImportName} `);
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      setSelectedFileToImport(e.dataTransfer.files[0]);
+    }
+  };
+
+  const handleUnifiedFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setSelectedFileToImport(e.target.files[0]);
+    }
+  };
+
+  const confirmUnifiedImport = () => {
+    if (!selectedFileToImport) return;
+    if (!selectedImportModule) {
+      showToast('الرجاء اختيار نوع الملف (القسم) أولاً');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const dataUrl = event.target?.result as string;
+      const newImport = {
+        id: Date.now(),
+        name: selectedFileToImport.name,
+        module: selectedImportModule,
+        time: new Date().toLocaleTimeString('ar-EG'),
+        dataUrl: dataUrl
       };
-      reader.readAsDataURL(file);
-    }
-    if (migrationInputRef.current) {
-      migrationInputRef.current.value = '';
-    }
+      setRecentImports(prev => [newImport, ...prev]);
+      showToast(`تم استيراد بيانات ${selectedFileToImport.name} بنجاح للقسم: ${selectedImportModule}`);
+      
+      // Reset
+      setSelectedFileToImport(null);
+      setSelectedImportModule('');
+      if (migrationInputRef.current) migrationInputRef.current.value = '';
+    };
+    reader.readAsDataURL(selectedFileToImport);
+  };
+
+  const cancelUnifiedImport = () => {
+    setSelectedFileToImport(null);
+    setSelectedImportModule('');
+    if (migrationInputRef.current) migrationInputRef.current.value = '';
   };
 
   const triggerMigrationExport = (name: string, format: string) => {
@@ -439,27 +469,66 @@ export function FileManagementPage() {
 
           {migrationTab === 'import' && (
             <div className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {importModules.map(module => (
-                  <div key={module.id} className="bg-white p-6 rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] border border-slate-100 hover:border-emerald-300 hover:shadow-lg transition-all duration-300 flex flex-col gap-5 group">
-                    <div className="w-14 h-14 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform">
-                      <module.icon className="w-7 h-7" />
+              {/* Unified Import Zone */}
+              {!selectedFileToImport ? (
+                <div 
+                  onDragOver={handleDragOver}
+                  onDrop={handleDrop}
+                  onClick={triggerUnifiedUpload}
+                  className="bg-slate-50/50 border-2 border-dashed border-emerald-200 hover:border-emerald-500 rounded-3xl p-12 text-center cursor-pointer transition-colors group"
+                >
+                  <div className="w-20 h-20 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform">
+                    <UploadCloud className="w-10 h-10" />
+                  </div>
+                  <h3 className="text-xl font-bold text-slate-800 mb-2">اسحب وأفلت الملف هنا أو اضغط للاختيار</h3>
+                  <p className="text-slate-500 font-medium">
+                    يدعم ملفات العملاء، كشوف الحساب، الأرصدة الافتتاحية (Excel, CSV, QBO)
+                  </p>
+                </div>
+              ) : (
+                <div className="bg-white rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] border border-slate-100 p-8 animate-in zoom-in-95 duration-300">
+                  <div className="flex flex-col md:flex-row items-center gap-6">
+                    <div className="w-16 h-16 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center shrink-0">
+                      <FileSpreadsheet className="w-8 h-8" />
                     </div>
-                    <div>
-                      <h3 className="font-bold text-slate-800 text-lg">{module.title}</h3>
-                      <p className="text-sm font-medium text-slate-500 mt-1.5 bg-slate-50 inline-block px-3 py-1 rounded-lg">الصيغ: <span className="dir-ltr inline-block text-emerald-600">{module.format}</span></p>
+                    <div className="flex-1 text-center md:text-start">
+                      <h3 className="font-black text-slate-800 text-xl">{selectedFileToImport.name}</h3>
+                      <p className="text-slate-500 font-mono text-sm mt-1">{(selectedFileToImport.size / 1024 / 1024).toFixed(2)} MB</p>
                     </div>
-                    <div className="mt-auto pt-5 border-t border-slate-100/60">
-                      <button 
-                        onClick={() => triggerMigrationUpload(module.title)}
-                        className="w-full bg-slate-50 text-slate-700 font-bold py-3.5 rounded-2xl flex items-center justify-center gap-2 hover:bg-emerald-50 hover:text-emerald-700 transition-colors"
-                      >
-                        <UploadCloud className="w-5 h-5" /> رفع ملف للإدخال (Import)
-                      </button>
+                    <div className="w-full md:w-80">
+                      <label className="block text-sm font-bold text-slate-700 mb-2">اختر القسم (النوع) الخاص بالبيانات:</label>
+                      <SearchableSelect 
+                        value={selectedImportModule}
+                        onChange={setSelectedImportModule}
+                        options={importModules.map(m => ({ value: m.title, label: m.title }))}
+                        allowCreate={false}
+                        className="w-full"
+                        placeholder="اختر القسم..."
+                      />
                     </div>
                   </div>
-                ))}
-              </div>
+                  <div className="mt-8 flex gap-4 pt-6 border-t border-slate-100">
+                    <button 
+                      onClick={cancelUnifiedImport}
+                      className="flex-1 py-3 px-6 rounded-2xl font-bold bg-slate-100 text-slate-600 hover:bg-slate-200 transition-colors"
+                    >
+                      إلغاء وإعادة الاختيار
+                    </button>
+                    <button 
+                      onClick={confirmUnifiedImport}
+                      disabled={!selectedImportModule}
+                      className={clsx(
+                        "flex-1 py-3 px-6 rounded-2xl font-bold transition-all shadow-lg",
+                        selectedImportModule 
+                          ? "bg-emerald-600 text-white hover:bg-emerald-700 shadow-emerald-600/20 active:scale-95" 
+                          : "bg-slate-200 text-slate-400 cursor-not-allowed shadow-none"
+                      )}
+                    >
+                      تأكيد الاستيراد
+                    </button>
+                  </div>
+                </div>
+              )}
 
               {recentImports.length > 0 && (
                 <div className="bg-white rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] border-0 p-6">
@@ -523,7 +592,7 @@ export function FileManagementPage() {
             </div>
           )}
           
-          <input type="file" ref={migrationInputRef} onChange={handleMigrationFileUpload} className="hidden" />
+          <input type="file" ref={migrationInputRef} onChange={handleUnifiedFileSelect} className="hidden" />
         </div>
       )}
 
