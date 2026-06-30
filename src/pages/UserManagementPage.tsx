@@ -440,14 +440,15 @@ export function UserManagementPage() {
                                           <button 
                                              onClick={() => togglePermission(mod, action)}
                                              disabled={isSystemAdmin}
-                                             className={clsx(
-                                                "inline-flex items-center justify-center w-8 h-8 rounded-lg transition-all duration-300 disabled:opacity-70 disabled:cursor-not-allowed",
-                                                hasPerm 
-                                                   ? "bg-emerald-500 text-white shadow-sm shadow-emerald-200 scale-110" 
-                                                   : "bg-slate-100 text-transparent hover:bg-slate-200"
-                                             )}
+                                             className="group inline-flex items-center justify-center w-8 h-8 rounded-lg transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
                                           >
-                                             <Check className={clsx("w-5 h-5", hasPerm ? "opacity-100" : "opacity-0")} strokeWidth={3} />
+                                             <Check 
+                                                className={clsx(
+                                                   "w-6 h-6 transition-all", 
+                                                   hasPerm ? "text-emerald-500 opacity-100 scale-110" : "text-slate-300 opacity-0 group-hover:opacity-100"
+                                                )} 
+                                                strokeWidth={3} 
+                                             />
                                           </button>
                                        </td>
                                     );
