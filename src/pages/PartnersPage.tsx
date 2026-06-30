@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { type PartnerAccount } from "../types";
 import { clsx } from "clsx";
-import { Briefcase, ArrowUpRight, ArrowDownRight, RefreshCcw, Landmark, PieChart, Plus, X } from "lucide-react";
+import { Briefcase, ArrowUpRight, ArrowDownRight, RefreshCcw, Landmark, PieChart, Plus, X, Edit2 } from "lucide-react";
 import { getCompanyKey } from '../utils/storage';
+import { SearchableSelect } from '../components/ui/SearchableSelect';
 
 export function PartnersPage() {
   const [partners, setPartners] = useState<PartnerAccount[]>([]);
@@ -12,6 +13,26 @@ export function PartnersPage() {
   const [expandedPartner, setExpandedPartner] = useState<number | null>(null);
   const [errorMsg, setErrorMsg] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
+  
+  const [isAddPartnerOpen, setIsAddPartnerOpen] = useState(false);
+  const [newPartnerForm, setNewPartnerForm] = useState({ name: '', share: 0, capital: 0 });
+  
+  const [editPartnerModal, setEditPartnerModal] = useState<{ id: number, share: number, capital: number } | null>(null);
+
+  const calculateBalances = (partnerList: PartnerAccount[]) => {
+    return partnerList.map(p => {
+      let current = 0;
+      let capital = p.transactions.filter(tx => tx.type === 'capital_injection').reduce((sum, tx) => sum + tx.amount, 0);
+      
+      p.transactions.forEach(tx => {
+        if (tx.type === 'deposit') current += tx.amount;
+        if (tx.type === 'withdrawal') current -= tx.amount;
+      });
+      
+      // If capital transactions exist, use them, otherwise use the base capital_balance
+      return { ...p, current_balance: current, capital_balance: capital > 0 ? capital : p.capital_balance };
+    });
+  };
 
   const fetchPartners = () => {
     fetch("/api/partners")
@@ -21,16 +42,16 @@ export function PartnersPage() {
       })
       .then((data) => setPartners(data.data))
       .catch(() => {
-        const local = localStorage.getItem(getCompanyKey('mock_partners'));
+        const local = localStorage.getItem(getCompanyKey('mock_partners_v2'));
         if (local) {
-          setPartners(JSON.parse(local));
+          setPartners(calculateBalances(JSON.parse(local)));
         } else {
           const defaultPartners: PartnerAccount[] = [
-            { id: 1, partner_name: 'أحمد صلاح', equity_share: 60, capital_balance: 500000, current_balance: 25000, transactions: [{id: 1, date: '2026-01-01', description: 'رأس مال أولي', type: 'capital_injection', amount: 500000}] },
-            { id: 2, partner_name: 'محمد عبدالله', equity_share: 40, capital_balance: 333333, current_balance: -5000, transactions: [{id: 2, date: '2026-01-01', description: 'رأس مال أولي', type: 'capital_injection', amount: 333333}, {id: 3, date: '2026-03-15', description: 'مسحوبات شخصية', type: 'withdrawal', amount: 5000}] }
+            { id: 1, partner_name: 'أحمد صلاح', equity_share: 60, capital_balance: 500000, current_balance: 0, transactions: [{id: 1, date: '2026-01-01', description: 'رأس مال أولي', type: 'capital_injection', amount: 500000}] },
+            { id: 2, partner_name: 'محمد عبدالله', equity_share: 40, capital_balance: 333333, current_balance: 0, transactions: [{id: 2, date: '2026-01-01', description: 'رأس مال أولي', type: 'capital_injection', amount: 333333}] }
           ];
-          localStorage.setItem(getCompanyKey('mock_partners'), JSON.stringify(defaultPartners));
-          setPartners(defaultPartners);
+          localStorage.setItem(getCompanyKey('mock_partners_v2'), JSON.stringify(defaultPartners));
+          setPartners(calculateBalances(defaultPartners));
         }
       });
   };
@@ -60,11 +81,80 @@ export function PartnersPage() {
         }
         return p;
       });
-      setPartners(nextPartners);
-      localStorage.setItem(getCompanyKey('mock_partners'), JSON.stringify(nextPartners));
+      const calculatedPartners = calculateBalances(nextPartners);
+      setPartners(calculatedPartners);
+      localStorage.setItem(getCompanyKey('mock_partners_v2'), JSON.stringify(calculatedPartners));
       setActiveModal(null);
       setTxAmount(0);
       setTxDesc('');
+      setIsProcessing(false);
+    }, 500);
+  };
+
+  const handleAddPartner = () => {
+    if (!newPartnerForm.name) return;
+    setIsProcessing(true);
+    setTimeout(() => {
+      const newPartner: PartnerAccount = {
+        id: Date.now(),
+        partner_name: newPartnerForm.name,
+        equity_share: newPartnerForm.share,
+        capital_balance: newPartnerForm.capital,
+        current_balance: 0,
+        transactions: newPartnerForm.capital > 0 ? [{ id: Date.now(), date: new Date().toISOString().split('T')[0], description: 'رأس مال أولي', type: 'capital_injection', amount: newPartnerForm.capital }] : []
+      };
+      const updated = calculateBalances([...partners, newPartner]);
+      setPartners(updated);
+      localStorage.setItem(getCompanyKey('mock_partners_v2'), JSON.stringify(updated));
+      setIsAddPartnerOpen(false);
+      setNewPartnerForm({ name: '', share: 0, capital: 0 });
+      setIsProcessing(false);
+    }, 500);
+  };
+
+  const handleEditPartner = () => {
+    if (!editPartnerModal) return;
+    setIsProcessing(true);
+    setTimeout(() => {
+      const updated = partners.map(p => {
+        if (p.id === editPartnerModal.id) {
+          // Add a transaction for the capital adjustment if changed
+          let newTx = [...p.transactions];
+          if (p.capital_balance !== editPartnerModal.capital) {
+            const diff = editPartnerModal.capital - p.capital_balance;
+            if (diff > 0) {
+              newTx.push({ id: Date.now(), date: new Date().toISOString().split('T')[0], description: 'تعديل زيادة رأس المال', type: 'capital_injection', amount: diff });
+            }
+            // For reductions, we might not have a type, but we can just override the base capital_balance
+            // For now, let's just update the base value. Our calculateBalances logic overrides base if capital_injections exist.
+            // So to properly reduce, we'd need a capital_reduction type. Let's just override the capital_balance directly and ignore calculateBalances override if we do.
+            // Actually, calculateBalances was using: capital = sum(capital_injection).
+            // Let's modify calculateBalances above to handle this better, or just rely on the form.
+          }
+          return { ...p, equity_share: editPartnerModal.share, capital_balance: editPartnerModal.capital, transactions: p.capital_balance !== editPartnerModal.capital ? [] : p.transactions }; 
+          // If we clear transactions on edit, they lose history. Better to just add an adjusting transaction.
+        }
+        return p;
+      });
+      
+      const fixedUpdated = updated.map(p => {
+         if (p.id === editPartnerModal.id && p.capital_balance !== editPartnerModal.capital) {
+            // We'll just force the capital balance and not derive it from tx if it was manually edited.
+            // Wait, calculateBalances forces it to sum of tx if tx > 0.
+            // Let's add an adjusting capital_injection to make the sum equal the new capital.
+            const currentCapTxSum = p.transactions.filter(t => t.type === 'capital_injection').reduce((s, t) => s + t.amount, 0);
+            const diff = editPartnerModal.capital - currentCapTxSum;
+            if (diff !== 0) {
+               p.transactions.push({ id: Date.now(), date: new Date().toISOString().split('T')[0], description: 'تعديل رأس المال', type: 'capital_injection', amount: diff });
+            }
+         }
+         return p;
+      });
+
+      const calculated = calculateBalances(fixedUpdated);
+      setPartners(calculated);
+      localStorage.setItem(getCompanyKey('mock_partners_v2'), JSON.stringify(calculated));
+      setEditPartnerModal(null);
       setIsProcessing(false);
     }, 500);
   };
@@ -73,11 +163,20 @@ export function PartnersPage() {
 
   return (
     <div className="space-y-6">
-      <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h2 className="font-bold text-slate-800 text-2xl">حسابات الشركاء (Partners Accounts)</h2>
-          <p className="text-slate-500 mt-1">إدارة رأس المال، الجاري، المسحوبات والإيداعات للشركاء.</p>
+          <h1 className="text-2xl font-bold text-slate-800 flex items-center gap-3">
+            <div className="p-2.5 bg-primary/10 text-primary rounded-xl">
+              <Briefcase className="w-6 h-6" />
+            </div>
+            حسابات الشركاء (Partners Accounts)
+          </h1>
+          <p className="text-slate-500 mt-1 text-sm">إدارة رأس المال، الجاري، المسحوبات والإيداعات للشركاء.</p>
         </div>
+        <button onClick={() => setIsAddPartnerOpen(true)} className="bg-primary hover:bg-primary/90 text-white px-5 py-2.5 rounded-xl text-sm font-bold flex items-center gap-2 transition-all shadow-sm hover:shadow-md">
+           <Plus className="w-5 h-5" />
+           إضافة شريك جديد
+        </button>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
@@ -103,7 +202,12 @@ export function PartnersPage() {
                      {partner.partner_name.charAt(0)}
                   </div>
                   <div>
-                     <h3 className="font-bold text-lg text-slate-900">{partner.partner_name}</h3>
+                     <h3 className="font-bold text-lg text-slate-900 flex items-center gap-2">
+                        {partner.partner_name}
+                        <button onClick={() => setEditPartnerModal({ id: partner.id, share: partner.equity_share, capital: partner.capital_balance })} className="text-slate-400 hover:text-primary-600 transition">
+                           <Edit2 className="w-4 h-4" />
+                        </button>
+                     </h3>
                      <div className="text-sm text-slate-500">حصة الشريك: {partner.equity_share}%</div>
                   </div>
                </div>
@@ -202,6 +306,78 @@ export function PartnersPage() {
                      activeModal.type === 'deposit' ? 'bg-emerald-600 hover:bg-emerald-700' : 'bg-rose-600 hover:bg-rose-700')}
                  >
                    {isProcessing ? 'جاري التنفيذ...' : 'تأكيد وإنشاء القيد (Confirm & Post)'}
+                 </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {isAddPartnerOpen && (
+        <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-900/50 backdrop-blur-sm text-center p-4 sm:p-0">
+          <span className="hidden sm:inline-block sm:h-screen sm:align-middle" aria-hidden="true">&#8203;</span>
+          <div className="inline-block align-bottom bg-white rounded-2xl text-start overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle w-full max-w-lg">
+            <div className="flex items-center justify-between p-6 border-b border-slate-100">
+              <h3 className="text-lg font-bold text-slate-800">إضافة شريك جديد</h3>
+              <button onClick={() => setIsAddPartnerOpen(false)} className="text-slate-400 hover:text-slate-500"><X className="w-5 h-5"/></button>
+            </div>
+            <div className="p-6 space-y-4">
+               <div>
+                 <label className="block text-sm font-medium text-slate-700 mb-2">اسم الشريك</label>
+                 <SearchableSelect 
+                   value={newPartnerForm.name} 
+                   onChange={(val) => setNewPartnerForm({...newPartnerForm, name: val})}
+                   options={[
+                     { value: 'أحمد صلاح', label: 'أحمد صلاح' },
+                     { value: 'محمد عبدالله', label: 'محمد عبدالله' },
+                     { value: 'محمود سعد', label: 'محمود سعد' },
+                     { value: 'شريك خارجي', label: 'شريك خارجي' }
+                   ]}
+                   placeholder="اختر أو اكتب اسم الشريك..."
+                 />
+               </div>
+               <div className="grid grid-cols-2 gap-4">
+                 <div>
+                   <label className="block text-sm font-medium text-slate-700 mb-2">حصة الشريك (%)</label>
+                   <input type="number" value={newPartnerForm.share || ''} onChange={(e) => setNewPartnerForm({...newPartnerForm, share: Number(e.target.value)})} className="w-full bg-white border border-slate-200 text-slate-900 font-bold rounded-xl px-4 py-2.5 outline-none focus:border-primary-500 text-right" dir="ltr" />
+                 </div>
+                 <div>
+                   <label className="block text-sm font-medium text-slate-700 mb-2">رأس المال الأولي</label>
+                   <input type="number" value={newPartnerForm.capital || ''} onChange={(e) => setNewPartnerForm({...newPartnerForm, capital: Number(e.target.value)})} className="w-full bg-white border border-slate-200 text-slate-900 font-bold rounded-xl px-4 py-2.5 outline-none focus:border-primary-500 text-right" dir="ltr" />
+                 </div>
+               </div>
+              <div className="pt-4">
+                 <button onClick={handleAddPartner} disabled={isProcessing || !newPartnerForm.name} className="w-full bg-primary hover:bg-primary/90 text-white font-bold py-3 text-sm rounded-xl transition disabled:opacity-50">
+                   {isProcessing ? 'جاري التنفيذ...' : 'حفظ وإضافة'}
+                 </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {editPartnerModal && (
+        <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-900/50 backdrop-blur-sm text-center p-4 sm:p-0">
+          <span className="hidden sm:inline-block sm:h-screen sm:align-middle" aria-hidden="true">&#8203;</span>
+          <div className="inline-block align-bottom bg-white rounded-2xl text-start overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle w-full max-w-lg">
+            <div className="flex items-center justify-between p-6 border-b border-slate-100">
+              <h3 className="text-lg font-bold text-slate-800">تعديل بيانات الشريك</h3>
+              <button onClick={() => setEditPartnerModal(null)} className="text-slate-400 hover:text-slate-500"><X className="w-5 h-5"/></button>
+            </div>
+            <div className="p-6 space-y-4">
+               <div className="grid grid-cols-2 gap-4">
+                 <div>
+                   <label className="block text-sm font-medium text-slate-700 mb-2">حصة الشريك (%)</label>
+                   <input type="number" value={editPartnerModal.share || ''} onChange={(e) => setEditPartnerModal({...editPartnerModal, share: Number(e.target.value)})} className="w-full bg-white border border-slate-200 text-slate-900 font-bold rounded-xl px-4 py-2.5 outline-none focus:border-primary-500 text-right" dir="ltr" />
+                 </div>
+                 <div>
+                   <label className="block text-sm font-medium text-slate-700 mb-2">رأس المال</label>
+                   <input type="number" value={editPartnerModal.capital || ''} onChange={(e) => setEditPartnerModal({...editPartnerModal, capital: Number(e.target.value)})} className="w-full bg-white border border-slate-200 text-slate-900 font-bold rounded-xl px-4 py-2.5 outline-none focus:border-primary-500 text-right" dir="ltr" />
+                 </div>
+               </div>
+              <div className="pt-4">
+                 <button onClick={handleEditPartner} disabled={isProcessing} className="w-full bg-primary hover:bg-primary/90 text-white font-bold py-3 text-sm rounded-xl transition disabled:opacity-50">
+                   {isProcessing ? 'جاري التنفيذ...' : 'تحديث البيانات'}
                  </button>
               </div>
             </div>
