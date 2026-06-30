@@ -310,7 +310,7 @@ export function TaxesPage() {
               ) : records.map((record) => (
                 <tr key={record.id} className="border-b border-slate-50 hover:bg-slate-50 transition-colors">
                   <td className="px-6 py-4 text-start font-bold text-slate-900">
-                    {taxTypeTranslations[record.type]}
+                    {taxTypeTranslations[record.type] || record.type}
                   </td>
                   <td className="px-6 py-4 text-start font-mono text-slate-600">
                     {record.period}
@@ -361,7 +361,7 @@ export function TaxesPage() {
             </div>
             <div className="p-6 space-y-5">
                <div className="bg-slate-50 p-4 rounded-xl border border-slate-200">
-                  <div className="font-bold text-slate-800">{taxTypeTranslations[focusedRecord.type]} - {focusedRecord.period}</div>
+                  <div className="font-bold text-slate-800">{taxTypeTranslations[focusedRecord.type] || focusedRecord.type} - {focusedRecord.period}</div>
                   <div className="text-sm text-slate-500 mb-2">إجمالي المستحق: {new Intl.NumberFormat('ar-EG', { style: 'currency', currency: 'EGP' }).format(focusedRecord.liability_amount - focusedRecord.paid_amount)}</div>
                </div>
 
@@ -399,6 +399,7 @@ export function TaxesPage() {
                    value={newTaxForm.type} 
                    onChange={(value) => setNewTaxForm({...newTaxForm, type: value})} 
                    options={Object.entries(taxTypeTranslations).map(([val, label]) => ({ value: val, label }))}
+                   allowCreate={true}
                  />
                </div>
 
