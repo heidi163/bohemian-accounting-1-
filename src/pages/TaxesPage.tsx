@@ -23,6 +23,9 @@ export function TaxesPage() {
   const fetchTaxes = async () => {
     try {
       const res = await apiClient.get('/taxes');
+      if (typeof res.data === 'string' || !res.data.records) {
+        throw new Error("Invalid API response, likely Vercel static fallback");
+      }
       setSummary(res.data.summary);
       setRecords(res.data.records);
     } catch (error) {
@@ -66,10 +69,13 @@ export function TaxesPage() {
   const handleRegisterPayment = async () => {
     if (!focusedRecord) return;
     try {
-      await apiClient.post(`/taxes/${focusedRecord.id}/pay`, {
+      const res = await apiClient.post(`/taxes/${focusedRecord.id}/pay`, {
         amount: paymentAmount,
         bank_account_id: 1
       });
+      if (typeof res.data === 'string' || !res.data.success) {
+        throw new Error("Invalid API response");
+      }
       toast.success('تم تسجيل الدفعة بنجاح');
       setActiveModal(null);
       fetchTaxes();
@@ -106,7 +112,10 @@ export function TaxesPage() {
 
   const handlePostTax = async (record: TaxRecord) => {
     try {
-      await apiClient.post(`/taxes/${record.id}/post`);
+      const res = await apiClient.post(`/taxes/${record.id}/post`);
+      if (typeof res.data === 'string' || !res.data.success) {
+        throw new Error("Invalid API response");
+      }
       toast.success('تم ترحيل الضريبة وإغلاق الفترة بنجاح');
       fetchTaxes();
     } catch (error: any) {
