@@ -726,37 +726,6 @@ export function SettingsPage() {
         </div>
       </div>
 
-      {/* Floating Save Bar */}
-      <div className={clsx(
-        "fixed bottom-0 start-0 lg:start-64 right-0 bg-white/80 backdrop-blur-md border-t border-slate-200/60 p-4 flex items-center justify-between lg:justify-end gap-4 shadow-[0_-10px_30px_rgb(0,0,0,0.05)] z-40 transition-transform duration-500",
-        hasChanges ? "translate-y-0" : "translate-y-full"
-      )}>
-        <div className="hidden sm:block text-slate-600 font-bold text-sm">
-          لديك تغييرات غير محفوظة!
-        </div>
-        <div className="flex gap-3 w-full sm:w-auto">
-          <button 
-            onClick={() => setHasChanges(false)}
-            className="flex-1 sm:flex-none px-6 py-3 rounded-2xl text-sm font-bold bg-slate-100 text-slate-600 hover:bg-slate-200 transition-colors"
-          >
-            تجاهل
-          </button>
-          <button 
-            onClick={handleSave}
-            disabled={isSaving}
-            className="flex-[2] sm:flex-none px-8 py-3 rounded-2xl text-sm font-bold bg-emerald-600 text-white hover:bg-emerald-700 shadow-lg shadow-emerald-600/20 active:scale-95 transition-all flex items-center justify-center gap-2 min-w-[160px]"
-          >
-            {isSaving ? (
-              <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-            ) : showSuccess ? (
-              <CheckCircle2 className="w-5 h-5" />
-            ) : (
-              <Save className="w-5 h-5" />
-            )}
-            <span>{isSaving ? 'جاري الحفظ...' : showSuccess ? 'تم الحفظ بنجاح' : 'حفظ التعديلات'}</span>
-          </button>
-        </div>
-      </div>
 
       {/* Add User Modal */}
       {isUserModalOpen && (
