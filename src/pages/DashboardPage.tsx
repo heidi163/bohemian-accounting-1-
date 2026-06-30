@@ -28,9 +28,9 @@ const COLORS = [
 export function DashboardPage() {
   const navigate = useNavigate();
   const [stats, setStats] = useState<DashboardData | null>(null);
+  const company = getActiveCompany();
 
   useEffect(() => {
-    const company = getActiveCompany();
     const companyId = company === "BGK" ? 1 : 2;
 
     apiClient.get(`/dashboard/metrics?company_id=${companyId}`)

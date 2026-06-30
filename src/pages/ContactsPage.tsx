@@ -5,6 +5,7 @@ import { useNavigate } from "react-router";
 import { Download, Upload, AlertTriangle, TrendingUp, X, Filter } from "lucide-react";
 import { clsx } from "clsx";
 import apiClient from "../api/client";
+import { getCompanyKey } from "../utils/storage";
 
 export function ContactsPage() {
   const [contacts, setContacts] = useState<Contact[]>([]);

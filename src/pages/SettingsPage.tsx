@@ -1,5 +1,5 @@
 import { toast } from 'react-hot-toast';
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Save, Building, Percent, Users, KeyRound, CheckCircle2, X, Palette, UploadCloud, Globe, Settings as SettingsIcon, ShieldCheck, Mail, Phone, MapPin, Hash, Trash2, Edit2, Shield, Eye, EyeOff } from "lucide-react";
 import { useTheme } from "../contexts/ThemeContext";
 import { getCompanyKey } from '../utils/storage';
