@@ -263,7 +263,7 @@ export function ReportBuilderPage() {
                <div className="flex-1 flex flex-col">
                   {/* Chart Area using Recharts */}
                   {config.chartType !== 'table' && (
-                     <div className="h-64 border-b border-slate-100 p-4 bg-slate-50">
+                     <div className="h-[400px] border-b border-slate-100 p-6 bg-slate-50">
                         <ResponsiveContainer width="100%" height="100%">
                            {config.chartType === 'bar' ? (
                               <BarChart data={previewData.chartData} barSize={24}>
