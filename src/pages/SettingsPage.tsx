@@ -563,9 +563,17 @@ export function SettingsPage() {
                     <div>
                        <input type="file" className="hidden" id="logo-upload" accept="image/*" onChange={(e) => {
                          if(e.target.files && e.target.files[0]) {
-                            const url = URL.createObjectURL(e.target.files[0]);
-                            setLogoUrl(url);
-                            setHasChanges(true);
+                           const file = e.target.files[0];
+                           if (file.size > 2 * 1024 * 1024) {
+                             toast.error('حجم الصورة كبير جداً. أقصى حجم هو 2MB');
+                             return;
+                           }
+                           const reader = new FileReader();
+                           reader.onloadend = () => {
+                             setLogoUrl(reader.result as string);
+                             setHasChanges(true);
+                           };
+                           reader.readAsDataURL(file);
                          }
                        }} />
                        <label htmlFor="logo-upload" className="bg-emerald-50 text-emerald-700 border border-emerald-100 px-5 py-2.5 rounded-xl text-sm font-bold cursor-pointer hover:bg-emerald-100 transition-colors flex items-center gap-2 w-max mb-3">
@@ -596,6 +604,17 @@ export function SettingsPage() {
                             )}
                           ></button>
                         ))}
+                        <div className="relative overflow-hidden w-12 h-12 rounded-2xl border-4 border-transparent hover:scale-110 transition-all shadow-sm group">
+                          <input 
+                            type="color" 
+                            value={primaryColor}
+                            onChange={(e) => { setPrimaryColor(e.target.value); setHasChanges(true); }}
+                            className="absolute -top-4 -left-4 w-20 h-20 cursor-pointer"
+                          />
+                          <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-0 group-hover:opacity-100 bg-black/20 transition-opacity text-white text-xs font-bold font-mono">
+                            مخصص
+                          </div>
+                        </div>
                       </div>
                     </div>
                     
@@ -614,6 +633,17 @@ export function SettingsPage() {
                             )}
                           ></button>
                         ))}
+                        <div className="relative overflow-hidden w-12 h-12 rounded-2xl border-4 border-transparent hover:scale-110 transition-all shadow-sm group">
+                          <input 
+                            type="color" 
+                            value={secondaryColor}
+                            onChange={(e) => { setSecondaryColor(e.target.value); setHasChanges(true); }}
+                            className="absolute -top-4 -left-4 w-20 h-20 cursor-pointer"
+                          />
+                          <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-0 group-hover:opacity-100 bg-black/20 transition-opacity text-white text-xs font-bold font-mono">
+                            مخصص
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
