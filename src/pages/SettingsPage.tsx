@@ -328,8 +328,9 @@ export function SettingsPage() {
                     <p className="text-xs font-medium text-slate-500 mt-1">تفعيل هذا الخيار سيجعل النظام يستقطع الضريبة من السعر المدخل بدلاً من إضافتها عليه.</p>
                   </div>
                   <label className="relative inline-flex items-center cursor-pointer">
-                    <input type="checkbox" onChange={handleFieldChange} className="sr-only peer" />
-                    <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:right-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-500"></div>
+                    <input type="checkbox" defaultChecked onChange={handleFieldChange} className="sr-only peer" />
+                    <div className="w-9 h-3.5 bg-slate-300 rounded-full peer-checked:bg-emerald-200 transition-colors duration-300"></div>
+                    <div className="absolute right-0 top-1/2 -translate-y-1/2 w-5 h-5 bg-white rounded-full shadow-md peer-checked:bg-emerald-500 peer-checked:-translate-x-4 transition-all duration-300"></div>
                   </label>
                 </div>
 
