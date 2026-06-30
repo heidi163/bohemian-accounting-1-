@@ -263,29 +263,29 @@ export function ReportBuilderPage() {
                      <div className="h-64 border-b border-slate-100 p-4 bg-slate-50">
                         <ResponsiveContainer width="100%" height="100%">
                            {config.chartType === 'bar' ? (
-                              <BarChart data={previewData.chartData}>
-                                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
-                                 <XAxis dataKey="label" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#64748b' }} />
-                                 <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#64748b' }} />
-                                 <Tooltip cursor={{ fill: '#f1f5f9' }} contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)', fontWeight: 'bold' }} />
-                                 <Bar dataKey="value" fill="#6366f1" radius={[4, 4, 0, 0]} barSize={40} animationDuration={1000} />
+                              <BarChart data={previewData.chartData} barSize={24}>
+                                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" opacity={0.5} />
+                                 <XAxis dataKey="label" axisLine={false} tickLine={false} tick={{ fill: '#94a3b8', fontSize: 11, fontWeight: 500 }} dy={10} />
+                                 <YAxis axisLine={false} tickLine={false} tick={{ fill: '#94a3b8', fontSize: 11, fontWeight: 500 }} />
+                                 <Tooltip cursor={{ fill: '#f8fafc', radius: 12 }} contentStyle={{ borderRadius: '1rem', border: 'none', boxShadow: '0 10px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)' }} />
+                                 <Bar dataKey="value" fill="var(--color-primary-500)" radius={[12, 12, 12, 12]} background={{ fill: 'var(--color-primary-50)', radius: [12, 12, 12, 12] }} animationDuration={1000} />
                               </BarChart>
                            ) : config.chartType === 'line' ? (
                               <LineChart data={previewData.chartData}>
-                                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
-                                 <XAxis dataKey="label" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#64748b' }} />
-                                 <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#64748b' }} />
-                                 <Tooltip contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)', fontWeight: 'bold' }} />
-                                 <Line type="monotone" dataKey="value" stroke="#6366f1" strokeWidth={4} dot={{ r: 5, fill: '#6366f1', strokeWidth: 2, stroke: 'white' }} activeDot={{ r: 8 }} animationDuration={1000} />
+                                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" opacity={0.5} />
+                                 <XAxis dataKey="label" axisLine={false} tickLine={false} tick={{ fill: '#94a3b8', fontSize: 11, fontWeight: 500 }} dy={10} />
+                                 <YAxis axisLine={false} tickLine={false} tick={{ fill: '#94a3b8', fontSize: 11, fontWeight: 500 }} />
+                                 <Tooltip contentStyle={{ borderRadius: '1rem', border: 'none', boxShadow: '0 10px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)', fontWeight: 'bold' }} />
+                                 <Line type="monotone" dataKey="value" stroke="var(--color-primary-500)" strokeWidth={4} dot={{ r: 5, fill: 'var(--color-primary-500)', strokeWidth: 2, stroke: 'white' }} activeDot={{ r: 8 }} animationDuration={1000} />
                               </LineChart>
                            ) : (
                               <PieChart>
                                  <Pie data={previewData.chartData} dataKey="value" nameKey="label" cx="50%" cy="50%" innerRadius={60} outerRadius={85} paddingAngle={5} animationDuration={1000}>
                                     {previewData.chartData.map((entry: any, index: number) => (
-                                       <Cell key={`cell-${index}`} fill={['#6366f1', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6'][index % 5]} />
+                                       <Cell key={`cell-${index}`} fill={['var(--color-primary-500)', 'var(--color-primary-300)', 'var(--color-primary-700)', 'var(--color-primary-400)', 'var(--color-primary-600)'][index % 5]} />
                                     ))}
                                  </Pie>
-                                 <Tooltip contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)', fontWeight: 'bold' }} />
+                                 <Tooltip contentStyle={{ borderRadius: '1rem', border: 'none', boxShadow: '0 10px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)', fontWeight: 'bold' }} />
                                  <Legend iconType="circle" wrapperStyle={{ fontSize: '13px', fontWeight: 'bold', paddingTop: '10px' }} />
                               </PieChart>
                            )}
