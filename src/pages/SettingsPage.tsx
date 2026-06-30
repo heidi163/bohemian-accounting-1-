@@ -712,15 +712,21 @@ export function SettingsPage() {
               </div>
               <div>
                 <label className="block text-sm font-bold text-slate-700 mb-2">الصلاحية (الدور)</label>
-                <select 
+                <input 
+                  type="text"
+                  list="roles-list"
                   value={newUserRole}
                   onChange={(e) => setNewUserRole(e.target.value)}
-                  className="w-full bg-slate-50 border border-slate-200 text-slate-800 text-sm rounded-2xl px-5 py-3.5 focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 outline-none transition-all font-bold cursor-pointer appearance-none"
-                >
-                  <option value="محاسب">محاسب (وصول كامل للحسابات)</option>
-                  <option value="مدير نظام">مدير نظام (تحكم كامل)</option>
-                  <option value="مُدخل بيانات">مُدخل بيانات (محدود)</option>
-                </select>
+                  className="w-full bg-slate-50 border border-slate-200 text-slate-800 text-sm rounded-2xl px-5 py-3.5 focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 outline-none transition-all font-bold"
+                  placeholder="اختر أو اكتب صلاحية جديدة..."
+                />
+                <datalist id="roles-list">
+                  <option value="محاسب" />
+                  <option value="مدير نظام" />
+                  <option value="مُدخل بيانات" />
+                  <option value="مراجع مالي" />
+                  <option value="شريك" />
+                </datalist>
               </div>
               <div className="pt-4 flex gap-3">
                 <button 
