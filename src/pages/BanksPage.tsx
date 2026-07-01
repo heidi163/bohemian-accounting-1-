@@ -29,12 +29,16 @@ export function BanksPage() {
         if (!res.ok) throw new Error('API Error');
         return res.json();
       })
-      .then((data) => setBanks(data.data))
+      .then((data) => {
+        const activeCompany = getActiveCompany();
+        setBanks(data.data.filter((b: BankAccount) => b.company_id === 'ALL' || b.company_id === activeCompany));
+      })
       .catch(() => {
         const localBanks = JSON.parse(localStorage.getItem(getCompanyKey('mock_banks')) || '[]');
+        const activeCompany = getActiveCompany();
         if (localBanks.length > 0) {
-          setBanks(localBanks);
-        } else if (false) {
+          setBanks(localBanks.filter((b: BankAccount) => b.company_id === 'ALL' || b.company_id === activeCompany));
+        } else {
             const defaults = [
             { id: "1", code: "1111", name: "البنك الأهلي - EGP", type: "bank", currency: "EGP", balance: 1500000, company_id: "BGK" },
             { id: "2", code: "1112", name: "بنك الراجحي - SAR", type: "bank", currency: "SAR", balance: 250000, company_id: "BGK" },
@@ -42,7 +46,7 @@ export function BanksPage() {
             { id: "4", code: "1121", name: "صندوق المركز الرئيسي", type: "cash", currency: "EGP", balance: 25000, company_id: "ALL" }
           ];
           localStorage.setItem(getCompanyKey('mock_banks'), JSON.stringify(defaults));
-          setBanks(defaults);
+          setBanks(defaults.filter((b: BankAccount) => b.company_id === 'ALL' || b.company_id === activeCompany));
         }
       });
   };
@@ -129,16 +133,16 @@ export function BanksPage() {
   return (
     <div className="space-y-6">
       {/* Header & Quick Actions */}
-      <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+      <div className="bg-white rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100/50 p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
           <h1 className="text-2xl font-bold text-slate-800">البنوك والنقد (Banking & Cash)</h1>
           <p className="text-slate-500 mt-1">إدارة الحسابات البنكية، الخزينة، الحركات البنكية والمطابقات.</p>
         </div>
         <div className="flex flex-wrap gap-2">
-          <button onClick={() => navigate('/banks/new')} className="bg-primary-600 text-white px-4 py-2.5 rounded-xl text-sm font-semibold hover:bg-primary-700 transition">
+          <button onClick={() => navigate('/banks/new')} className="bg-primary-600 text-white px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-primary-700 transition">
             إضافة حساب جديد
           </button>
-          <button onClick={() => handleAction('transfer')} className="bg-slate-100 text-slate-700 px-4 py-2.5 rounded-xl text-sm font-semibold hover:bg-slate-200 transition flex items-center gap-2">
+          <button onClick={() => handleAction('transfer')} className="bg-slate-50 border border-slate-200 text-slate-700 px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-slate-100 transition flex items-center gap-2">
             <ArrowRightLeft className="w-4 h-4" /> تحويل (Transfer)
           </button>
         </div>
@@ -146,7 +150,7 @@ export function BanksPage() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
         {banks.map((bank) => (
-          <div key={bank.id} className="bg-white border border-slate-200 rounded-2xl p-5 hover:border-primary-200 hover:shadow-md transition-all group relative overflow-hidden flex flex-col justify-between">
+          <div key={bank.id} className="bg-white rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] border border-slate-100/50 p-6 hover:-translate-y-1 transition-transform duration-300 group relative overflow-hidden flex flex-col justify-between">
             <div className={clsx("absolute top-0 start-0 w-1.5 h-full", bank.type === 'bank' ? 'bg-primary-500' : 'bg-emerald-500')}></div>
             <div>
               <div className="flex items-start justify-between mb-4">
