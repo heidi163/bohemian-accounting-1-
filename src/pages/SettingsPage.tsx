@@ -101,7 +101,7 @@ export function SettingsPage() {
     // Load Users
     apiClient.get('/users').then(res => {
       if (res.data.success) {
-        setUsersList(res.data.data);
+        setUsersList(res.data.data || []);
       }
     });
   }, []);

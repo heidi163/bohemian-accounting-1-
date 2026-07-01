@@ -35,7 +35,7 @@ export function DashboardPage() {
 
     apiClient.get(`/dashboard/metrics?company_id=${companyId}`)
       .then((res) => {
-        const m = res.data.data.metrics;
+        const m = (res.data.data && res.data.data.metrics) || null;
         setStats({ 
           totalCash: m.net_profit + 500000, // Temp mock for cash
           receivables: m.pending_invoices_amount + m.overdue_invoices_amount, 

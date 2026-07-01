@@ -49,7 +49,7 @@ export function PurchasesPage() {
          return res.json();
       })
       .then((data) => {
-         if (data.success) setBills(data.data);
+         if (data.success) setBills(data.data || []);
       })
       .catch(() => {
          const localBills = JSON.parse(localStorage.getItem(getCompanyKey('mock_bills')) || '[]');

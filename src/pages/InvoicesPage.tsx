@@ -55,7 +55,7 @@ export function InvoicesPage() {
     apiClient.get(`/invoices?company_id=${companyId}`)
       .then((res) => {
         if (res.data && res.data.success) {
-          setInvoices(res.data.data);
+          setInvoices(res.data.data || []);
         } else {
           throw new Error("API failed");
         }

@@ -29,7 +29,7 @@ export function JournalPage() {
   const loadJournals = async () => {
     try {
       const res = await apiClient.get('/journal-entries');
-      setEntries(res.data.data);
+      setEntries(res.data.data || []);
     } catch (error) {
       console.error("Failed to load journals, using fallback", error);
       const localJournals = JSON.parse(localStorage.getItem(getCompanyKey('mock_journals')) || '[]');
