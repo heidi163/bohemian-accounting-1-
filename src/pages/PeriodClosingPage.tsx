@@ -115,8 +115,9 @@ export function PeriodClosingPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-        <div>
+      <div className="bg-white rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] hover:-translate-y-1 hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all duration-300 group border-0 p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 relative overflow-hidden">
+        <div className="absolute top-0 start-0 w-2 h-full bg-primary-500"></div>
+        <div className="ps-2">
           <h2 className="font-bold text-slate-800 text-2xl flex items-center gap-2">
              <Calendar className="w-7 h-7 text-primary-600"/> إغلاق الفترات (Period Closing)
           </h2>

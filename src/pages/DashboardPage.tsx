@@ -173,9 +173,10 @@ export function DashboardPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Sales Chart */}
-        <div className="lg:col-span-8 bg-white rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] hover:-translate-y-1 hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all duration-300 group border-0 flex flex-col min-h-[400px]">
-          <div className="p-6 md:p-8 flex items-center justify-between">
-            <h2 className="text-lg font-bold text-slate-900 tracking-tight">حركة المبيعات والتدفقات</h2>
+        <div className="bg-white rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] hover:-translate-y-1 hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all duration-300 group border-0 p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 relative overflow-hidden">
+        <div className="absolute top-0 start-0 w-2 h-full bg-primary-500"></div>
+        <div className="ps-2">
+          <h2 className="text-lg font-bold text-slate-900 tracking-tight">حركة المبيعات والتدفقات</h2>
             <select className="bg-slate-50 border-0 text-sm font-medium rounded-full px-4 py-1.5 text-slate-600 outline-none cursor-pointer focus:ring-2 focus:ring-primary/20 transition-all hover:bg-slate-100">
               <option>2026</option>
               <option>2025</option>

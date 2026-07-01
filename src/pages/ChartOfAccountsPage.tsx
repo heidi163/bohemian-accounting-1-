@@ -211,9 +211,10 @@ export function ChartOfAccountsPage() {
       </div>
 
       <div className="bg-white rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100/50 p-6 flex flex-col overflow-hidden">
-        <div className="flex flex-col sm:flex-row justify-between items-start md:items-center gap-4 mb-6">
-          <div>
-            <h1 className="text-2xl font-bold text-slate-800">شجرة الحسابات</h1>
+        <div className="bg-white rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] hover:-translate-y-1 hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all duration-300 group border-0 p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 relative overflow-hidden">
+        <div className="absolute top-0 start-0 w-2 h-full bg-primary-500"></div>
+        <div className="ps-2">
+          <h1 className="text-2xl font-bold text-slate-800">شجرة الحسابات</h1>
             <p className="text-slate-500 mt-1">إعدادات الدليل المحاسبي للشركات التابعة</p>
           </div>
           <button 
