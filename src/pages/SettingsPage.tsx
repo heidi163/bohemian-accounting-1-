@@ -582,7 +582,7 @@ export function SettingsPage() {
                   <h4 className="font-bold text-slate-800 border-b border-slate-100 pb-3">إعدادات المصادقة</h4>
                   
                   <div className="bg-slate-50 border border-slate-200 rounded-3xl p-6 relative overflow-hidden">
-                    <div className="absolute top-0 start-0 p-6 opacity-5">
+                    <div className="absolute top-0 end-0 p-6 opacity-5">
                       <Shield className="w-32 h-32 text-primary-900" />
                     </div>
                     <div className="relative z-10">

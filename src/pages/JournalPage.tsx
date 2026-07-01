@@ -87,10 +87,9 @@ export function JournalPage() {
       </div>
 
       <div className="bg-white rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100/50 flex flex-col overflow-hidden">
-        <div className="bg-white rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] hover:-translate-y-1 hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all duration-300 group border-0 p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 relative overflow-hidden">
-        <div className="absolute top-0 start-0 w-2 h-full bg-primary-500"></div>
-        <div className="ps-2">
-          <h2 className="font-bold text-slate-800 text-xl">قيود اليومية</h2>
+        <div className="p-6 border-b border-slate-100 flex items-center justify-between">
+          <div>
+            <h2 className="font-bold text-slate-800 text-xl">قيود اليومية</h2>
             <p className="text-slate-500 text-sm mt-1">سجل القيود اليومية وعمليات الترحيل والتسوية.</p>
           </div>
           <button className="bg-primary-600 text-white px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-primary-700 transition" onClick={() => navigate('/journal/new')}>
