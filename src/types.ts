@@ -68,7 +68,8 @@ export interface PayrollRun {
   total_taxes: number;
   total_social_insurance: number;
   net_salary: number;
-  status: 'draft' | 'approved' | 'paid';
+  status: 'draft' | 'approved' | 'paid' | 'under_review';
+  company_id?: string;
 }
 
 export interface Asset {
@@ -86,6 +87,7 @@ export interface Asset {
   status: 'active' | 'sold' | 'disposed';
   location?: string;
   last_depreciation_date?: string;
+  company_id?: string;
 }
 
 export interface JournalEntry {
