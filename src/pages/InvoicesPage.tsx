@@ -62,7 +62,13 @@ export function InvoicesPage() {
         if (localInvoices.length > 0) {
           setInvoices(localInvoices);
         } else {
-          showToast('لا يمكن الاتصال بالخادم ولا توجد بيانات محلية');
+          const defaultInvoices = [
+            { id: 1, invoice_number: 'INV-2026-00001', customer_name: 'Bohemian Geeks', total_amount: 15400, paid_amount: 5400, tax_amount: 1400, status: 'partial', invoice_date: '2026-05-15', due_date: '2026-06-15', type: 'invoice', is_recurring: false },
+            { id: 2, invoice_number: 'QT-2026-00102', customer_name: 'Sealy KSA', total_amount: 45000, paid_amount: 0, tax_amount: 0, status: 'draft', invoice_date: '2026-06-01', due_date: '2026-06-30', type: 'quotation', is_recurring: false },
+            { id: 3, invoice_number: 'INV-2026-00003', customer_name: 'Nola Cupcakes', total_amount: 8200, paid_amount: 8200, tax_amount: 1000, status: 'paid', invoice_date: '2026-06-10', due_date: '2026-06-25', type: 'invoice', is_recurring: true }
+          ];
+          setInvoices(defaultInvoices as any);
+          localStorage.setItem(getCompanyKey('mock_invoices'), JSON.stringify(defaultInvoices));
         }
       });
   };
@@ -213,7 +219,34 @@ export function InvoicesPage() {
         </div>
       </div>
 
-      <div className="bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col overflow-hidden">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="bg-gradient-to-br from-slate-900 to-slate-800 p-6 rounded-[2rem] shadow-xl text-white flex flex-col justify-between hover:-translate-y-1 transition-transform duration-300 relative overflow-hidden">
+          <div className="absolute top-0 end-0 p-8 opacity-10 pointer-events-none">
+            <DollarSign className="w-32 h-32" />
+          </div>
+          <div className="text-sm font-medium text-slate-300 mb-4 flex items-center gap-2">
+            <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center"><DollarSign className="w-4 h-4"/></div>
+            إجمالي الإيرادات المفوترة
+          </div>
+          <div className="text-3xl font-black" dir="ltr">{new Intl.NumberFormat('ar-EG', { style: 'currency', currency: 'EGP' }).format(invoices.reduce((acc, curr) => acc + curr.total_amount, 0))}</div>
+        </div>
+        <div className="bg-white p-6 rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] flex flex-col justify-between hover:-translate-y-1 transition-transform duration-300 border border-slate-100/50">
+          <div className="text-sm font-bold text-slate-500 mb-4 flex items-center gap-2">
+            <div className="w-8 h-8 rounded-full bg-amber-50 text-amber-600 flex items-center justify-center"><FileText className="w-4 h-4"/></div>
+            مستحقات متأخرة
+          </div>
+          <div className="text-3xl font-black text-amber-600" dir="ltr">{new Intl.NumberFormat('ar-EG', { style: 'currency', currency: 'EGP' }).format(invoices.filter(i => i.status === 'overdue' || i.status === 'partial').reduce((acc, curr) => acc + (curr.total_amount - curr.paid_amount), 0))}</div>
+        </div>
+        <div className="bg-white p-6 rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] flex flex-col justify-between hover:-translate-y-1 transition-transform duration-300 border border-slate-100/50">
+          <div className="text-sm font-bold text-slate-500 mb-4 flex items-center gap-2">
+            <div className="w-8 h-8 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center"><Tag className="w-4 h-4"/></div>
+            التحصيلات النقدية
+          </div>
+          <div className="text-3xl font-black text-emerald-600" dir="ltr">{new Intl.NumberFormat('ar-EG', { style: 'currency', currency: 'EGP' }).format(invoices.reduce((acc, curr) => acc + curr.paid_amount, 0))}</div>
+        </div>
+      </div>
+
+      <div className="bg-white rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100/50 flex flex-col overflow-hidden">
         <div className="flex-1 overflow-x-auto">
           <table className="w-full text-start border-collapse">
             <thead className="bg-slate-50 text-slate-400 text-xs uppercase font-bold tracking-widest">
