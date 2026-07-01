@@ -209,14 +209,14 @@ export function EmployeeAdvancesPage() {
                   <td className="px-6 py-4 text-start text-slate-600 font-medium">{adv.reason}</td>
                   <td className="px-6 py-4 text-end font-mono font-bold text-slate-800" dir="ltr">{adv.amount.toLocaleString()}</td>
                   <td className="px-6 py-4 text-end font-mono font-black" dir="ltr">
-                    <span className={clsx(adv.remaining > 0 ? "text-rose-600" : "text-emerald-600")}>
+                    <span className={clsx(adv.remaining > 0 ? "text-rose-600" : "text-primary-600")}>
                       {adv.remaining.toLocaleString()}
                     </span>
                   </td>
                   <td className="px-6 py-4 text-center">
                     <span className={clsx(
                       "inline-flex items-center rounded-xl px-3 py-1 text-xs font-black", 
-                      adv.status === "active" ? "bg-amber-50 text-amber-600" : "bg-emerald-50 text-emerald-600"
+                      adv.status === "active" ? "bg-amber-50 text-amber-600" : "bg-primary-50 text-primary-600"
                     )}>
                       {adv.status === "active" ? "نشط" : "مُسدَّد"}
                     </span>

@@ -248,7 +248,7 @@ export function TaxesPage() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
           {[
              { title: 'القيمة المضافة (VAT)', liability: summary.vat_liability, paid: summary.vat_paid, icon: Receipt, color: 'primary' },
-             { title: 'ضريبة الدخل (Income)', liability: summary.income_liability, paid: summary.income_paid, icon: Landmark, color: 'emerald' },
+             { title: 'ضريبة الدخل (Income)', liability: summary.income_liability, paid: summary.income_paid, icon: Landmark, color: 'primary' },
              { title: 'خصم من المنبع', liability: summary.withholding_liability, paid: summary.withholding_paid, icon: FileText, color: 'amber' },
              { title: 'ضريبة المرتبات', liability: summary.payroll_liability, paid: summary.payroll_paid, icon: Calculator, color: 'rose' },
           ].map((tax, index) => {
@@ -269,7 +269,7 @@ export function TaxesPage() {
                    </div>
                    <div className="flex justify-between text-sm">
                       <span className="text-slate-500">المدفوع:</span>
-                      <span className="font-mono font-bold text-emerald-600">{new Intl.NumberFormat('ar-EG').format(tax.paid)}</span>
+                      <span className="font-mono font-bold text-primary-600">{new Intl.NumberFormat('ar-EG').format(tax.paid)}</span>
                    </div>
                    <div className="pt-2 border-t border-slate-100 flex justify-between text-sm">
                       <span className="text-slate-700 font-bold">المتبقي:</span>
@@ -318,7 +318,7 @@ export function TaxesPage() {
                   <td className="px-6 py-4 text-end font-mono font-medium text-slate-900" dir="ltr">
                     {new Intl.NumberFormat('ar-EG').format(record.liability_amount)}
                   </td>
-                  <td className="px-6 py-4 text-end font-mono font-medium text-emerald-600" dir="ltr">
+                  <td className="px-6 py-4 text-end font-mono font-medium text-primary-600" dir="ltr">
                     {new Intl.NumberFormat('ar-EG').format(record.paid_amount)}
                   </td>
                   <td className="px-6 py-4 text-center font-mono">
@@ -326,7 +326,7 @@ export function TaxesPage() {
                   </td>
                   <td className="px-6 py-4 text-center">
                     <span className={clsx('inline-flex items-center rounded-md px-2.5 py-1 text-xs font-bold leading-none', 
-                        record.status === 'paid' ? 'bg-emerald-100 text-emerald-700' : 
+                        record.status === 'paid' ? 'bg-primary-100 text-primary-700' : 
                         record.status === 'posted' ? 'bg-primary-100 text-primary-700' :
                         record.status === 'partial' ? 'bg-amber-100 text-amber-700' : 'bg-rose-100 text-rose-700')}>
                       {record.status === 'paid' ? 'مسدد' : record.status === 'posted' ? 'مُرحل' : record.status === 'partial' ? 'جزئي' : 'معلق'}

@@ -227,7 +227,7 @@ export function ReportsPage() {
                <div className="mt-4 pt-4 border-t border-slate-50 flex items-center justify-between text-sm">
                   <span className="text-primary-600 font-bold group-hover:underline flex items-center gap-1"><Eye className="w-4 h-4"/> عرض التقرير</span>
                   <div className="flex gap-2 opacity-50 group-hover:opacity-100 transition">
-                     <FileDown className="w-4 h-4 text-emerald-600"/>
+                     <FileDown className="w-4 h-4 text-primary-600"/>
                   </div>
                </div>
             </div>
@@ -244,7 +244,7 @@ export function ReportsPage() {
                  <p className="text-sm text-slate-500 mt-1">تقرير مستخرج في {new Date().toLocaleDateString('ar-EG')}</p>
               </div>
               <div className="flex items-center gap-2">
-                 <button onClick={exportToExcel} className="px-4 py-2 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 rounded-lg text-sm font-bold transition flex items-center gap-2">
+                 <button onClick={exportToExcel} className="px-4 py-2 bg-primary-50 text-primary-700 hover:bg-primary-100 rounded-lg text-sm font-bold transition flex items-center gap-2">
                     <FileDown className="w-4 h-4" /> تصدير Excel
                  </button>
                  <button onClick={exportToPDF} className="px-4 py-2 bg-rose-50 text-rose-700 hover:bg-rose-100 rounded-lg text-sm font-bold transition flex items-center gap-2">

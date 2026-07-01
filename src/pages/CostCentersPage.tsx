@@ -146,11 +146,11 @@ export function CostCentersPage() {
                 </div>
                 <div className="flex flex-col text-end justify-center">
                    <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider mb-1">الإيرادات المحققة</span>
-                   <span className="font-mono font-black text-emerald-600" dir="ltr">{new Intl.NumberFormat('ar-EG').format(node.revenue)}</span>
+                   <span className="font-mono font-black text-primary-600" dir="ltr">{new Intl.NumberFormat('ar-EG').format(node.revenue)}</span>
                 </div>
                 <div className="flex flex-col text-end justify-center">
                    <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider mb-1">الربح الصافي</span>
-                   <span className={clsx("font-mono font-black text-lg flex items-center justify-end gap-1", netProfit >= 0 ? "text-emerald-600" : "text-rose-600")} dir="ltr">
+                   <span className={clsx("font-mono font-black text-lg flex items-center justify-end gap-1", netProfit >= 0 ? "text-primary-600" : "text-rose-600")} dir="ltr">
                       {netProfit >= 0 ? <ArrowUpRight className="w-4 h-4" /> : <ArrowDownRight className="w-4 h-4" />}
                       {new Intl.NumberFormat('ar-EG').format(Math.abs(netProfit))}
                    </span>
@@ -212,10 +212,10 @@ export function CostCentersPage() {
         <div className="bg-white p-6 rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] border-0 flex flex-col justify-between min-h-[140px] hover:-translate-y-1 transition-transform duration-300">
           <div className="text-sm font-bold text-slate-500 mb-4 flex justify-between items-center">
             <span>الوفر / (التجاوز)</span>
-            <div className="w-10 h-10 rounded-2xl bg-emerald-50 flex items-center justify-center text-emerald-600"><PieChartIcon className="w-5 h-5"/></div>
+            <div className="w-10 h-10 rounded-2xl bg-primary-50 flex items-center justify-center text-primary-600"><PieChartIcon className="w-5 h-5"/></div>
           </div>
           <div>
-            <div className={clsx("text-3xl font-black tracking-tight", totalVariance >= 0 ? "text-emerald-600" : "text-rose-600")} dir="ltr">
+            <div className={clsx("text-3xl font-black tracking-tight", totalVariance >= 0 ? "text-primary-600" : "text-rose-600")} dir="ltr">
                {new Intl.NumberFormat('ar-EG', { style: 'currency', currency: 'EGP', maximumSignificantDigits: 4 }).format(Math.abs(totalVariance))}
             </div>
           </div>

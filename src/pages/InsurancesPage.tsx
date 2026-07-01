@@ -71,7 +71,7 @@ export function InsurancesPage() {
                     {new Intl.NumberFormat('ar-EG').format(item.premium)} EGP
                   </td>
                   <td className="px-6 py-4 text-start">
-                    <span className="inline-flex items-center rounded-md px-2.5 py-1 text-xs font-bold leading-none bg-emerald-100 text-emerald-700">
+                    <span className="inline-flex items-center rounded-md px-2.5 py-1 text-xs font-bold leading-none bg-primary-100 text-primary-700">
                       نشط
                     </span>
                   </td>

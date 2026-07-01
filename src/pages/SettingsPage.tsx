@@ -171,10 +171,10 @@ export function SettingsPage() {
       
       {/* Header */}
       <div className="bg-white rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] hover:-translate-y-1 hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all duration-300 group border-0 p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 relative overflow-hidden">
-        <div className="absolute top-0 start-0 w-2 h-full bg-emerald-500"></div>
+        <div className="absolute top-0 start-0 w-2 h-full bg-primary-500"></div>
         <div className="ps-2">
           <h2 className="font-black text-slate-800 text-2xl flex items-center gap-3">
-            <SettingsIcon className="w-8 h-8 text-emerald-600" />
+            <SettingsIcon className="w-8 h-8 text-primary-600" />
             لوحة تحكم النظام
             <span className="text-slate-400 font-medium text-lg hidden sm:inline-block">/ System Settings</span>
           </h2>
@@ -193,16 +193,16 @@ export function SettingsPage() {
                 className={clsx(
                   "w-full flex items-center gap-4 px-4 py-3.5 rounded-2xl transition-all duration-300 font-bold text-start",
                   activeTab === item.id 
-                    ? "bg-emerald-50 text-emerald-700 shadow-sm border border-emerald-100" 
+                    ? "bg-primary-50 text-primary-700 shadow-sm border border-primary-100" 
                     : "bg-transparent text-slate-600 hover:bg-slate-50 border border-transparent hover:border-slate-100"
                 )}
               >
-                <div className={clsx("w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-colors", activeTab === item.id ? "bg-emerald-100 text-emerald-700" : "bg-slate-100 text-slate-400")}>
+                <div className={clsx("w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-colors", activeTab === item.id ? "bg-primary-100 text-primary-700" : "bg-slate-100 text-slate-400")}>
                   <item.icon className="w-5 h-5" />
                 </div>
                 <div>
                   <div className="text-[15px]">{item.label}</div>
-                  <div className={clsx("text-xs font-medium mt-0.5", activeTab === item.id ? "text-emerald-600/70" : "text-slate-400")}>{item.desc}</div>
+                  <div className={clsx("text-xs font-medium mt-0.5", activeTab === item.id ? "text-primary-600/70" : "text-slate-400")}>{item.desc}</div>
                 </div>
               </button>
             ))}
@@ -217,7 +217,7 @@ export function SettingsPage() {
             <div className="animate-in slide-in-from-bottom-2 fade-in duration-300 space-y-8">
               <div>
                 <h3 className="text-xl font-black text-slate-800 flex items-center gap-2 mb-2">
-                  <Building className="w-6 h-6 text-emerald-500" /> بيانات الشركة الأساسية
+                  <Building className="w-6 h-6 text-primary-500" /> بيانات الشركة الأساسية
                 </h3>
                 <p className="text-sm font-medium text-slate-500">هذه البيانات ستظهر على الفواتير والتقارير الرسمية المصدرة من النظام.</p>
               </div>
@@ -225,23 +225,23 @@ export function SettingsPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label className="block text-sm font-bold text-slate-700 mb-2">اسم الشركة بالكامل</label>
-                  <input type="text" onChange={handleFieldChange} defaultValue="بوهيميان جيكس (Bohemian Geeks)" className="w-full bg-slate-50 border border-slate-200 text-slate-800 text-sm rounded-2xl px-5 py-3.5 focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 outline-none transition-all font-bold shadow-sm" />
+                  <input type="text" onChange={handleFieldChange} defaultValue="بوهيميان جيكس (Bohemian Geeks)" className="w-full bg-slate-50 border border-slate-200 text-slate-800 text-sm rounded-2xl px-5 py-3.5 focus:ring-4 focus:ring-primary-500/10 focus:border-primary-500 outline-none transition-all font-bold shadow-sm" />
                 </div>
                 <div>
                   <label className="block text-sm font-bold text-slate-700 mb-2">مجال العمل / النشاط</label>
-                  <input type="text" onChange={handleFieldChange} defaultValue="خدمات تقنية وتطوير برمجيات" className="w-full bg-slate-50 border border-slate-200 text-slate-800 text-sm rounded-2xl px-5 py-3.5 focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 outline-none transition-all font-bold shadow-sm" />
+                  <input type="text" onChange={handleFieldChange} defaultValue="خدمات تقنية وتطوير برمجيات" className="w-full bg-slate-50 border border-slate-200 text-slate-800 text-sm rounded-2xl px-5 py-3.5 focus:ring-4 focus:ring-primary-500/10 focus:border-primary-500 outline-none transition-all font-bold shadow-sm" />
                 </div>
                 <div>
                   <label className="block text-sm font-bold text-slate-700 mb-2 flex items-center gap-1.5"><Hash className="w-4 h-4 text-slate-400" /> الرقم الضريبي (TIN)</label>
-                  <input type="text" onChange={handleFieldChange} defaultValue="123-456-789" className="w-full bg-slate-50 border border-slate-200 text-slate-800 text-sm rounded-2xl px-5 py-3.5 focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 outline-none transition-all font-bold font-mono shadow-sm" />
+                  <input type="text" onChange={handleFieldChange} defaultValue="123-456-789" className="w-full bg-slate-50 border border-slate-200 text-slate-800 text-sm rounded-2xl px-5 py-3.5 focus:ring-4 focus:ring-primary-500/10 focus:border-primary-500 outline-none transition-all font-bold font-mono shadow-sm" />
                 </div>
                 <div>
                   <label className="block text-sm font-bold text-slate-700 mb-2 flex items-center gap-1.5"><Hash className="w-4 h-4 text-slate-400" /> رقم السجل التجاري</label>
-                  <input type="text" onChange={handleFieldChange} defaultValue="987654321" className="w-full bg-slate-50 border border-slate-200 text-slate-800 text-sm rounded-2xl px-5 py-3.5 focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 outline-none transition-all font-bold font-mono shadow-sm" />
+                  <input type="text" onChange={handleFieldChange} defaultValue="987654321" className="w-full bg-slate-50 border border-slate-200 text-slate-800 text-sm rounded-2xl px-5 py-3.5 focus:ring-4 focus:ring-primary-500/10 focus:border-primary-500 outline-none transition-all font-bold font-mono shadow-sm" />
                 </div>
                 <div className="md:col-span-2">
                   <label className="block text-sm font-bold text-slate-700 mb-2 flex items-center gap-1.5"><MapPin className="w-4 h-4 text-slate-400" /> عنوان المقر الرئيسي</label>
-                  <textarea rows={3} onChange={handleFieldChange} defaultValue="القرية الذكية، مبنى B12، الدور الرابع، الجيزة، مصر" className="w-full bg-slate-50 border border-slate-200 text-slate-800 text-sm rounded-2xl px-5 py-3.5 focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 outline-none transition-all font-bold shadow-sm resize-none"></textarea>
+                  <textarea rows={3} onChange={handleFieldChange} defaultValue="القرية الذكية، مبنى B12، الدور الرابع، الجيزة، مصر" className="w-full bg-slate-50 border border-slate-200 text-slate-800 text-sm rounded-2xl px-5 py-3.5 focus:ring-4 focus:ring-primary-500/10 focus:border-primary-500 outline-none transition-all font-bold shadow-sm resize-none"></textarea>
                 </div>
               </div>
               
@@ -252,11 +252,11 @@ export function SettingsPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
                     <label className="block text-sm font-bold text-slate-700 mb-2 flex items-center gap-1.5"><Mail className="w-4 h-4 text-slate-400" /> البريد الإلكتروني الرسمي</label>
-                    <input type="email" onChange={handleFieldChange} defaultValue="info@bohemiangeeks.com" className="w-full bg-slate-50 border border-slate-200 text-slate-800 text-sm rounded-2xl px-5 py-3.5 focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 outline-none transition-all text-right font-bold font-mono shadow-sm" dir="ltr" />
+                    <input type="email" onChange={handleFieldChange} defaultValue="info@bohemiangeeks.com" className="w-full bg-slate-50 border border-slate-200 text-slate-800 text-sm rounded-2xl px-5 py-3.5 focus:ring-4 focus:ring-primary-500/10 focus:border-primary-500 outline-none transition-all text-right font-bold font-mono shadow-sm" dir="ltr" />
                   </div>
                   <div>
                     <label className="block text-sm font-bold text-slate-700 mb-2 flex items-center gap-1.5"><Phone className="w-4 h-4 text-slate-400" /> رقم هاتف الشركة</label>
-                    <input type="tel" onChange={handleFieldChange} defaultValue="+20 100 123 4567" className="w-full bg-slate-50 border border-slate-200 text-slate-800 text-sm rounded-2xl px-5 py-3.5 focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 outline-none transition-all text-right font-bold font-mono shadow-sm" dir="ltr" />
+                    <input type="tel" onChange={handleFieldChange} defaultValue="+20 100 123 4567" className="w-full bg-slate-50 border border-slate-200 text-slate-800 text-sm rounded-2xl px-5 py-3.5 focus:ring-4 focus:ring-primary-500/10 focus:border-primary-500 outline-none transition-all text-right font-bold font-mono shadow-sm" dir="ltr" />
                   </div>
                 </div>
               </div>
@@ -271,7 +271,7 @@ export function SettingsPage() {
                       {stampUrl ? (
                          <img src={stampUrl} alt="Stamp" className="w-full h-full object-contain p-2" />
                       ) : (
-                         <ShieldCheck className="w-8 h-8 text-emerald-600" />
+                         <ShieldCheck className="w-8 h-8 text-primary-600" />
                       )}
                     </div>
                     <div>
@@ -293,7 +293,7 @@ export function SettingsPage() {
                            reader.readAsDataURL(file);
                          }
                       }} />
-                      <label htmlFor="stamp-upload" className="text-xs font-bold text-emerald-600 bg-emerald-50 hover:bg-emerald-100 px-3 py-1.5 rounded-lg transition-colors border border-emerald-100 cursor-pointer inline-block">رفع صورة الختم</label>
+                      <label htmlFor="stamp-upload" className="text-xs font-bold text-primary-600 bg-primary-50 hover:bg-primary-100 px-3 py-1.5 rounded-lg transition-colors border border-primary-100 cursor-pointer inline-block">رفع صورة الختم</label>
                     </div>
                   </div>
                   <div className="bg-slate-50 border border-slate-200 rounded-2xl p-5 flex items-center gap-5 relative overflow-hidden">
@@ -323,7 +323,7 @@ export function SettingsPage() {
                            reader.readAsDataURL(file);
                          }
                       }} />
-                      <label htmlFor="signature-upload" className="text-xs font-bold text-emerald-600 bg-emerald-50 hover:bg-emerald-100 px-3 py-1.5 rounded-lg transition-colors border border-emerald-100 cursor-pointer inline-block">رفع صورة التوقيع</label>
+                      <label htmlFor="signature-upload" className="text-xs font-bold text-primary-600 bg-primary-50 hover:bg-primary-100 px-3 py-1.5 rounded-lg transition-colors border border-primary-100 cursor-pointer inline-block">رفع صورة التوقيع</label>
                     </div>
                   </div>
                 </div>
@@ -336,7 +336,7 @@ export function SettingsPage() {
             <div className="animate-in slide-in-from-bottom-2 fade-in duration-300 space-y-8">
               <div>
                 <h3 className="text-xl font-black text-slate-800 flex items-center gap-2 mb-2">
-                  <Globe className="w-6 h-6 text-emerald-500" /> تفضيلات النظام
+                  <Globe className="w-6 h-6 text-primary-500" /> تفضيلات النظام
                 </h3>
                 <p className="text-sm font-medium text-slate-500">تخصيص لغة النظام، المنطقة الزمنية، والتنسيقات الإقليمية.</p>
               </div>
@@ -344,14 +344,14 @@ export function SettingsPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label className="block text-sm font-bold text-slate-700 mb-2">لغة النظام الافتراضية</label>
-                  <select onChange={handleFieldChange} defaultValue="ar" className="w-full bg-slate-50 border border-slate-200 text-slate-800 text-sm rounded-2xl px-5 py-3.5 focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 outline-none transition-all font-bold shadow-sm cursor-pointer appearance-none">
+                  <select onChange={handleFieldChange} defaultValue="ar" className="w-full bg-slate-50 border border-slate-200 text-slate-800 text-sm rounded-2xl px-5 py-3.5 focus:ring-4 focus:ring-primary-500/10 focus:border-primary-500 outline-none transition-all font-bold shadow-sm cursor-pointer appearance-none">
                     <option value="ar">العربية (Arabic)</option>
                     <option value="en">English (الإنجليزية)</option>
                   </select>
                 </div>
                 <div>
                   <label className="block text-sm font-bold text-slate-700 mb-2">المنطقة الزمنية (Timezone)</label>
-                  <select onChange={handleFieldChange} defaultValue="Cairo" className="w-full bg-slate-50 border border-slate-200 text-slate-800 text-sm rounded-2xl px-5 py-3.5 focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 outline-none transition-all font-bold shadow-sm cursor-pointer appearance-none">
+                  <select onChange={handleFieldChange} defaultValue="Cairo" className="w-full bg-slate-50 border border-slate-200 text-slate-800 text-sm rounded-2xl px-5 py-3.5 focus:ring-4 focus:ring-primary-500/10 focus:border-primary-500 outline-none transition-all font-bold shadow-sm cursor-pointer appearance-none">
                     <option value="Cairo">Africa/Cairo (GMT+2/3)</option>
                     <option value="Riyadh">Asia/Riyadh (GMT+3)</option>
                     <option value="Dubai">Asia/Dubai (GMT+4)</option>
@@ -359,7 +359,7 @@ export function SettingsPage() {
                 </div>
                 <div>
                   <label className="block text-sm font-bold text-slate-700 mb-2">تنسيق التاريخ (Date Format)</label>
-                  <select onChange={handleFieldChange} defaultValue="YYYY-MM-DD" className="w-full bg-slate-50 border border-slate-200 text-slate-800 text-sm rounded-2xl px-5 py-3.5 focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 outline-none transition-all font-bold font-mono shadow-sm cursor-pointer appearance-none">
+                  <select onChange={handleFieldChange} defaultValue="YYYY-MM-DD" className="w-full bg-slate-50 border border-slate-200 text-slate-800 text-sm rounded-2xl px-5 py-3.5 focus:ring-4 focus:ring-primary-500/10 focus:border-primary-500 outline-none transition-all font-bold font-mono shadow-sm cursor-pointer appearance-none">
                     <option value="YYYY-MM-DD">2026-06-30 (YYYY-MM-DD)</option>
                     <option value="DD/MM/YYYY">30/06/2026 (DD/MM/YYYY)</option>
                     <option value="MM/DD/YYYY">06/30/2026 (MM/DD/YYYY)</option>
@@ -367,7 +367,7 @@ export function SettingsPage() {
                 </div>
                 <div>
                   <label className="block text-sm font-bold text-slate-700 mb-2">شهر بداية السنة المالية</label>
-                  <select onChange={handleFieldChange} defaultValue="1" className="w-full bg-slate-50 border border-slate-200 text-slate-800 text-sm rounded-2xl px-5 py-3.5 focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 outline-none transition-all font-bold shadow-sm cursor-pointer appearance-none">
+                  <select onChange={handleFieldChange} defaultValue="1" className="w-full bg-slate-50 border border-slate-200 text-slate-800 text-sm rounded-2xl px-5 py-3.5 focus:ring-4 focus:ring-primary-500/10 focus:border-primary-500 outline-none transition-all font-bold shadow-sm cursor-pointer appearance-none">
                     <option value="1">يناير (January)</option>
                     <option value="4">أبريل (April)</option>
                     <option value="7">يوليو (July)</option>
@@ -383,7 +383,7 @@ export function SettingsPage() {
             <div className="animate-in slide-in-from-bottom-2 fade-in duration-300 space-y-8">
               <div>
                 <h3 className="text-xl font-black text-slate-800 flex items-center gap-2 mb-2">
-                  <Percent className="w-6 h-6 text-emerald-500" /> إعدادات الضرائب والفواتير
+                  <Percent className="w-6 h-6 text-primary-500" /> إعدادات الضرائب والفواتير
                 </h3>
                 <p className="text-sm font-medium text-slate-500">ضبط إعدادات الضرائب الافتراضية، العملات، وشروط الدفع للفواتير.</p>
               </div>
@@ -392,13 +392,13 @@ export function SettingsPage() {
                 <div>
                   <label className="block text-sm font-bold text-slate-700 mb-2">ضريبة القيمة المضافة الافتراضية (%)</label>
                   <div className="relative">
-                    <input type="number" onChange={handleFieldChange} defaultValue="14" className="w-full bg-slate-50 border border-slate-200 text-slate-800 text-sm rounded-2xl px-5 py-3.5 pe-12 focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 outline-none transition-all font-bold font-mono shadow-sm" />
+                    <input type="number" onChange={handleFieldChange} defaultValue="14" className="w-full bg-slate-50 border border-slate-200 text-slate-800 text-sm rounded-2xl px-5 py-3.5 pe-12 focus:ring-4 focus:ring-primary-500/10 focus:border-primary-500 outline-none transition-all font-bold font-mono shadow-sm" />
                     <span className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 font-bold">%</span>
                   </div>
                 </div>
                 <div>
                   <label className="block text-sm font-bold text-slate-700 mb-2">عملة النظام الافتراضية</label>
-                  <select onChange={handleFieldChange} defaultValue="EGP" className="w-full bg-slate-50 border border-slate-200 text-slate-800 text-sm rounded-2xl px-5 py-3.5 focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 outline-none transition-all font-bold shadow-sm cursor-pointer appearance-none">
+                  <select onChange={handleFieldChange} defaultValue="EGP" className="w-full bg-slate-50 border border-slate-200 text-slate-800 text-sm rounded-2xl px-5 py-3.5 focus:ring-4 focus:ring-primary-500/10 focus:border-primary-500 outline-none transition-all font-bold shadow-sm cursor-pointer appearance-none">
                     <option value="EGP">جنيه مصري (EGP)</option>
                     <option value="USD">دولار أمريكي (USD)</option>
                     <option value="SAR">ريال سعودي (SAR)</option>
@@ -412,19 +412,19 @@ export function SettingsPage() {
                   </div>
                   <label className="relative inline-flex items-center cursor-pointer">
                     <input type="checkbox" defaultChecked onChange={handleFieldChange} className="sr-only peer" />
-                    <div className="w-9 h-3.5 bg-slate-300 rounded-full peer-checked:bg-emerald-200 transition-colors duration-300"></div>
-                    <div className="absolute right-0 top-1/2 -translate-y-1/2 w-5 h-5 bg-white rounded-full shadow-md peer-checked:bg-emerald-500 peer-checked:-translate-x-4 transition-all duration-300"></div>
+                    <div className="w-9 h-3.5 bg-slate-300 rounded-full peer-checked:bg-primary-200 transition-colors duration-300"></div>
+                    <div className="absolute right-0 top-1/2 -translate-y-1/2 w-5 h-5 bg-white rounded-full shadow-md peer-checked:bg-primary-500 peer-checked:-translate-x-4 transition-all duration-300"></div>
                   </label>
                 </div>
 
                 <div className="md:col-span-2">
                   <label className="block text-sm font-bold text-slate-700 mb-2">شروط الدفع القياسية (تُطبع أسفل الفواتير)</label>
-                  <textarea rows={3} onChange={handleFieldChange} defaultValue="برجاء سداد قيمة الفاتورة خلال 30 يوم من تاريخ الإصدار. المعاملات البنكية يجب أن تتضمن رقم الفاتورة في وصف التحويل." className="w-full bg-slate-50 border border-slate-200 text-slate-800 text-sm rounded-2xl px-5 py-3.5 focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 outline-none transition-all font-bold shadow-sm resize-none"></textarea>
+                  <textarea rows={3} onChange={handleFieldChange} defaultValue="برجاء سداد قيمة الفاتورة خلال 30 يوم من تاريخ الإصدار. المعاملات البنكية يجب أن تتضمن رقم الفاتورة في وصف التحويل." className="w-full bg-slate-50 border border-slate-200 text-slate-800 text-sm rounded-2xl px-5 py-3.5 focus:ring-4 focus:ring-primary-500/10 focus:border-primary-500 outline-none transition-all font-bold shadow-sm resize-none"></textarea>
                 </div>
                 
                 <div>
                   <label className="block text-sm font-bold text-slate-700 mb-2">بادئة الفاتورة التلقائية (Invoice Prefix)</label>
-                  <input type="text" onChange={handleFieldChange} defaultValue="INV-2026-" className="w-full bg-slate-50 border border-slate-200 text-slate-800 text-sm rounded-2xl px-5 py-3.5 focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 outline-none transition-all font-bold font-mono text-right shadow-sm" dir="ltr" />
+                  <input type="text" onChange={handleFieldChange} defaultValue="INV-2026-" className="w-full bg-slate-50 border border-slate-200 text-slate-800 text-sm rounded-2xl px-5 py-3.5 focus:ring-4 focus:ring-primary-500/10 focus:border-primary-500 outline-none transition-all font-bold font-mono text-right shadow-sm" dir="ltr" />
                 </div>
                 <div>
                   <label className="block text-sm font-bold text-slate-700 mb-2 text-rose-600">تاريخ إغلاق الفترة (Period Lock Date)</label>
@@ -441,13 +441,13 @@ export function SettingsPage() {
               <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <div>
                   <h3 className="text-xl font-black text-slate-800 flex items-center gap-2 mb-2">
-                    <Users className="w-6 h-6 text-emerald-500" /> إدارة فريق العمل
+                    <Users className="w-6 h-6 text-primary-500" /> إدارة فريق العمل
                   </h3>
                   <p className="text-sm font-medium text-slate-500">إضافة مستخدمين، تعيين الصلاحيات، وإدارة الوصول للنظام.</p>
                 </div>
                 <button 
                   onClick={openAddModal}
-                  className="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2.5 rounded-xl text-sm font-bold transition-all shadow-lg shadow-emerald-600/20 active:scale-95 shrink-0"
+                  className="bg-primary-600 hover:bg-primary-700 text-white px-5 py-2.5 rounded-xl text-sm font-bold transition-all shadow-lg shadow-primary-600/20 active:scale-95 shrink-0"
                 >
                   + إضافة مستخدم جديد
                 </button>
@@ -478,7 +478,7 @@ export function SettingsPage() {
                         <td className="px-6 py-4">
                           <span className={clsx(
                             "px-3 py-1.5 rounded-lg text-xs font-bold inline-flex border",
-                            user.role === 'مدير نظام' ? "bg-emerald-50 text-emerald-700 border-emerald-100" : 
+                            user.role === 'مدير نظام' ? "bg-primary-50 text-primary-700 border-primary-100" : 
                             user.role === 'محاسب' ? "bg-indigo-50 text-indigo-700 border-indigo-100" :
                             "bg-slate-100 text-slate-700 border-slate-200"
                           )}>
@@ -487,13 +487,13 @@ export function SettingsPage() {
                         </td>
                         <td className="px-6 py-4">
                           <div className="flex items-center gap-2">
-                            <div className={clsx("w-2 h-2 rounded-full", user.status === 'مفعل' ? "bg-emerald-500" : "bg-slate-300")}></div>
-                            <span className={clsx("font-bold", user.status === 'مفعل' ? "text-emerald-700" : "text-slate-500")}>{user.status}</span>
+                            <div className={clsx("w-2 h-2 rounded-full", user.status === 'مفعل' ? "bg-primary-500" : "bg-slate-300")}></div>
+                            <span className={clsx("font-bold", user.status === 'مفعل' ? "text-primary-700" : "text-slate-500")}>{user.status}</span>
                           </div>
                         </td>
                         <td className="px-6 py-4 text-center">
                           <div className="flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                            <button onClick={() => openEditModal(user)} className="p-2 text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg transition-colors"><Edit2 className="w-4 h-4" /></button>
+                            <button onClick={() => openEditModal(user)} className="p-2 text-slate-400 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors"><Edit2 className="w-4 h-4" /></button>
                             <button onClick={() => handleDeleteUser(user.id)} className="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors"><Trash2 className="w-4 h-4" /></button>
                           </div>
                         </td>
@@ -510,7 +510,7 @@ export function SettingsPage() {
             <div className="animate-in slide-in-from-bottom-2 fade-in duration-300 space-y-8">
               <div>
                 <h3 className="text-xl font-black text-slate-800 flex items-center gap-2 mb-2">
-                  <ShieldCheck className="w-6 h-6 text-emerald-500" /> الأمان والخصوصية
+                  <ShieldCheck className="w-6 h-6 text-primary-500" /> الأمان والخصوصية
                 </h3>
                 <p className="text-sm font-medium text-slate-500">حماية حسابك عن طريق تحديث كلمة المرور وتفعيل المصادقة الثنائية.</p>
               </div>
@@ -527,7 +527,7 @@ export function SettingsPage() {
                         required 
                         value={currentPassword} 
                         onChange={(e) => setCurrentPassword(e.target.value)} 
-                        className="w-full bg-slate-50 border border-slate-200 text-slate-800 text-sm rounded-2xl px-5 py-3.5 focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 outline-none transition-all font-mono shadow-sm text-right pe-12" 
+                        className="w-full bg-slate-50 border border-slate-200 text-slate-800 text-sm rounded-2xl px-5 py-3.5 focus:ring-4 focus:ring-primary-500/10 focus:border-primary-500 outline-none transition-all font-mono shadow-sm text-right pe-12" 
                       />
                       <button type="button" onClick={() => setShowCurrentPassword(!showCurrentPassword)} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
                         {showCurrentPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
@@ -542,7 +542,7 @@ export function SettingsPage() {
                         required 
                         value={newPassword} 
                         onChange={(e) => setNewPassword(e.target.value)} 
-                        className="w-full bg-slate-50 border border-slate-200 text-slate-800 text-sm rounded-2xl px-5 py-3.5 focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 outline-none transition-all font-mono shadow-sm text-right pe-12" 
+                        className="w-full bg-slate-50 border border-slate-200 text-slate-800 text-sm rounded-2xl px-5 py-3.5 focus:ring-4 focus:ring-primary-500/10 focus:border-primary-500 outline-none transition-all font-mono shadow-sm text-right pe-12" 
                       />
                       <button type="button" onClick={() => setShowNewPassword(!showNewPassword)} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
                         {showNewPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
@@ -556,7 +556,7 @@ export function SettingsPage() {
                       required 
                       value={confirmPassword} 
                       onChange={(e) => setConfirmPassword(e.target.value)} 
-                      className="w-full bg-slate-50 border border-slate-200 text-slate-800 text-sm rounded-2xl px-5 py-3.5 focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 outline-none transition-all font-mono shadow-sm text-right" 
+                      className="w-full bg-slate-50 border border-slate-200 text-slate-800 text-sm rounded-2xl px-5 py-3.5 focus:ring-4 focus:ring-primary-500/10 focus:border-primary-500 outline-none transition-all font-mono shadow-sm text-right" 
                     />
                   </div>
                   <div className="pt-2">
@@ -565,7 +565,7 @@ export function SettingsPage() {
                       disabled={isUpdatingPassword}
                       className={clsx(
                         "w-full py-3.5 rounded-2xl text-sm font-bold transition-all shadow-md flex items-center justify-center gap-2 active:scale-95",
-                        passwordUpdateSuccess ? "bg-emerald-500 text-white shadow-emerald-500/20" : "bg-slate-900 text-white hover:bg-slate-800"
+                        passwordUpdateSuccess ? "bg-primary-500 text-white shadow-primary-500/20" : "bg-slate-900 text-white hover:bg-slate-800"
                       )}
                     >
                       {isUpdatingPassword ? (
@@ -583,17 +583,17 @@ export function SettingsPage() {
                   
                   <div className="bg-slate-50 border border-slate-200 rounded-3xl p-6 relative overflow-hidden">
                     <div className="absolute top-0 end-0 p-6 opacity-5">
-                      <Shield className="w-32 h-32 text-emerald-900" />
+                      <Shield className="w-32 h-32 text-primary-900" />
                     </div>
                     <div className="relative z-10">
                       <div className="w-12 h-12 bg-white border border-slate-200 rounded-xl flex items-center justify-center mb-4 shadow-sm">
-                        <KeyRound className="w-6 h-6 text-emerald-600" />
+                        <KeyRound className="w-6 h-6 text-primary-600" />
                       </div>
                       <h5 className="font-black text-slate-800 text-lg mb-2">المصادقة الثنائية (2FA)</h5>
                       <p className="text-sm font-medium text-slate-500 mb-6 leading-relaxed">أضف طبقة حماية إضافية لحسابك. عند تفعيل هذه الميزة، ستحتاج إلى رمز مرور من هاتفك لتسجيل الدخول.</p>
                       {is2FAEnabled ? (
                         <div className="flex items-center gap-3">
-                          <span className="bg-emerald-100 text-emerald-700 px-3 py-1 rounded-lg text-sm font-bold flex items-center gap-1"><CheckCircle2 className="w-4 h-4" /> مفعل</span>
+                          <span className="bg-primary-100 text-primary-700 px-3 py-1 rounded-lg text-sm font-bold flex items-center gap-1"><CheckCircle2 className="w-4 h-4" /> مفعل</span>
                           <button onClick={() => {
                              if(window.confirm('هل أنت متأكد من إلغاء تفعيل المصادقة الثنائية؟')) {
                                setIs2FAEnabled(false);
@@ -605,7 +605,7 @@ export function SettingsPage() {
                           </button>
                         </div>
                       ) : (
-                        <button onClick={() => setIs2FAModalOpen(true)} className="bg-white border border-slate-200 text-slate-800 font-bold px-6 py-2.5 rounded-xl hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-200 transition-colors shadow-sm">
+                        <button onClick={() => setIs2FAModalOpen(true)} className="bg-white border border-slate-200 text-slate-800 font-bold px-6 py-2.5 rounded-xl hover:bg-primary-50 hover:text-primary-700 hover:border-primary-200 transition-colors shadow-sm">
                           تفعيل الميزة (Setup 2FA)
                         </button>
                       )}
@@ -621,7 +621,7 @@ export function SettingsPage() {
             <div className="animate-in slide-in-from-bottom-2 fade-in duration-300 space-y-8">
               <div>
                 <h3 className="text-xl font-black text-slate-800 flex items-center gap-2 mb-2">
-                  <Palette className="w-6 h-6 text-emerald-500" /> المظهر والهوية البصرية
+                  <Palette className="w-6 h-6 text-primary-500" /> المظهر والهوية البصرية
                 </h3>
                 <p className="text-sm font-medium text-slate-500">تخصيص ألوان النظام، الشعار، ووضع العرض ليتماشى مع هوية شركتك.</p>
               </div>
@@ -654,7 +654,7 @@ export function SettingsPage() {
                            reader.readAsDataURL(file);
                          }
                        }} />
-                       <label htmlFor="logo-upload" className="bg-emerald-50 text-emerald-700 border border-emerald-100 px-5 py-2.5 rounded-xl text-sm font-bold cursor-pointer hover:bg-emerald-100 transition-colors flex items-center gap-2 w-max mb-3">
+                       <label htmlFor="logo-upload" className="bg-primary-50 text-primary-700 border border-primary-100 px-5 py-2.5 rounded-xl text-sm font-bold cursor-pointer hover:bg-primary-100 transition-colors flex items-center gap-2 w-max mb-3">
                          <UploadCloud className="w-4 h-4" /> رفع صورة جديدة
                        </label>
                        <p className="text-xs font-medium text-slate-500 leading-relaxed">أفضل أبعاد 256x256 بيكسل.<br/>الصيغ المدعومة: PNG (شفاف), JPG. أقصى حجم: 2MB.</p>
@@ -678,7 +678,7 @@ export function SettingsPage() {
                             style={{ backgroundColor: color }}
                             className={clsx(
                               "w-12 h-12 rounded-2xl border-4 transition-all shadow-sm",
-                              primaryColor === color ? "border-white ring-2 ring-emerald-500 scale-110" : "border-transparent hover:scale-110"
+                              primaryColor === color ? "border-white ring-2 ring-primary-500 scale-110" : "border-transparent hover:scale-110"
                             )}
                           ></button>
                         ))}
@@ -700,7 +700,7 @@ export function SettingsPage() {
                             onChange={(e) => { setPrimaryColor(e.target.value); setHasChanges(true); }}
                             placeholder="#HEX"
                             maxLength={7}
-                            className="w-24 bg-slate-50 border border-slate-200 text-slate-800 text-sm rounded-xl px-3 py-2.5 outline-none focus:border-emerald-500 font-mono text-center shadow-sm uppercase"
+                            className="w-24 bg-slate-50 border border-slate-200 text-slate-800 text-sm rounded-xl px-3 py-2.5 outline-none focus:border-primary-500 font-mono text-center shadow-sm uppercase"
                             dir="ltr"
                           />
                         </div>
@@ -740,7 +740,7 @@ export function SettingsPage() {
                             onChange={(e) => { setSecondaryColor(e.target.value); setHasChanges(true); }}
                             placeholder="#HEX"
                             maxLength={7}
-                            className="w-24 bg-slate-50 border border-slate-200 text-slate-800 text-sm rounded-xl px-3 py-2.5 outline-none focus:border-emerald-500 font-mono text-center shadow-sm uppercase"
+                            className="w-24 bg-slate-50 border border-slate-200 text-slate-800 text-sm rounded-xl px-3 py-2.5 outline-none focus:border-primary-500 font-mono text-center shadow-sm uppercase"
                             dir="ltr"
                           />
                         </div>
@@ -757,7 +757,7 @@ export function SettingsPage() {
                       onClick={() => { setThemeMode('light'); setHasChanges(true); }}
                       className={clsx(
                         "p-4 rounded-2xl border-2 transition-all flex flex-col items-center justify-center gap-3",
-                        themeMode === 'light' ? "border-emerald-500 bg-emerald-50/50" : "border-slate-100 bg-white hover:border-slate-200"
+                        themeMode === 'light' ? "border-primary-500 bg-primary-50/50" : "border-slate-100 bg-white hover:border-slate-200"
                       )}
                     >
                       <div className="w-16 h-10 rounded shadow-sm border border-slate-200 bg-white flex flex-col p-1 gap-1">
@@ -786,7 +786,7 @@ export function SettingsPage() {
                       onClick={() => { setThemeMode('system'); setHasChanges(true); }}
                       className={clsx(
                         "p-4 rounded-2xl border-2 transition-all flex flex-col items-center justify-center gap-3 opacity-50 cursor-not-allowed",
-                        themeMode === 'system' ? "border-emerald-500 bg-emerald-50" : "border-slate-100 bg-white"
+                        themeMode === 'system' ? "border-primary-500 bg-primary-50" : "border-slate-100 bg-white"
                       )}
                       title="قريباً"
                     >
@@ -809,7 +809,7 @@ export function SettingsPage() {
               className={clsx(
                 "px-8 py-3.5 rounded-2xl font-black text-sm flex items-center justify-center gap-2 transition-all shadow-sm w-full sm:w-auto min-w-[200px]",
                 hasChanges 
-                  ? "bg-emerald-600 hover:bg-emerald-700 text-white shadow-lg shadow-emerald-600/20 active:scale-95" 
+                  ? "bg-primary-600 hover:bg-primary-700 text-white shadow-lg shadow-primary-600/20 active:scale-95" 
                   : "bg-slate-100 text-slate-400 cursor-not-allowed"
               )}
             >
@@ -889,7 +889,7 @@ export function SettingsPage() {
                   required
                   value={newUserName}
                   onChange={(e) => setNewUserName(e.target.value)}
-                  className="w-full bg-slate-50 border border-slate-200 text-slate-800 text-sm rounded-2xl px-5 py-3.5 focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 outline-none transition-all font-bold" 
+                  className="w-full bg-slate-50 border border-slate-200 text-slate-800 text-sm rounded-2xl px-5 py-3.5 focus:ring-4 focus:ring-primary-500/10 focus:border-primary-500 outline-none transition-all font-bold" 
                   placeholder="مثال: أحمد محمد"
                 />
               </div>
@@ -900,7 +900,7 @@ export function SettingsPage() {
                   required
                   value={newUserEmail}
                   onChange={(e) => setNewUserEmail(e.target.value)}
-                  className="w-full bg-slate-50 border border-slate-200 text-slate-800 text-sm rounded-2xl px-5 py-3.5 focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 outline-none transition-all font-mono font-bold text-right" 
+                  className="w-full bg-slate-50 border border-slate-200 text-slate-800 text-sm rounded-2xl px-5 py-3.5 focus:ring-4 focus:ring-primary-500/10 focus:border-primary-500 outline-none transition-all font-mono font-bold text-right" 
                   dir="ltr"
                   placeholder="ahmed@example.com"
                 />
@@ -917,7 +917,7 @@ export function SettingsPage() {
                       setNewUserRole(e.target.value);
                       setIsRoleDropdownOpen(true);
                     }}
-                    className="w-full bg-slate-50 border border-slate-200 text-slate-800 text-sm rounded-2xl px-5 py-3.5 focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 outline-none transition-all font-bold pe-12"
+                    className="w-full bg-slate-50 border border-slate-200 text-slate-800 text-sm rounded-2xl px-5 py-3.5 focus:ring-4 focus:ring-primary-500/10 focus:border-primary-500 outline-none transition-all font-bold pe-12"
                     placeholder="اختر أو اكتب صلاحية جديدة..."
                   />
                   <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">
@@ -943,9 +943,9 @@ export function SettingsPage() {
                       {newUserRole && !defaultRoles.includes(newUserRole) && (
                         <li 
                           onClick={() => setIsRoleDropdownOpen(false)}
-                          className="px-4 py-3 hover:bg-emerald-50 rounded-xl cursor-pointer text-sm font-bold text-emerald-700 transition-colors flex items-center gap-2"
+                          className="px-4 py-3 hover:bg-primary-50 rounded-xl cursor-pointer text-sm font-bold text-primary-700 transition-colors flex items-center gap-2"
                         >
-                          <span className="text-emerald-500 font-black text-lg leading-none">+</span> إضافة "{newUserRole}"
+                          <span className="text-primary-500 font-black text-lg leading-none">+</span> إضافة "{newUserRole}"
                         </li>
                       )}
                     </ul>
@@ -959,7 +959,7 @@ export function SettingsPage() {
                   <select 
                     value={newUserStatus}
                     onChange={(e) => setNewUserStatus(e.target.value)}
-                    className="w-full bg-slate-50 border border-slate-200 text-slate-800 text-sm rounded-2xl px-5 py-3.5 focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 outline-none transition-all font-bold cursor-pointer appearance-none"
+                    className="w-full bg-slate-50 border border-slate-200 text-slate-800 text-sm rounded-2xl px-5 py-3.5 focus:ring-4 focus:ring-primary-500/10 focus:border-primary-500 outline-none transition-all font-bold cursor-pointer appearance-none"
                   >
                     <option value="مفعل">مفعل (نشط)</option>
                     <option value="غير مفعل">غير مفعل (موقوف)</option>
@@ -977,7 +977,7 @@ export function SettingsPage() {
                 </button>
                 <button 
                   type="submit"
-                  className="flex-[2] bg-emerald-600 text-white py-3.5 px-6 rounded-2xl text-sm font-bold hover:bg-emerald-700 shadow-lg shadow-emerald-600/20 active:scale-95 transition-all"
+                  className="flex-[2] bg-primary-600 text-white py-3.5 px-6 rounded-2xl text-sm font-bold hover:bg-primary-700 shadow-lg shadow-primary-600/20 active:scale-95 transition-all"
                 >
                   {editingUserId ? 'حفظ التعديلات' : 'حفظ وإضافة المستخدم'}
                 </button>
@@ -1020,7 +1020,7 @@ export function SettingsPage() {
                     }
                     setTwoFACode(val.replace(/\D/g, ''));
                   }}
-                  className="w-full bg-slate-50 border border-slate-200 text-slate-800 text-2xl tracking-[0.5em] text-center rounded-2xl px-5 py-3.5 focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 outline-none transition-all font-mono font-bold" 
+                  className="w-full bg-slate-50 border border-slate-200 text-slate-800 text-2xl tracking-[0.5em] text-center rounded-2xl px-5 py-3.5 focus:ring-4 focus:ring-primary-500/10 focus:border-primary-500 outline-none transition-all font-mono font-bold" 
                   placeholder="000000"
                 />
               </div>
@@ -1036,7 +1036,7 @@ export function SettingsPage() {
                     toast.error("برجاء إدخال الرمز المكون من 6 أرقام بشكل صحيح.");
                   }
                 }}
-                className="w-full bg-emerald-600 text-white py-3.5 rounded-2xl text-sm font-bold hover:bg-emerald-700 shadow-lg shadow-emerald-600/20 active:scale-95 transition-all"
+                className="w-full bg-primary-600 text-white py-3.5 rounded-2xl text-sm font-bold hover:bg-primary-700 shadow-lg shadow-primary-600/20 active:scale-95 transition-all"
               >
                 تأكيد وتفعيل
               </button>

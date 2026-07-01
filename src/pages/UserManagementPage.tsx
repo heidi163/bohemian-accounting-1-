@@ -225,9 +225,9 @@ export function UserManagementPage() {
                <div className="bg-white p-5 rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] flex flex-col justify-between hover:-translate-y-1 transition-transform duration-300">
                   <div className="text-sm font-bold text-slate-500 mb-3 flex justify-between items-center">
                      <span>نشط الآن</span>
-                     <div className="w-9 h-9 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-600"><UserCheck className="w-4 h-4"/></div>
+                     <div className="w-9 h-9 rounded-xl bg-primary-50 flex items-center justify-center text-primary-600"><UserCheck className="w-4 h-4"/></div>
                   </div>
-                  <div className="text-3xl font-black text-emerald-600">{activeUsers}</div>
+                  <div className="text-3xl font-black text-primary-600">{activeUsers}</div>
                </div>
 
                <div className="bg-white p-5 rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] flex flex-col justify-between hover:-translate-y-1 transition-transform duration-300">
@@ -323,7 +323,7 @@ export function UserManagementPage() {
                               </td>
                               <td className="px-6 py-5 text-center">
                                  {user.status === 'active' ? (
-                                    <span className="inline-flex items-center gap-1.5 text-emerald-700 bg-emerald-50 border border-emerald-200 px-3 py-1 rounded-lg text-xs font-bold">
+                                    <span className="inline-flex items-center gap-1.5 text-primary-700 bg-primary-50 border border-primary-200 px-3 py-1 rounded-lg text-xs font-bold">
                                        <Unlock className="w-3 h-3"/> نشط
                                     </span>
                                  ) : (
@@ -445,7 +445,7 @@ export function UserManagementPage() {
                                              <Check 
                                                 className={clsx(
                                                    "w-6 h-6 transition-all", 
-                                                   hasPerm ? "text-emerald-500 opacity-100 scale-110" : "text-slate-300 opacity-0 group-hover:opacity-100"
+                                                   hasPerm ? "text-primary-500 opacity-100 scale-110" : "text-slate-300 opacity-0 group-hover:opacity-100"
                                                 )} 
                                                 strokeWidth={3} 
                                              />

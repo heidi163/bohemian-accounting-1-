@@ -98,7 +98,7 @@ export function ChecksPage() {
 
   const getStatusBadge = (status: string) => {
     switch (status) {
-      case 'cleared': return <span className="px-2.5 py-1 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-lg text-xs font-bold flex items-center gap-1"><CheckCircle2 className="w-3 h-3"/> محصل/مصروف</span>;
+      case 'cleared': return <span className="px-2.5 py-1 bg-primary-50 text-primary-700 border border-primary-200 rounded-lg text-xs font-bold flex items-center gap-1"><CheckCircle2 className="w-3 h-3"/> محصل/مصروف</span>;
       case 'bounced': return <span className="px-2.5 py-1 bg-rose-50 text-rose-700 border border-rose-200 rounded-lg text-xs font-bold flex items-center gap-1"><AlertCircle className="w-3 h-3"/> مرتجع</span>;
       default: return <span className="px-2.5 py-1 bg-amber-50 text-amber-700 border border-amber-200 rounded-lg text-xs font-bold flex items-center gap-1"><Clock className="w-3 h-3"/> معلق</span>;
     }
@@ -148,7 +148,7 @@ export function ChecksPage() {
               onClick={() => setActiveTab("received")}
               className={clsx(
                 "flex-1 md:flex-none px-6 py-2.5 rounded-lg text-sm font-bold transition-all flex items-center justify-center gap-2",
-                activeTab === "received" ? "bg-white text-emerald-600 shadow-sm" : "text-slate-500 hover:text-slate-700"
+                activeTab === "received" ? "bg-white text-primary-600 shadow-sm" : "text-slate-500 hover:text-slate-700"
               )}
             >
               <ArrowDownLeft className="w-4 h-4" />
@@ -201,7 +201,7 @@ export function ChecksPage() {
                   <tr key={check.id} className="hover:bg-slate-50 transition-colors">
                     <td className="px-4 py-4">
                       <div className="flex items-center gap-3">
-                        <div className={clsx("p-2 rounded-lg", activeTab === 'issued' ? 'bg-primary/10 text-primary' : 'bg-emerald-100 text-emerald-600')}>
+                        <div className={clsx("p-2 rounded-lg", activeTab === 'issued' ? 'bg-primary/10 text-primary' : 'bg-primary-100 text-primary-600')}>
                           <Banknote className="w-4 h-4" />
                         </div>
                         <div>

@@ -95,7 +95,7 @@ export function CashFlowPage() {
               className={clsx(
                 "flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold transition-all duration-200",
                 scenario === key
-                  ? key === 'optimistic'  ? "bg-emerald-500 text-white shadow"
+                  ? key === 'optimistic'  ? "bg-primary-500 text-white shadow"
                   : key === 'pessimistic' ? "bg-rose-500 text-white shadow"
                   : "bg-white text-primary-700 shadow"
                   : "text-slate-500 hover:text-slate-700"
@@ -121,7 +121,7 @@ export function CashFlowPage() {
             label: "مقبوضات متوقعة (30 يوم)",
             value: fmt(totalInflows30),
             icon: <TrendingUp className="w-5 h-5" />,
-            bg: "bg-emerald-50", iconColor: "text-emerald-600",
+            bg: "bg-primary-50", iconColor: "text-primary-600",
             sub: "إجمالي الإيرادات المرتقبة"
           },
           {
@@ -135,8 +135,8 @@ export function CashFlowPage() {
             label: "مؤشر الأمان النقدي",
             value: runway > 50 ? "آمن جداً " : `${runway} أسبوع`,
             icon: <Shield className="w-5 h-5" />,
-            bg: runway > 8 ? "bg-emerald-50" : "bg-amber-50",
-            iconColor: runway > 8 ? "text-emerald-600" : "text-amber-600",
+            bg: runway > 8 ? "bg-primary-50" : "bg-amber-50",
+            iconColor: runway > 8 ? "text-primary-600" : "text-amber-600",
             sub: "مدة الصمود بالرصيد الحالي"
           },
         ].map((card, i) => (
@@ -225,7 +225,7 @@ export function CashFlowPage() {
                     )}>
                       <td className="px-5 py-3.5 font-bold text-slate-800">{row.period}</td>
                       <td className="px-5 py-3.5 text-end font-mono text-slate-600" dir="ltr">{fmtShort(row.starting_balance)}</td>
-                      <td className="px-5 py-3.5 text-end font-mono font-bold text-emerald-600" dir="ltr">+{fmtShort(row.inflows)}</td>
+                      <td className="px-5 py-3.5 text-end font-mono font-bold text-primary-600" dir="ltr">+{fmtShort(row.inflows)}</td>
                       <td className="px-5 py-3.5 text-end font-mono font-bold text-rose-600" dir="ltr">-{fmtShort(row.outflows)}</td>
                       <td className={clsx(
                         "px-5 py-3.5 text-end font-mono font-black",
@@ -252,11 +252,11 @@ export function CashFlowPage() {
             </div>
             <div className="p-5 space-y-3">
               {alerts.length === 0 ? (
-                <div className="flex items-start gap-3 text-emerald-700 bg-emerald-50 p-4 rounded-2xl border border-emerald-100">
+                <div className="flex items-start gap-3 text-primary-700 bg-primary-50 p-4 rounded-2xl border border-primary-100">
                   <CheckCircle className="w-5 h-5 shrink-0 mt-0.5" />
                   <div>
                     <div className="font-bold text-sm">الوضع النقدي آمن</div>
-                    <div className="text-xs mt-1 text-emerald-600">لا توجد مخاطر نقدية متوقعة خلال الـ 12 أسبوع القادمة.</div>
+                    <div className="text-xs mt-1 text-primary-600">لا توجد مخاطر نقدية متوقعة خلال الـ 12 أسبوع القادمة.</div>
                   </div>
                 </div>
               ) : alerts.map((alert, i) => (
@@ -288,7 +288,7 @@ export function CashFlowPage() {
                   <div className="flex items-start gap-3">
                     <div className={clsx(
                       "w-9 h-9 rounded-xl flex items-center justify-center shrink-0",
-                      (rec as any).type === 'collection' ? 'bg-emerald-100 text-emerald-600' : 'bg-rose-100 text-rose-600'
+                      (rec as any).type === 'collection' ? 'bg-primary-100 text-primary-600' : 'bg-rose-100 text-rose-600'
                     )}>
                       {(rec as any).type === 'collection' ? <ArrowDownRight className="w-4 h-4"/> : <ArrowUpRight className="w-4 h-4"/>}
                     </div>
@@ -297,7 +297,7 @@ export function CashFlowPage() {
                         {(rec as any).type === 'collection' ? 'تسريع تحصيل' : 'تأجيل سداد'}
                       </div>
                       <div className="text-sm font-bold text-slate-800 leading-snug">{(rec as any).action}</div>
-                      <div className="mt-2.5 text-xs font-mono font-black text-emerald-700 bg-emerald-50 inline-block px-2.5 py-1 rounded-lg border border-emerald-100">
+                      <div className="mt-2.5 text-xs font-mono font-black text-primary-700 bg-primary-50 inline-block px-2.5 py-1 rounded-lg border border-primary-100">
                         التأثير: +{fmtShort((rec as any).impact_amount)} ج.م
                       </div>
                     </div>

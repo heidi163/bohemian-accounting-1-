@@ -130,7 +130,7 @@ export function MultiCurrencyPage() {
                   </div>
                   <div className={clsx(
                     "flex items-center gap-1 text-xs font-bold pt-1",
-                    rate.trend === 'up' ? "text-emerald-600" : rate.trend === 'down' ? "text-rose-600" : "text-slate-500"
+                    rate.trend === 'up' ? "text-primary-600" : rate.trend === 'down' ? "text-rose-600" : "text-slate-500"
                   )}>
                     {rate.trend === 'up' ? <TrendingUp className="w-4 h-4" /> : rate.trend === 'down' ? <TrendingDown className="w-4 h-4" /> : <TrendingUp className="w-4 h-4" />}
                     {rate.change} منذ التحديث الأخير
@@ -162,7 +162,7 @@ export function MultiCurrencyPage() {
               </h3>
               <p className="text-slate-500 text-sm mt-1">تحديث قيمة الأصول والخصوم بالعملات الأجنبية بناءً على سعر صرف اليوم وإثبات الفروق كأرباح/خسائر غير محققة.</p>
             </div>
-            <button onClick={handleRunRevaluation} className="bg-emerald-600 text-white font-bold py-2.5 px-5 rounded-xl flex items-center gap-2 hover:bg-emerald-700 transition shadow-sm whitespace-nowrap">
+            <button onClick={handleRunRevaluation} className="bg-primary-600 text-white font-bold py-2.5 px-5 rounded-xl flex items-center gap-2 hover:bg-primary-700 transition shadow-sm whitespace-nowrap">
               <Calculator className="w-4 h-4" /> إنشاء قيد التقييم الشهري
             </button>
           </div>
@@ -200,7 +200,7 @@ export function MultiCurrencyPage() {
                     <td className="px-6 py-4" dir="ltr">
                       <span className={clsx(
                         "font-bold font-mono px-2.5 py-1 rounded-lg flex items-center justify-end gap-1 max-w-[fit-content]",
-                        row.gain > 0 ? "bg-emerald-50 text-emerald-700" : "bg-rose-50 text-rose-700"
+                        row.gain > 0 ? "bg-primary-50 text-primary-700" : "bg-rose-50 text-rose-700"
                       )}>
                         {row.gain > 0 ? '+' : ''}{row.gain.toLocaleString()} EGP
                         {row.gain > 0 ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
@@ -252,7 +252,7 @@ export function MultiCurrencyPage() {
                     <td className="px-6 py-4" dir="ltr">
                       <span className={clsx(
                         "font-bold font-mono flex items-center justify-end gap-1",
-                        row.gainLoss > 0 ? "text-emerald-600" : "text-rose-600"
+                        row.gainLoss > 0 ? "text-primary-600" : "text-rose-600"
                       )}>
                         {row.gainLoss > 0 ? '+' : ''}{row.gainLoss.toLocaleString()} EGP
                         {row.gainLoss > 0 ? <TrendingUp className="w-4 h-4" /> : <TrendingDown className="w-4 h-4" />}

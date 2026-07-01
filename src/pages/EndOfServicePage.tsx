@@ -246,17 +246,17 @@ export function EndOfServicePage() {
               
               <div className="flex justify-between items-center bg-slate-900 text-white px-6 py-5 rounded-2xl shadow-lg">
                 <span className="font-bold text-lg">الإجمالي المستحق</span>
-                <span className="font-mono font-black text-2xl text-emerald-400" dir="ltr">{fmt(result.total)}</span>
+                <span className="font-mono font-black text-2xl text-primary-400" dir="ltr">{fmt(result.total)}</span>
               </div>
 
               <div className="flex gap-3 mt-4">
                 {journalCreated ? (
-                   <div className="flex-1 bg-emerald-50 text-emerald-700 font-bold py-3.5 rounded-xl text-sm flex items-center justify-center gap-2 border border-emerald-200 animate-in zoom-in-95">
+                   <div className="flex-1 bg-primary-50 text-primary-700 font-bold py-3.5 rounded-xl text-sm flex items-center justify-center gap-2 border border-primary-200 animate-in zoom-in-95">
                      <CheckCircle2 className="w-5 h-5" />
                      تم إنشاء القيد المحاسبي بنجاح!
                    </div>
                 ) : (
-                  <button onClick={handleCreateJournal} disabled={isProcessingJournal} className="flex-1 bg-emerald-600 text-white font-bold py-3.5 rounded-xl text-sm flex items-center justify-center gap-2 hover:bg-emerald-700 shadow-lg shadow-emerald-600/20 hover:-translate-y-0.5 transition-all disabled:opacity-50 disabled:hover:translate-y-0">
+                  <button onClick={handleCreateJournal} disabled={isProcessingJournal} className="flex-1 bg-primary-600 text-white font-bold py-3.5 rounded-xl text-sm flex items-center justify-center gap-2 hover:bg-primary-700 shadow-lg shadow-primary-600/20 hover:-translate-y-0.5 transition-all disabled:opacity-50 disabled:hover:translate-y-0">
                     {isProcessingJournal ? <><RefreshCw className="w-5 h-5 animate-spin"/> جاري الإنشاء...</> : 'تأكيد وإنشاء قيد محاسبي'}
                   </button>
                 )}

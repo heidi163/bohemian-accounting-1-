@@ -245,7 +245,7 @@ export function LoansPage() {
                               <td className="px-4 py-3 text-end font-mono text-rose-500">{new Intl.NumberFormat('ar-EG').format(inst.interest_amount)}</td>
                               <td className="px-4 py-3 text-end font-mono font-bold text-slate-900">{new Intl.NumberFormat('ar-EG').format(inst.total_amount)}</td>
                               <td className="px-4 py-3 text-center">
-                                 <span className={clsx('inline-flex items-center rounded-md px-2 py-1 text-xs font-bold', inst.status === 'paid' ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700')}>
+                                 <span className={clsx('inline-flex items-center rounded-md px-2 py-1 text-xs font-bold', inst.status === 'paid' ? 'bg-primary-100 text-primary-700' : 'bg-amber-100 text-amber-700')}>
                                     {inst.status === 'paid' ? 'مسدد' : 'مستحق'}
                                  </span>
                               </td>

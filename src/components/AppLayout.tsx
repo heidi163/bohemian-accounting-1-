@@ -217,7 +217,7 @@ export function AppLayout() {
               </div>
             </div>
             <div className="flex items-center gap-3">
-              <span className="text-[10px] sm:text-xs bg-emerald-50 text-emerald-700 border border-emerald-200 px-2 py-1 rounded-lg font-bold hidden sm:inline-block shadow-sm">● متصل</span>
+              <span className="text-[10px] sm:text-xs bg-primary-50 text-primary-700 border border-primary-200 px-2 py-1 rounded-lg font-bold hidden sm:inline-block shadow-sm">● متصل</span>
               <div className="w-8 h-8 rounded-full flex items-center justify-center font-bold text-white text-sm shrink-0 shadow-md transition-transform hover:scale-105 cursor-pointer" style={{ backgroundColor: primaryColor }}>أ</div>
             </div>
           </header>

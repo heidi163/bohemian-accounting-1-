@@ -13,7 +13,7 @@ const statusStyles: Record<string, string> = {
   pending_approval: 'bg-amber-100 text-amber-700',
   issued: 'bg-blue-100 text-blue-700',
   partial: 'bg-primary-100 text-primary-700',
-  paid: 'bg-emerald-100 text-emerald-700',
+  paid: 'bg-primary-100 text-primary-700',
   overdue: 'bg-red-100 text-red-700',
   cancelled: 'bg-slate-100 text-slate-500',
 };
@@ -212,7 +212,7 @@ export function InvoicesPage() {
         </div>
         <div className="flex flex-wrap gap-2">
           {selectedInvoices.size > 0 && (
-            <button onClick={() => openModal('payment')} className="bg-emerald-100 text-emerald-800 px-4 py-2.5 rounded-xl text-sm font-semibold hover:bg-emerald-200 transition flex items-center gap-2">
+            <button onClick={() => openModal('payment')} className="bg-primary-100 text-primary-800 px-4 py-2.5 rounded-xl text-sm font-semibold hover:bg-primary-200 transition flex items-center gap-2">
               <DollarSign className="w-4 h-4" /> دفع مجمع ({selectedInvoices.size})
             </button>
           )}
@@ -242,10 +242,10 @@ export function InvoicesPage() {
         </div>
         <div className="bg-white p-6 rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] flex flex-col justify-between hover:-translate-y-1 transition-transform duration-300 border border-slate-100/50">
           <div className="text-sm font-bold text-slate-500 mb-4 flex items-center gap-2">
-            <div className="w-8 h-8 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center"><Tag className="w-4 h-4"/></div>
+            <div className="w-8 h-8 rounded-full bg-primary-50 text-primary-600 flex items-center justify-center"><Tag className="w-4 h-4"/></div>
             التحصيلات النقدية
           </div>
-          <div className="text-3xl font-black text-emerald-600" dir="ltr">{new Intl.NumberFormat('ar-EG', { style: 'currency', currency: 'EGP' }).format(invoices.reduce((acc, curr) => acc + curr.paid_amount, 0))}</div>
+          <div className="text-3xl font-black text-primary-600" dir="ltr">{new Intl.NumberFormat('ar-EG', { style: 'currency', currency: 'EGP' }).format(invoices.reduce((acc, curr) => acc + curr.paid_amount, 0))}</div>
         </div>
       </div>
 
@@ -300,7 +300,7 @@ export function InvoicesPage() {
                     {(invoice.tax_amount || invoice.discount_amount) ? (
                       <div className="text-[10px] text-slate-500 font-normal mt-1 flex gap-1 justify-end">
                         {invoice.tax_amount ? <span className="text-rose-500">+{invoice.tax_amount} ضريبة</span> : null}
-                        {invoice.discount_amount ? <span className="text-emerald-500">-{invoice.discount_amount} خصم</span> : null}
+                        {invoice.discount_amount ? <span className="text-primary-500">-{invoice.discount_amount} خصم</span> : null}
                       </div>
                     ) : null}
                   </td>
@@ -316,7 +316,7 @@ export function InvoicesPage() {
                   </td>
                   <td className="px-6 py-4 text-center">
                     {invoice.recurring_status && invoice.recurring_status !== 'none' ? (
-                       <button onClick={() => openModal('recurring', invoice)} className={clsx("text-xs px-2 py-1 rounded font-bold transition", invoice.recurring_status === 'active' ? "bg-emerald-50 text-emerald-700 hover:bg-emerald-100" : invoice.recurring_status === 'paused' ? "bg-amber-50 text-amber-700 hover:bg-amber-100" : "bg-slate-100 text-slate-700 hover:bg-slate-200")}>
+                       <button onClick={() => openModal('recurring', invoice)} className={clsx("text-xs px-2 py-1 rounded font-bold transition", invoice.recurring_status === 'active' ? "bg-primary-50 text-primary-700 hover:bg-primary-100" : invoice.recurring_status === 'paused' ? "bg-amber-50 text-amber-700 hover:bg-amber-100" : "bg-slate-100 text-slate-700 hover:bg-slate-200")}>
                          {invoice.recurring_frequency === 'monthly' ? 'شهري' : invoice.recurring_frequency === 'annual' ? 'سنوي' : 'دوري'} {invoice.recurring_status === 'active' ? '' : '⏸'}
                        </button>
                     ) : (
@@ -327,7 +327,7 @@ export function InvoicesPage() {
                     <button onClick={() => openModal('email', invoice)} title="إرسال إيميل" className="p-2 text-slate-400 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition"><Send className="w-4 h-4" /></button>
                     <button onClick={() => handleDownload(invoice)} title="تحميل PDF" className="p-2 text-slate-400 hover:bg-rose-50 hover:text-rose-600 rounded-lg transition"><Download className="w-4 h-4" /></button>
                     {['issued', 'partial', 'overdue'].includes(invoice.status) && (
-                      <button onClick={() => openModal('payment', invoice)} title="تسجيل دفعة" className="p-2 text-slate-400 hover:bg-emerald-50 hover:text-emerald-600 rounded-lg transition"><DollarSign className="w-4 h-4" /></button>
+                      <button onClick={() => openModal('payment', invoice)} title="تسجيل دفعة" className="p-2 text-slate-400 hover:bg-primary-50 hover:text-primary-600 rounded-lg transition"><DollarSign className="w-4 h-4" /></button>
                     )}
                   </td>
                 </tr>
@@ -381,7 +381,7 @@ export function InvoicesPage() {
               </div>
               <button 
                 onClick={handlePayment}
-                className="w-full bg-emerald-600 text-white font-bold py-3 text-sm rounded-xl hover:bg-emerald-700 transition mt-4"
+                className="w-full bg-primary-600 text-white font-bold py-3 text-sm rounded-xl hover:bg-primary-700 transition mt-4"
               >
                 تأكيد الدفع (Record Payment)
               </button>
@@ -472,7 +472,7 @@ export function InvoicesPage() {
       )}
 
       {toastMsg && (
-        <div className="fixed bottom-6 left-6 bg-emerald-600 text-white px-6 py-3 rounded-xl shadow-lg font-bold text-sm z-50 flex items-center gap-2">
+        <div className="fixed bottom-6 left-6 bg-primary-600 text-white px-6 py-3 rounded-xl shadow-lg font-bold text-sm z-50 flex items-center gap-2">
           {toastMsg}
         </div>
       )}

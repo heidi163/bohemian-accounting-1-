@@ -182,12 +182,12 @@ export function PartnersPage() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
           <div className="flex items-center gap-3 mb-4">
-             <div className="w-10 h-10 rounded-xl bg-emerald-100 flex items-center justify-center text-emerald-600">
+             <div className="w-10 h-10 rounded-xl bg-primary-100 flex items-center justify-center text-primary-600">
                 <PieChart className="w-5 h-5" />
              </div>
              <div className="font-bold text-slate-800">إجمالي رأس المال المستثمر</div>
           </div>
-          <div className="text-3xl font-black text-emerald-600 font-mono" dir="ltr">
+          <div className="text-3xl font-black text-primary-600 font-mono" dir="ltr">
              {new Intl.NumberFormat('ar-EG', { style: 'currency', currency: 'EGP' }).format(totalCapital)}
           </div>
         </div>
@@ -220,13 +220,13 @@ export function PartnersPage() {
                <div className="flex justify-between items-center mb-6">
                   <div>
                      <div className="text-xs text-slate-500 font-bold mb-1">الرصيد الجاري (Current Account)</div>
-                     <div className={clsx("font-mono font-black text-2xl", partner.current_balance >= 0 ? 'text-emerald-600' : 'text-rose-600')} dir="ltr">
+                     <div className={clsx("font-mono font-black text-2xl", partner.current_balance >= 0 ? 'text-primary-600' : 'text-rose-600')} dir="ltr">
                         {new Intl.NumberFormat('ar-EG').format(partner.current_balance)}
                      </div>
                      <div className="text-xs text-slate-400 mt-1">{partner.current_balance >= 0 ? 'دائن للشريك (له)' : 'مدين على الشريك (عليه)'}</div>
                   </div>
                   <div className="flex flex-col gap-2">
-                     <button onClick={() => { setActiveModal({ partnerId: partner.id, type: 'deposit' }); setErrorMsg(''); }} className="bg-emerald-50 text-emerald-700 hover:bg-emerald-100 px-3 py-2 rounded-lg text-xs font-bold transition flex items-center gap-1">
+                     <button onClick={() => { setActiveModal({ partnerId: partner.id, type: 'deposit' }); setErrorMsg(''); }} className="bg-primary-50 text-primary-700 hover:bg-primary-100 px-3 py-2 rounded-lg text-xs font-bold transition flex items-center gap-1">
                         <ArrowDownRight className="w-4 h-4"/> إيداع / تمويل
                      </button>
                      <button onClick={() => { setActiveModal({ partnerId: partner.id, type: 'withdrawal' }); setErrorMsg(''); }} className="bg-rose-50 text-rose-700 hover:bg-rose-100 px-3 py-2 rounded-lg text-xs font-bold transition flex items-center gap-1">
@@ -262,7 +262,7 @@ export function PartnersPage() {
                                        {tx.type === 'deposit' ? 'إيداع في الجاري' : tx.type === 'withdrawal' ? 'مسحوبات' : 'زيادة رأس مال'}
                                     </span>
                                  </td>
-                                 <td className={clsx("px-3 py-2 text-end font-mono font-bold", tx.type === 'withdrawal' ? 'text-rose-600' : 'text-emerald-600')} dir="ltr">
+                                 <td className={clsx("px-3 py-2 text-end font-mono font-bold", tx.type === 'withdrawal' ? 'text-rose-600' : 'text-primary-600')} dir="ltr">
                                     {tx.type === 'withdrawal' ? '-' : '+'}{new Intl.NumberFormat('ar-EG').format(tx.amount)}
                                  </td>
                               </tr>
@@ -303,7 +303,7 @@ export function PartnersPage() {
                    onClick={handleTransaction}
                    disabled={isProcessing}
                    className={clsx("w-full text-white font-bold py-3 text-sm rounded-xl transition disabled:opacity-50", 
-                     activeModal.type === 'deposit' ? 'bg-emerald-600 hover:bg-emerald-700' : 'bg-rose-600 hover:bg-rose-700')}
+                     activeModal.type === 'deposit' ? 'bg-primary-600 hover:bg-primary-700' : 'bg-rose-600 hover:bg-rose-700')}
                  >
                    {isProcessing ? 'جاري التنفيذ...' : 'تأكيد وإنشاء القيد (Confirm & Post)'}
                  </button>

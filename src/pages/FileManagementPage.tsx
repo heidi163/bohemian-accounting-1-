@@ -109,7 +109,7 @@ export function FileManagementPage() {
   const getFileIcon = (format: string) => {
     switch (format) {
       case 'pdf': return <FileText className="w-5 h-5 text-rose-500" />;
-      case 'excel': return <FileSpreadsheet className="w-5 h-5 text-emerald-500" />;
+      case 'excel': return <FileSpreadsheet className="w-5 h-5 text-primary-500" />;
       case 'image': return <FileImage className="w-5 h-5 text-sky-500" />;
       default: return <File className="w-5 h-5 text-slate-400" />;
     }
@@ -118,7 +118,7 @@ export function FileManagementPage() {
   const getFileIconBg = (format: string) => {
     switch (format) {
       case 'pdf': return "bg-rose-50 group-hover:bg-rose-100 text-rose-600";
-      case 'excel': return "bg-emerald-50 group-hover:bg-emerald-100 text-emerald-600";
+      case 'excel': return "bg-primary-50 group-hover:bg-primary-100 text-primary-600";
       case 'image': return "bg-sky-50 group-hover:bg-sky-100 text-sky-600";
       default: return "bg-slate-50 group-hover:bg-slate-100 text-slate-500";
     }
@@ -314,8 +314,8 @@ export function FileManagementPage() {
             </div>
 
             <div className="bg-white rounded-3xl p-5 shadow-[0_4px_24px_rgb(0,0,0,0.02)] hover:-translate-y-1 hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all duration-300 group border border-slate-100 flex items-center gap-4">
-              <div className="w-12 h-12 bg-emerald-50 rounded-2xl flex items-center justify-center shrink-0">
-                <ShieldCheck className="w-6 h-6 text-emerald-600" />
+              <div className="w-12 h-12 bg-primary-50 rounded-2xl flex items-center justify-center shrink-0">
+                <ShieldCheck className="w-6 h-6 text-primary-600" />
               </div>
               <div>
                 <p className="text-sm text-slate-500 font-bold">حالة الأمان</p>
@@ -436,10 +436,10 @@ export function FileManagementPage() {
       {mainTab === 'migration' && (
         <div className="space-y-6 animate-in slide-in-from-left-4 duration-300">
           <div className="bg-white rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] hover:-translate-y-1 hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all duration-300 group border-0 p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 relative overflow-hidden">
-            <div className="absolute top-0 start-0 w-2 h-full bg-emerald-500"></div>
+            <div className="absolute top-0 start-0 w-2 h-full bg-primary-500"></div>
             <div className="ps-2">
               <h2 className="font-black text-slate-800 text-2xl flex items-center gap-3">
-                <DownloadCloud className="w-8 h-8 text-emerald-600"/> 
+                <DownloadCloud className="w-8 h-8 text-primary-600"/> 
                 استيراد وتصدير البيانات 
                 <span className="text-slate-400 font-medium text-lg hidden sm:inline-block">/ Data Migration</span>
               </h2>
@@ -450,7 +450,7 @@ export function FileManagementPage() {
                   onClick={() => setMigrationTab('import')}
                   className={clsx(
                      "px-6 py-2.5 rounded-xl text-sm font-bold flex items-center gap-2 transition-all",
-                     migrationTab === 'import' ? "bg-white text-emerald-700 shadow-sm" : "text-slate-500 hover:text-slate-700 hover:bg-slate-200/50"
+                     migrationTab === 'import' ? "bg-white text-primary-700 shadow-sm" : "text-slate-500 hover:text-slate-700 hover:bg-slate-200/50"
                   )}
                >
                   <UploadCloud className="w-4 h-4"/> الاستيراد (Import)
@@ -459,7 +459,7 @@ export function FileManagementPage() {
                   onClick={() => setMigrationTab('export')}
                   className={clsx(
                      "px-6 py-2.5 rounded-xl text-sm font-bold flex items-center gap-2 transition-all",
-                     migrationTab === 'export' ? "bg-white text-emerald-700 shadow-sm" : "text-slate-500 hover:text-slate-700 hover:bg-slate-200/50"
+                     migrationTab === 'export' ? "bg-white text-primary-700 shadow-sm" : "text-slate-500 hover:text-slate-700 hover:bg-slate-200/50"
                   )}
                >
                   <DownloadCloud className="w-4 h-4"/> التصدير (Export)
@@ -475,9 +475,9 @@ export function FileManagementPage() {
                   onDragOver={handleDragOver}
                   onDrop={handleDrop}
                   onClick={triggerUnifiedUpload}
-                  className="bg-slate-50/30 border-2 border-dashed border-emerald-200 hover:border-emerald-500 hover:bg-emerald-50/30 rounded-3xl py-8 px-6 text-center cursor-pointer transition-all group max-w-3xl mx-auto"
+                  className="bg-slate-50/30 border-2 border-dashed border-primary-200 hover:border-primary-500 hover:bg-primary-50/30 rounded-3xl py-8 px-6 text-center cursor-pointer transition-all group max-w-3xl mx-auto"
                 >
-                  <div className="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
+                  <div className="w-16 h-16 bg-primary-100 text-primary-600 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
                     <UploadCloud className="w-8 h-8" />
                   </div>
                   <h3 className="text-lg font-bold text-slate-800 mb-1.5">اسحب وأفلت الملف هنا أو اضغط للاختيار</h3>
@@ -488,7 +488,7 @@ export function FileManagementPage() {
               ) : (
                 <div className="bg-white rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] hover:-translate-y-1 hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all duration-300 group border border-slate-100 p-8 animate-in zoom-in-95 duration-300">
                   <div className="flex flex-col md:flex-row items-center gap-6">
-                    <div className="w-16 h-16 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center shrink-0">
+                    <div className="w-16 h-16 bg-primary-50 text-primary-600 rounded-2xl flex items-center justify-center shrink-0">
                       <FileSpreadsheet className="w-8 h-8" />
                     </div>
                     <div className="flex-1 text-center md:text-start">
@@ -520,7 +520,7 @@ export function FileManagementPage() {
                       className={clsx(
                         "flex-1 py-3 px-6 rounded-2xl font-bold transition-all shadow-lg",
                         selectedImportModule 
-                          ? "bg-emerald-600 text-white hover:bg-emerald-700 shadow-emerald-600/20 active:scale-95" 
+                          ? "bg-primary-600 text-white hover:bg-primary-700 shadow-primary-600/20 active:scale-95" 
                           : "bg-slate-200 text-slate-400 cursor-not-allowed shadow-none"
                       )}
                     >
@@ -533,14 +533,14 @@ export function FileManagementPage() {
               {recentImports.length > 0 && (
                 <div className="bg-white rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] hover:-translate-y-1 hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all duration-300 group border-0 p-6">
                   <h3 className="font-bold text-slate-800 text-lg mb-5 flex items-center gap-2">
-                    <UploadCloud className="w-5 h-5 text-emerald-600" /> العمليات المنفذة حديثاً
+                    <UploadCloud className="w-5 h-5 text-primary-600" /> العمليات المنفذة حديثاً
                   </h3>
                   <div className="space-y-3">
                     {recentImports.map(item => (
                       <div key={item.id} className="flex items-center justify-between p-4 bg-slate-50/50 rounded-2xl border border-slate-100 hover:bg-slate-50 transition-colors">
                         <div className="flex items-center gap-4">
                           <div className="p-3 bg-white rounded-xl shadow-sm">
-                            <FileSpreadsheet className="w-6 h-6 text-emerald-500" />
+                            <FileSpreadsheet className="w-6 h-6 text-primary-500" />
                           </div>
                           <div>
                             <p className="font-bold text-slate-700 text-sm">{item.name}</p>
@@ -551,7 +551,7 @@ export function FileManagementPage() {
                           <span className="text-xs font-mono font-bold text-slate-400 bg-white px-2 py-1 rounded-md">{item.time}</span>
                           <button 
                             onClick={() => triggerDownloadImport(item)}
-                            className="p-2 text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-xl transition"
+                            className="p-2 text-slate-400 hover:text-primary-600 hover:bg-primary-50 rounded-xl transition"
                             title="فتح / تحميل الملف"
                           >
                             <DownloadCloud className="w-5 h-5" />
@@ -568,11 +568,11 @@ export function FileManagementPage() {
           {migrationTab === 'export' && (
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {exportModules.map(module => (
-                <div key={module.id} className="bg-white p-6 rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.03)] border border-slate-100 hover:border-emerald-200 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col gap-5 group relative overflow-hidden">
+                <div key={module.id} className="bg-white p-6 rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.03)] border border-slate-100 hover:border-primary-200 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col gap-5 group relative overflow-hidden">
                   <div className="absolute top-0 end-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
-                    <module.icon className="w-32 h-32 text-emerald-900" />
+                    <module.icon className="w-32 h-32 text-primary-900" />
                   </div>
-                  <div className="relative z-10 w-14 h-14 bg-gradient-to-br from-emerald-50 to-emerald-100 text-emerald-600 rounded-2xl flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform duration-300">
+                  <div className="relative z-10 w-14 h-14 bg-gradient-to-br from-primary-50 to-primary-100 text-primary-600 rounded-2xl flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform duration-300">
                     <module.icon className="w-7 h-7" />
                   </div>
                   <div className="relative z-10">
@@ -584,10 +584,10 @@ export function FileManagementPage() {
                       <button 
                         key={format}
                         onClick={() => triggerMigrationExport(module.title, format)}
-                        className="flex-1 bg-slate-50 border border-slate-100 text-slate-700 font-bold py-3 rounded-2xl flex items-center justify-center gap-2 hover:bg-emerald-50 hover:border-emerald-200 hover:text-emerald-700 hover:shadow-md hover:shadow-emerald-100 transition-all text-sm"
+                        className="flex-1 bg-slate-50 border border-slate-100 text-slate-700 font-bold py-3 rounded-2xl flex items-center justify-center gap-2 hover:bg-primary-50 hover:border-primary-200 hover:text-primary-700 hover:shadow-md hover:shadow-primary-100 transition-all text-sm"
                       >
                         {format === 'PDF' && <FileText className="w-4 h-4 text-rose-500" />}
-                        {format === 'Excel' && <FileSpreadsheet className="w-4 h-4 text-emerald-500" />}
+                        {format === 'Excel' && <FileSpreadsheet className="w-4 h-4 text-primary-500" />}
                         تصدير {format}
                       </button>
                     ))}
@@ -626,7 +626,7 @@ export function FileManagementPage() {
 
       {toastMsg && (
         <div className="fixed bottom-10 start-1/2 -translate-x-1/2 bg-slate-900 text-white px-6 py-4 rounded-2xl text-sm font-bold shadow-2xl z-[9999] whitespace-nowrap flex items-center gap-3 animate-in slide-in-from-bottom-5">
-          <div className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></div>
+          <div className="w-2.5 h-2.5 rounded-full bg-primary-400 animate-pulse"></div>
           {toastMsg}
         </div>
       )}

@@ -425,7 +425,7 @@ export function ReportBuilderPage() {
 
       {toastMsg && (
         <div className="fixed bottom-10 start-1/2 -translate-x-1/2 bg-slate-900 text-white px-6 py-3 rounded-xl text-sm font-bold shadow-2xl z-[9999] whitespace-nowrap flex items-center gap-2">
-          <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></div>
+          <div className="w-2 h-2 rounded-full bg-primary-400 animate-pulse"></div>
           {toastMsg}
         </div>
       )}

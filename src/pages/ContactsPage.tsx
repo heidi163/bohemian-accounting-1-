@@ -238,10 +238,10 @@ export function ContactsPage() {
           </div>
           <div className="flex flex-col justify-between px-4 hover:scale-105 transition-transform duration-300">
             <div className="text-sm font-bold text-slate-500 mb-2 flex items-center gap-2">
-              <div className="w-8 h-8 rounded-full bg-emerald-50 flex items-center justify-center text-emerald-600"><DollarSign className="w-4 h-4"/></div>
+              <div className="w-8 h-8 rounded-full bg-primary-50 flex items-center justify-center text-primary-600"><DollarSign className="w-4 h-4"/></div>
               إجمالي المستحقات
             </div>
-            <div className="text-2xl font-black text-emerald-600 mt-2" dir="ltr">{new Intl.NumberFormat('ar-EG', { style: 'currency', currency: 'EGP' }).format(contacts.filter(c => c.type === 'customer').reduce((acc, curr) => acc + (curr.outstanding_balance ?? curr.balance), 0))}</div>
+            <div className="text-2xl font-black text-primary-600 mt-2" dir="ltr">{new Intl.NumberFormat('ar-EG', { style: 'currency', currency: 'EGP' }).format(contacts.filter(c => c.type === 'customer').reduce((acc, curr) => acc + (curr.outstanding_balance ?? curr.balance), 0))}</div>
           </div>
         </div>
       </div>
@@ -364,7 +364,7 @@ export function ContactsPage() {
                      <div key={i} className="flex justify-between items-center border border-slate-100 p-4 rounded-xl hover:bg-slate-50">
                         <div>
                            <div className="font-bold text-slate-800">{c.name}</div>
-                           <div className="text-sm text-emerald-600 font-mono mt-1">{new Intl.NumberFormat('ar-EG', { style: 'currency', currency: 'EGP' }).format(c.profit)} أرباح</div>
+                           <div className="text-sm text-primary-600 font-mono mt-1">{new Intl.NumberFormat('ar-EG', { style: 'currency', currency: 'EGP' }).format(c.profit)} أرباح</div>
                         </div>
                         <div className="text-2xl font-black text-primary-200">{c.grade}</div>
                      </div>
@@ -417,7 +417,7 @@ export function ContactsPage() {
                      <div className="grid grid-cols-4 text-center divide-x divide-slate-100">
                        <div className="p-4">
                          <div className="text-sm font-semibold text-slate-500 mb-1">0 - 30 يوماً</div>
-                         <div className="font-bold text-emerald-600" dir="ltr">{new Intl.NumberFormat('ar-EG', { style: 'currency', currency: 'EGP' }).format(agingData.aging_summary['0_30'])}</div>
+                         <div className="font-bold text-primary-600" dir="ltr">{new Intl.NumberFormat('ar-EG', { style: 'currency', currency: 'EGP' }).format(agingData.aging_summary['0_30'])}</div>
                        </div>
                        <div className="p-4">
                          <div className="text-sm font-semibold text-slate-500 mb-1">31 - 60 يوماً</div>
@@ -498,7 +498,7 @@ export function ContactsPage() {
       )}
       
       {toastMsg && (
-        <div className="fixed bottom-6 left-6 bg-emerald-600 text-white px-6 py-3 rounded-xl shadow-lg font-bold text-sm z-50 flex items-center gap-2">
+        <div className="fixed bottom-6 left-6 bg-primary-600 text-white px-6 py-3 rounded-xl shadow-lg font-bold text-sm z-50 flex items-center gap-2">
           {toastMsg}
         </div>
       )}

@@ -157,7 +157,7 @@ export function AssetsPage() {
             disabled={isDepreciating} 
             className="bg-white border border-slate-200 text-slate-700 px-6 py-3 rounded-2xl text-sm font-bold hover:bg-slate-50 hover:-translate-y-0.5 transition-all shadow-sm flex items-center gap-2 disabled:opacity-50 disabled:hover:translate-y-0"
           >
-            <RefreshCcw className={clsx("w-5 h-5 text-emerald-600", isDepreciating && "animate-spin")} /> 
+            <RefreshCcw className={clsx("w-5 h-5 text-primary-600", isDepreciating && "animate-spin")} /> 
             {isDepreciating ? "جاري احتساب الإهلاك..." : "تنفيذ الإهلاك الشهري"}
           </button>
           <button 
@@ -200,15 +200,15 @@ export function AssetsPage() {
         </div>
 
         <div className="bg-white p-6 rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] border border-slate-100/50 flex flex-col justify-between hover:-translate-y-1 transition-transform duration-300 relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-50 rounded-full blur-2xl opacity-50 -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
+          <div className="absolute top-0 right-0 w-32 h-32 bg-primary-50 rounded-full blur-2xl opacity-50 -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
           <div className="flex justify-between items-start relative z-10">
             <div>
-              <p className="text-emerald-700 text-sm font-bold mb-1">صافي القيمة الدفترية (Net Book Value)</p>
-              <h3 className="font-black text-emerald-600 text-2xl lg:text-3xl" dir="ltr">
+              <p className="text-primary-700 text-sm font-bold mb-1">صافي القيمة الدفترية (Net Book Value)</p>
+              <h3 className="font-black text-primary-600 text-2xl lg:text-3xl" dir="ltr">
                 {new Intl.NumberFormat('ar-EG').format(assets.reduce((sum, a) => sum + a.net_book_value, 0))} EGP
               </h3>
             </div>
-            <div className="w-12 h-12 bg-emerald-100 text-emerald-700 rounded-2xl flex items-center justify-center shrink-0">
+            <div className="w-12 h-12 bg-primary-100 text-primary-700 rounded-2xl flex items-center justify-center shrink-0">
               <Wallet className="w-6 h-6" />
             </div>
           </div>
@@ -257,7 +257,7 @@ export function AssetsPage() {
                   <td className="px-6 py-4 text-end font-mono font-bold text-rose-600" dir="ltr">
                     -{new Intl.NumberFormat('ar-EG').format(asset.accumulated_depreciation)}
                   </td>
-                  <td className="px-6 py-4 text-end font-mono font-black text-emerald-600" dir="ltr">
+                  <td className="px-6 py-4 text-end font-mono font-black text-primary-600" dir="ltr">
                     {new Intl.NumberFormat('ar-EG').format(asset.net_book_value)}
                   </td>
                   <td className="px-6 py-4 text-center">
@@ -333,11 +333,11 @@ export function AssetsPage() {
                  </div>
                )}
 
-               <div className={clsx("p-5 rounded-2xl border", calculateGainLoss() >= 0 ? "bg-emerald-50 border-emerald-100" : "bg-rose-50 border-rose-100")}>
-                  <div className={clsx("text-sm font-bold mb-1", calculateGainLoss() >= 0 ? "text-emerald-800" : "text-rose-800")}>
+               <div className={clsx("p-5 rounded-2xl border", calculateGainLoss() >= 0 ? "bg-primary-50 border-primary-100" : "bg-rose-50 border-rose-100")}>
+                  <div className={clsx("text-sm font-bold mb-1", calculateGainLoss() >= 0 ? "text-primary-800" : "text-rose-800")}>
                      {calculateGainLoss() >= 0 ? "صافي الربح الرأسمالي المتوقع (Gain)" : "صافي الخسائر الرأسمالية المتوقعة (Loss)"}
                   </div>
-                  <div className={clsx("font-mono text-2xl font-black", calculateGainLoss() >= 0 ? "text-emerald-600" : "text-rose-600")} dir="ltr">
+                  <div className={clsx("font-mono text-2xl font-black", calculateGainLoss() >= 0 ? "text-primary-600" : "text-rose-600")} dir="ltr">
                      {new Intl.NumberFormat('ar-EG', { style: 'currency', currency: 'EGP' }).format(Math.abs(calculateGainLoss()))}
                   </div>
                </div>

@@ -153,7 +153,7 @@ export function ChartOfAccountsPage() {
                 <span className={clsx("px-2 py-0.5 rounded text-xs border", 
                   acc.level === 'main' ? 'bg-slate-100 border-slate-200' : 
                   acc.level === 'sub' ? 'bg-blue-50 border-blue-100 text-blue-700' : 
-                  'bg-emerald-50 border-emerald-100 text-emerald-700'
+                  'bg-primary-50 border-primary-100 text-primary-700'
                 )}>{levelTranslations[acc.level]}</span>
               </div>
               <div className="w-1/6 flex items-center justify-center">
@@ -162,7 +162,7 @@ export function ChartOfAccountsPage() {
                  </span>
               </div>
               <div className="w-1/6 text-end">
-                <span className={clsx("text-xs px-2 py-1 rounded inline-block", acc.is_active ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700')}>
+                <span className={clsx("text-xs px-2 py-1 rounded inline-block", acc.is_active ? 'bg-primary-100 text-primary-700' : 'bg-rose-100 text-rose-700')}>
                   {acc.is_active ? 'نشط' : 'معطل'}
                 </span>
               </div>
@@ -204,9 +204,9 @@ export function ChartOfAccountsPage() {
         <div className="bg-white p-5 rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] flex flex-col justify-between hover:-translate-y-1 transition-transform duration-300">
           <div className="text-sm font-bold text-slate-500 mb-3 flex justify-between items-center">
             <span>إيرادات ومصروفات</span>
-            <div className="w-9 h-9 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-600"><DollarSign className="w-4 h-4"/></div>
+            <div className="w-9 h-9 rounded-xl bg-primary-50 flex items-center justify-center text-primary-600"><DollarSign className="w-4 h-4"/></div>
           </div>
-          <div className="text-2xl font-black text-emerald-600">{accounts.filter(a => a.type === 'revenue' || a.type === 'expense').length} حساب</div>
+          <div className="text-2xl font-black text-primary-600">{accounts.filter(a => a.type === 'revenue' || a.type === 'expense').length} حساب</div>
         </div>
       </div>
 

@@ -167,8 +167,8 @@ export function AutomationPage() {
             </div>
 
             <div className="bg-white rounded-3xl p-5 shadow-[0_4px_24px_rgb(0,0,0,0.02)] hover:-translate-y-1 hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all duration-300 group border border-slate-100 flex items-center gap-4">
-              <div className="w-12 h-12 bg-emerald-50 rounded-2xl flex items-center justify-center shrink-0">
-                <TrendingUp className="w-6 h-6 text-emerald-600" />
+              <div className="w-12 h-12 bg-primary-50 rounded-2xl flex items-center justify-center shrink-0">
+                <TrendingUp className="w-6 h-6 text-primary-600" />
               </div>
               <div>
                 <p className="text-sm text-slate-500 font-bold">نسبة نجاح الأتمتة</p>
@@ -248,7 +248,7 @@ export function AutomationPage() {
                          </td>
                          <td className="px-6 py-4">
                            <div className="flex items-center gap-2">
-                              {job.lastStatus === 'success' && <div className="w-2.5 h-2.5 rounded-full bg-emerald-500 shadow-sm shadow-emerald-500/50" title="تم بنجاح"></div>}
+                              {job.lastStatus === 'success' && <div className="w-2.5 h-2.5 rounded-full bg-primary-500 shadow-sm shadow-primary-500/50" title="تم بنجاح"></div>}
                               {job.lastStatus === 'failed' && <div className="w-2.5 h-2.5 rounded-full bg-rose-500 shadow-sm shadow-rose-500/50 animate-pulse" title="فشل"></div>}
                               {job.lastStatus === 'pending' && <div className="w-2.5 h-2.5 rounded-full bg-slate-300" title="لم يعمل بعد"></div>}
                               <span className="font-mono text-slate-500 text-xs">{job.lastRun}</span>
@@ -261,11 +261,11 @@ export function AutomationPage() {
                            <button onClick={() => toggleStatus(job.id)} className="relative inline-flex items-center w-10 h-6 focus:outline-none transition hover:scale-105 active:scale-95">
                              <div className={clsx(
                                "w-10 h-1.5 rounded-full transition-colors duration-300",
-                               job.status === 'active' ? "bg-emerald-200" : "bg-slate-200"
+                               job.status === 'active' ? "bg-primary-200" : "bg-slate-200"
                              )}></div>
                              <div className={clsx(
                                "absolute top-1 w-4 h-4 rounded-full shadow-md transition-all duration-300",
-                               job.status === 'active' ? "bg-emerald-500 start-6" : "bg-white border border-slate-200 start-0"
+                               job.status === 'active' ? "bg-primary-500 start-6" : "bg-white border border-slate-200 start-0"
                              )}></div>
                            </button>
                          </td>
@@ -321,11 +321,11 @@ export function AutomationPage() {
                 <button onClick={() => setSendReport(!sendReport)} className="relative inline-flex items-center w-10 h-6 focus:outline-none transition hover:scale-105 active:scale-95 shrink-0">
                   <div className={clsx(
                     "w-10 h-1.5 rounded-full transition-colors duration-300",
-                    sendReport ? "bg-emerald-200" : "bg-slate-200"
+                    sendReport ? "bg-primary-200" : "bg-slate-200"
                   )}></div>
                   <div className={clsx(
                     "absolute top-1 w-4 h-4 rounded-full shadow-md transition-all duration-300",
-                    sendReport ? "bg-emerald-500 start-6" : "bg-white border border-slate-200 start-0"
+                    sendReport ? "bg-primary-500 start-6" : "bg-white border border-slate-200 start-0"
                   )}></div>
                 </button>
               </div>
@@ -338,11 +338,11 @@ export function AutomationPage() {
                 <button onClick={() => setKeepLogs(!keepLogs)} className="relative inline-flex items-center w-10 h-6 focus:outline-none transition hover:scale-105 active:scale-95 shrink-0">
                   <div className={clsx(
                     "w-10 h-1.5 rounded-full transition-colors duration-300",
-                    keepLogs ? "bg-emerald-200" : "bg-slate-200"
+                    keepLogs ? "bg-primary-200" : "bg-slate-200"
                   )}></div>
                   <div className={clsx(
                     "absolute top-1 w-4 h-4 rounded-full shadow-md transition-all duration-300",
-                    keepLogs ? "bg-emerald-500 start-6" : "bg-white border border-slate-200 start-0"
+                    keepLogs ? "bg-primary-500 start-6" : "bg-white border border-slate-200 start-0"
                   )}></div>
                 </button>
               </div>
@@ -351,7 +351,7 @@ export function AutomationPage() {
             <div className="pt-6 border-t border-slate-100 mt-8">
               <button 
                 onClick={() => showToast('تم حفظ إعدادات الأتمتة بنجاح')} 
-                className="w-full bg-emerald-600 text-white font-bold py-4 px-6 rounded-2xl hover:bg-emerald-700 transition shadow-lg shadow-emerald-600/20"
+                className="w-full bg-primary-600 text-white font-bold py-4 px-6 rounded-2xl hover:bg-primary-700 transition shadow-lg shadow-primary-600/20"
               >
                 حفظ التغييرات
               </button>
@@ -366,7 +366,7 @@ export function AutomationPage() {
              <p className="text-slate-500 text-sm font-medium leading-relaxed max-w-sm">
                خدمة الجدولة تعمل بكفاءة على الخادم، وجميع الإعدادات يتم مراقبتها لحظياً لضمان عدم تعطل أي عملية أتمتة دورية.
              </p>
-             <div className="mt-4 px-4 py-2 bg-emerald-100 text-emerald-700 rounded-xl text-xs font-bold flex items-center gap-2">
+             <div className="mt-4 px-4 py-2 bg-primary-100 text-primary-700 rounded-xl text-xs font-bold flex items-center gap-2">
                <CheckCircle2 className="w-4 h-4" /> الأتمتة تعمل بنسبة 100%
              </div>
           </div>
@@ -436,7 +436,7 @@ export function AutomationPage() {
 
       {toastMsg && (
         <div className="fixed bottom-10 start-1/2 -translate-x-1/2 bg-slate-900 text-white px-6 py-4 rounded-2xl text-sm font-bold shadow-2xl z-[9999] whitespace-nowrap flex items-center gap-3 animate-in slide-in-from-bottom-5">
-          <div className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></div>
+          <div className="w-2.5 h-2.5 rounded-full bg-primary-400 animate-pulse"></div>
           {toastMsg}
         </div>
       )}

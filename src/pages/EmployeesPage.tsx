@@ -75,7 +75,7 @@ export function EmployeesPage() {
               <p className="text-slate-500 text-sm font-bold mb-1">على قوة العمل (نشط)</p>
               <h3 className="font-black text-slate-800 text-3xl">{activeEmployees}</h3>
             </div>
-            <div className="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center">
+            <div className="w-12 h-12 bg-primary-50 text-primary-600 rounded-2xl flex items-center justify-center">
               <UserCheck className="w-6 h-6" />
             </div>
           </div>
@@ -135,7 +135,7 @@ export function EmployeesPage() {
                   <td className="px-6 py-4 text-start">
                     <span className={clsx(
                       'inline-flex items-center rounded-xl px-3 py-1 text-xs font-black', 
-                      emp.status === 'active' ? 'bg-emerald-50 text-emerald-600' : 'bg-slate-100 text-slate-500'
+                      emp.status === 'active' ? 'bg-primary-50 text-primary-600' : 'bg-slate-100 text-slate-500'
                     )}>
                       {emp.status === 'active' ? 'نشط' : 'غير نشط'}
                     </span>

@@ -178,10 +178,10 @@ export function EmailTemplatesPage() {
       
       {/* Header */}
       <div className="bg-white rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] hover:-translate-y-1 hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all duration-300 group border-0 p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 relative overflow-hidden">
-        <div className="absolute top-0 start-0 w-2 h-full bg-emerald-500"></div>
+        <div className="absolute top-0 start-0 w-2 h-full bg-primary-500"></div>
         <div className="ps-2">
           <h2 className="font-black text-slate-800 text-2xl flex items-center gap-3">
-            <Mail className="w-8 h-8 text-emerald-600" />
+            <Mail className="w-8 h-8 text-primary-600" />
             تخصيص رسائل الإيميل
             <span className="text-slate-400 font-medium text-lg hidden sm:inline-block">/ Email Editor</span>
           </h2>
@@ -203,11 +203,11 @@ export function EmailTemplatesPage() {
                 className={clsx(
                   "w-full text-start p-4 rounded-2xl transition-all duration-300 flex items-center gap-3 font-bold",
                   selected.id === t.id
-                    ? "bg-emerald-50 text-emerald-700 shadow-sm border border-emerald-100"
+                    ? "bg-primary-50 text-primary-700 shadow-sm border border-primary-100"
                     : "bg-transparent border border-transparent text-slate-600 hover:bg-slate-50 hover:border-slate-100"
                 )}
               >
-                <div className={clsx("w-8 h-8 rounded-xl flex items-center justify-center shrink-0 transition-colors", selected.id === t.id ? "bg-emerald-100 text-emerald-700" : "bg-slate-100 text-slate-400")}>
+                <div className={clsx("w-8 h-8 rounded-xl flex items-center justify-center shrink-0 transition-colors", selected.id === t.id ? "bg-primary-100 text-primary-700" : "bg-slate-100 text-slate-400")}>
                   <Mail className="w-4 h-4" />
                 </div>
                 {t.name}
@@ -239,7 +239,7 @@ export function EmailTemplatesPage() {
               {!editing && !preview && (
                 <button 
                   onClick={() => setEditing(true)} 
-                  className="px-5 py-2.5 rounded-xl text-sm font-bold bg-emerald-50 text-emerald-700 hover:bg-emerald-100 transition-colors flex items-center gap-2 border border-emerald-100"
+                  className="px-5 py-2.5 rounded-xl text-sm font-bold bg-primary-50 text-primary-700 hover:bg-primary-100 transition-colors flex items-center gap-2 border border-primary-100"
                 >
                   <Edit2 className="w-4 h-4" /> تعديل النص
                 </button>
@@ -255,7 +255,7 @@ export function EmailTemplatesPage() {
                   </button>
                   <button 
                     onClick={handleSave} 
-                    className="px-6 py-2.5 rounded-xl text-sm font-bold bg-emerald-600 text-white hover:bg-emerald-700 shadow-lg shadow-emerald-600/20 transition-all active:scale-95 flex items-center gap-2"
+                    className="px-6 py-2.5 rounded-xl text-sm font-bold bg-primary-600 text-white hover:bg-primary-700 shadow-lg shadow-primary-600/20 transition-all active:scale-95 flex items-center gap-2"
                   >
                     <Save className="w-4 h-4" /> حفظ التعديلات
                   </button>
@@ -268,16 +268,16 @@ export function EmailTemplatesPage() {
             
             {/* Variables Section */}
             {editing && !preview && (
-              <div className="bg-emerald-50/50 p-5 rounded-2xl border border-emerald-100 shadow-sm animate-in slide-in-from-top-2">
-                <span className="text-sm text-emerald-800 font-bold mb-3 block flex items-center gap-2">
-                  <Type className="w-4 h-4 text-emerald-500" /> الكلمات السحرية (اضغط للإضافة في النص):
+              <div className="bg-primary-50/50 p-5 rounded-2xl border border-primary-100 shadow-sm animate-in slide-in-from-top-2">
+                <span className="text-sm text-primary-800 font-bold mb-3 block flex items-center gap-2">
+                  <Type className="w-4 h-4 text-primary-500" /> الكلمات السحرية (اضغط للإضافة في النص):
                 </span>
                 <div className="flex flex-wrap gap-2.5">
                   {selected.variables.map(v => (
                     <button 
                       key={v}
                       onClick={() => insertVariable(v)}
-                      className="bg-white text-emerald-700 border border-emerald-200 text-sm px-4 py-2 rounded-xl font-bold cursor-pointer hover:bg-emerald-500 hover:text-white hover:border-emerald-500 transition-all shadow-sm active:scale-95"
+                      className="bg-white text-primary-700 border border-primary-200 text-sm px-4 py-2 rounded-xl font-bold cursor-pointer hover:bg-primary-500 hover:text-white hover:border-primary-500 transition-all shadow-sm active:scale-95"
                       title="اضغط لإدراج هذه الكلمة في النص"
                     >
                       {v}
@@ -302,7 +302,7 @@ export function EmailTemplatesPage() {
                   type="text" 
                   value={editData.subject} 
                   onChange={e => setEditData({ ...editData, subject: e.target.value })} 
-                  className="w-full bg-white border border-slate-200 rounded-2xl px-5 py-3.5 text-sm outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 transition-all font-bold text-slate-800 shadow-sm" 
+                  className="w-full bg-white border border-slate-200 rounded-2xl px-5 py-3.5 text-sm outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all font-bold text-slate-800 shadow-sm" 
                   placeholder="اكتب عنوان الإيميل هنا..."
                 />
               ) : (
@@ -329,7 +329,7 @@ export function EmailTemplatesPage() {
                   rows={14}
                   value={editData.body}
                   onChange={e => setEditData({ ...editData, body: e.target.value })}
-                  className="w-full flex-1 bg-white border border-slate-200 text-slate-800 rounded-2xl p-6 text-base outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 transition-all leading-relaxed shadow-sm resize-none"
+                  className="w-full flex-1 bg-white border border-slate-200 text-slate-800 rounded-2xl p-6 text-base outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all leading-relaxed shadow-sm resize-none"
                   placeholder="اكتب رسالتك هنا بكل بساطة كأنك تكتب رسالة عادية..."
                 />
               ) : (
@@ -355,7 +355,7 @@ export function EmailTemplatesPage() {
 
       {toastMsg && (
         <div className="fixed bottom-10 start-1/2 -translate-x-1/2 bg-slate-900 text-white px-6 py-4 rounded-2xl text-sm font-bold shadow-2xl z-[9999] whitespace-nowrap flex items-center gap-3 animate-in slide-in-from-bottom-5">
-          <CheckCircle2 className="w-5 h-5 text-emerald-400" />
+          <CheckCircle2 className="w-5 h-5 text-primary-400" />
           {toastMsg}
         </div>
       )}

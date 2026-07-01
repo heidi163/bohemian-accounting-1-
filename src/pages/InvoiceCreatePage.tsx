@@ -279,7 +279,7 @@ export function InvoiceCreatePage() {
                 <span>خصم خاص %</span>
                 <input type="number" value={discountPercent} onChange={(e) => setDiscountPercent(Number(e.target.value))} className="w-16 bg-white border border-slate-200 rounded px-2 py-1 text-xs text-center outline-none" min="0" max="100"/>
               </div>
-              <span className="font-mono font-medium text-emerald-600" dir="ltr">-{new Intl.NumberFormat('ar-EG', { style: 'currency', currency: currency }).format(discountAmount)}</span>
+              <span className="font-mono font-medium text-primary-600" dir="ltr">-{new Intl.NumberFormat('ar-EG', { style: 'currency', currency: currency }).format(discountAmount)}</span>
             </div>
             <div className="flex justify-between mb-4 text-sm text-slate-600">
               <span>ضريبة القيمة المضافة (14%)</span>

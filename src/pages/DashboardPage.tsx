@@ -127,7 +127,7 @@ export function DashboardPage() {
             <div className="text-3xl font-bold text-slate-900 tracking-tight" dir="ltr">
                {new Intl.NumberFormat('ar-EG', { style: 'currency', currency: 'EGP', maximumSignificantDigits: 4 }).format(stats.totalCash)}
             </div>
-            <div className="text-sm text-emerald-500 font-medium mt-1 flex items-center gap-1">الرصيد المتاح حالياً</div>
+            <div className="text-sm text-primary-500 font-medium mt-1 flex items-center gap-1">الرصيد المتاح حالياً</div>
           </div>
         </div>
         
@@ -140,7 +140,7 @@ export function DashboardPage() {
             <div className="text-3xl font-bold text-slate-900 tracking-tight" dir="ltr">
                {new Intl.NumberFormat('ar-EG', { style: 'currency', currency: 'EGP', maximumSignificantDigits: 4 }).format(kpis.revenue)}
             </div>
-            <div className="text-sm text-emerald-500 font-medium mt-1 flex items-center gap-1"><ArrowUpRight className="w-3 h-3"/> 8.2% عن العام الماضي</div>
+            <div className="text-sm text-primary-500 font-medium mt-1 flex items-center gap-1"><ArrowUpRight className="w-3 h-3"/> 8.2% عن العام الماضي</div>
           </div>
         </div>
 
@@ -166,7 +166,7 @@ export function DashboardPage() {
             <div className="text-3xl font-bold text-slate-900 tracking-tight" dir="ltr">
                {new Intl.NumberFormat('ar-EG', { style: 'currency', currency: 'EGP', maximumSignificantDigits: 4 }).format(stats.netProfit)}
             </div>
-            <div className="text-sm text-emerald-500 font-medium mt-1 flex items-center gap-1"><ArrowUpRight className="w-3 h-3"/> 12% عن الشهر الماضي</div>
+            <div className="text-sm text-primary-500 font-medium mt-1 flex items-center gap-1"><ArrowUpRight className="w-3 h-3"/> 12% عن الشهر الماضي</div>
           </div>
         </div>
       </div>
@@ -247,7 +247,7 @@ export function DashboardPage() {
                      {new Intl.NumberFormat('ar-EG', { style: 'currency', currency: 'EGP', maximumSignificantDigits: 4 }).format(stats.receivables)}
                    </h3>
                 </div>
-                <div className="w-14 h-14 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center"><TrendingUp className="w-7 h-7"/></div>
+                <div className="w-14 h-14 rounded-2xl bg-primary-50 text-primary-600 flex items-center justify-center"><TrendingUp className="w-7 h-7"/></div>
              </div>
              <div className="bg-white rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] border-0 p-6 flex items-center justify-between hover:-translate-y-1 transition-transform duration-300 cursor-pointer">
                 <div>
@@ -350,7 +350,7 @@ export function DashboardPage() {
                   <div>
                     <h3 className="font-bold text-slate-800 text-sm">{check.to}</h3>
                     <div className="flex items-center gap-2 mt-1">
-                      <span className={`text-[10px] font-bold px-2 py-0.5 rounded-md ${check.type === 'صادر' ? 'bg-rose-100 text-rose-700' : 'bg-emerald-100 text-emerald-700'}`}>
+                      <span className={`text-[10px] font-bold px-2 py-0.5 rounded-md ${check.type === 'صادر' ? 'bg-rose-100 text-rose-700' : 'bg-primary-100 text-primary-700'}`}>
                         {check.type}
                       </span>
                       <span className="text-xs text-amber-600 font-bold">{check.date}</span>

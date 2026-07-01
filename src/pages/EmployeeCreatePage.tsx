@@ -109,14 +109,14 @@ export function EmployeeCreatePage() {
               className="w-full bg-slate-50 border border-slate-200 text-slate-900 text-sm rounded-xl px-4 py-2.5 focus:bg-white focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 outline-none transition-all" 
             />
           </div>
-          <div className="bg-emerald-50/50 p-4 rounded-xl border border-emerald-100/50">
+          <div className="bg-primary-50/50 p-4 rounded-xl border border-primary-100/50">
             <label className="block text-sm font-medium text-slate-700 mb-2">الراتب الأساسي (EGP)</label>
             <input 
               type="number" 
               value={formData.basic_salary || ''} 
               onChange={e => setFormData({...formData, basic_salary: Number(e.target.value)})} 
               placeholder="0.00" 
-              className="w-full bg-white border border-slate-200 text-slate-900 text-sm rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all text-start" 
+              className="w-full bg-white border border-slate-200 text-slate-900 text-sm rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 outline-none transition-all text-start" 
               dir="ltr"
             />
           </div>

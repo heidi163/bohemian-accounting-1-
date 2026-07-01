@@ -11,7 +11,7 @@ import { BookOpen, CheckCircle2, Clock, DollarSign } from "lucide-react";
 const statusStyles: Record<string, string> = {
   draft: 'bg-slate-100 text-slate-600',
   pending_approval: 'bg-amber-100 text-amber-700',
-  posted: 'bg-emerald-100 text-emerald-700',
+  posted: 'bg-primary-100 text-primary-700',
   reversed: 'bg-red-100 text-red-700',
 };
 
@@ -66,9 +66,9 @@ export function JournalPage() {
         <div className="bg-white p-5 rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] flex flex-col justify-between hover:-translate-y-1 transition-transform duration-300">
           <div className="text-sm font-bold text-slate-500 mb-3 flex justify-between items-center">
             <span>قيود مرحلة (Posted)</span>
-            <div className="w-9 h-9 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-600"><CheckCircle2 className="w-4 h-4"/></div>
+            <div className="w-9 h-9 rounded-xl bg-primary-50 flex items-center justify-center text-primary-600"><CheckCircle2 className="w-4 h-4"/></div>
           </div>
-          <div className="text-2xl font-black text-emerald-600">{entries.filter(e => e.status === 'posted').length} قيد</div>
+          <div className="text-2xl font-black text-primary-600">{entries.filter(e => e.status === 'posted').length} قيد</div>
         </div>
         <div className="bg-white p-5 rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] flex flex-col justify-between hover:-translate-y-1 transition-transform duration-300">
           <div className="text-sm font-bold text-slate-500 mb-3 flex justify-between items-center">

@@ -151,11 +151,11 @@ export function BanksPage() {
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
         {banks.map((bank) => (
           <div key={bank.id} className="bg-white rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] border border-slate-100/50 p-6 hover:-translate-y-1 transition-transform duration-300 group relative overflow-hidden flex flex-col justify-between">
-            <div className={clsx("absolute top-0 start-0 w-1.5 h-full", bank.type === 'bank' ? 'bg-primary-500' : 'bg-emerald-500')}></div>
+            <div className={clsx("absolute top-0 start-0 w-1.5 h-full", bank.type === 'bank' ? 'bg-primary-500' : 'bg-primary-500')}></div>
             <div>
               <div className="flex items-start justify-between mb-4">
                 <div className="flex items-center space-x-3 ">
-                  <div className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 ${bank.type === 'bank' ? 'bg-blue-50 text-blue-600 border border-blue-100' : 'bg-emerald-50 text-emerald-600 border border-emerald-100'}`}>
+                  <div className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 ${bank.type === 'bank' ? 'bg-slate-50 text-slate-600 border border-slate-100' : 'bg-primary-50 text-primary-600 border border-primary-100'}`}>
                     {bank.type === 'bank' ? <Landmark className="w-6 h-6" /> : <Wallet className="w-6 h-6" />}
                   </div>
                   <div>
@@ -180,7 +180,7 @@ export function BanksPage() {
               </div>
 
               <div className="grid grid-cols-4 gap-2 pt-2">
-                 <button onClick={() => handleAction('deposit', bank)} title="إيداع (Deposit)" className="flex flex-col items-center justify-center gap-1.5 p-2 bg-slate-50 hover:bg-emerald-50 hover:text-emerald-700 text-slate-600 rounded-lg transition-colors group/btn">
+                 <button onClick={() => handleAction('deposit', bank)} title="إيداع (Deposit)" className="flex flex-col items-center justify-center gap-1.5 p-2 bg-slate-50 hover:bg-primary-50 hover:text-primary-700 text-slate-600 rounded-lg transition-colors group/btn">
                    <ArrowDownToLine className="w-4 h-4 group-hover/btn:-translate-y-0.5 transition-transform" />
                    <span className="text-[10px] font-bold">إيداع</span>
                  </button>
@@ -188,7 +188,7 @@ export function BanksPage() {
                    <ArrowUpFromLine className="w-4 h-4 group-hover/btn:-translate-y-0.5 transition-transform" />
                    <span className="text-[10px] font-bold">سحب</span>
                  </button>
-                 <button onClick={() => handleAction('transfer', bank)} title="تحويل (Transfer)" className="flex flex-col items-center justify-center gap-1.5 p-2 bg-slate-50 hover:bg-blue-50 hover:text-blue-700 text-slate-600 rounded-lg transition-colors group/btn">
+                 <button onClick={() => handleAction('transfer', bank)} title="تحويل (Transfer)" className="flex flex-col items-center justify-center gap-1.5 p-2 bg-slate-50 hover:bg-slate-50 hover:text-slate-700 text-slate-600 rounded-lg transition-colors group/btn">
                    <ArrowRightLeft className="w-4 h-4" />
                    <span className="text-[10px] font-bold">تحويل</span>
                  </button>
@@ -234,12 +234,12 @@ export function BanksPage() {
                 <label className="block text-sm font-medium text-slate-700 mb-2">المبلغ (Amount)</label>
                 <input type="number" value={transferForm.amount || ''} onChange={e => setTransferForm({...transferForm, amount: Number(e.target.value)})} placeholder="0.00" className="w-full bg-slate-50 border border-slate-200 text-slate-900 text-sm rounded-xl px-4 py-2.5 outline-none text-right" dir="ltr" />
               </div>
-              <div className="bg-blue-50 border border-blue-100 p-4 rounded-xl">
-                 <div className="text-sm font-medium text-blue-800 mb-2">معلومات التحويل متعدد العملات (إذا لزم الأمر):</div>
+              <div className="bg-slate-50 border border-slate-100 p-4 rounded-xl">
+                 <div className="text-sm font-medium text-slate-800 mb-2">معلومات التحويل متعدد العملات (إذا لزم الأمر):</div>
                  <div className="flex gap-4 items-center">
                     <div className="flex-1">
-                      <label className="block text-xs font-semibold text-blue-700 mb-1">سعر الصرف (Exchange Rate)</label>
-                      <input type="number" value={transferForm.exchangeRate || ''} onChange={e => setTransferForm({...transferForm, exchangeRate: Number(e.target.value)})} placeholder="1.0" className="w-full bg-white border border-blue-200 text-slate-900 text-sm rounded-lg px-3 py-2 outline-none text-right" dir="ltr" />
+                      <label className="block text-xs font-semibold text-slate-700 mb-1">سعر الصرف (Exchange Rate)</label>
+                      <input type="number" value={transferForm.exchangeRate || ''} onChange={e => setTransferForm({...transferForm, exchangeRate: Number(e.target.value)})} placeholder="1.0" className="w-full bg-white border border-slate-200 text-slate-900 text-sm rounded-lg px-3 py-2 outline-none text-right" dir="ltr" />
                     </div>
                  </div>
               </div>
@@ -291,7 +291,7 @@ export function BanksPage() {
                 <input type="text" placeholder="مثال: إيداع نقدي..." className="w-full bg-white border border-slate-200 text-slate-900 text-sm rounded-xl px-4 py-2.5 outline-none" />
               </div>
               <div className="pt-4">
-                <button disabled={isProcessing} onClick={() => handleTransaction(activeModal)} className={clsx("w-full text-white py-3 rounded-xl text-sm font-bold transition disabled:opacity-50", activeModal === 'deposit' ? 'bg-emerald-600 hover:bg-emerald-700' : 'bg-rose-600 hover:bg-rose-700')}>
+                <button disabled={isProcessing} onClick={() => handleTransaction(activeModal)} className={clsx("w-full text-white py-3 rounded-xl text-sm font-bold transition disabled:opacity-50", activeModal === 'deposit' ? 'bg-primary-600 hover:bg-primary-700' : 'bg-rose-600 hover:bg-rose-700')}>
                   {isProcessing ? 'جاري التسجيل...' : (activeModal === 'deposit' ? 'تسجيل الإيداع' : 'تسجيل السحب')}
                 </button>
               </div>
@@ -350,7 +350,7 @@ export function BanksPage() {
 
       {toastMsg && (
         <div className="fixed bottom-10 start-1/2 -translate-x-1/2 bg-slate-900 text-white px-6 py-3 rounded-xl text-sm font-bold shadow-2xl z-[9999] whitespace-nowrap flex items-center gap-2">
-          <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></div>
+          <div className="w-2 h-2 rounded-full bg-primary-400 animate-pulse"></div>
           {toastMsg}
         </div>
       )}

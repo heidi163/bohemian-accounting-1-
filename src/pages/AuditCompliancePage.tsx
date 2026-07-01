@@ -113,7 +113,7 @@ export function AuditCompliancePage() {
   const getTypeStyle = (type: string) => {
     switch(type) {
       case 'Logins': return 'bg-blue-50 text-blue-600 border-blue-100';
-      case 'Create Logs': return 'bg-emerald-50 text-emerald-600 border-emerald-100';
+      case 'Create Logs': return 'bg-primary-50 text-primary-600 border-primary-100';
       case 'Update Logs': return 'bg-amber-50 text-amber-600 border-amber-100';
       case 'Delete Logs': return 'bg-rose-50 text-rose-600 border-rose-100';
       case 'Approvals': return 'bg-purple-50 text-purple-600 border-purple-100';
@@ -191,8 +191,8 @@ export function AuditCompliancePage() {
             </div>
 
             <div className="bg-white rounded-3xl p-5 shadow-[0_4px_24px_rgb(0,0,0,0.02)] hover:-translate-y-1 hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all duration-300 group border border-slate-100 flex items-center gap-4">
-              <div className="w-12 h-12 bg-emerald-50 rounded-2xl flex items-center justify-center shrink-0">
-                <Users className="w-6 h-6 text-emerald-600" />
+              <div className="w-12 h-12 bg-primary-50 rounded-2xl flex items-center justify-center shrink-0">
+                <Users className="w-6 h-6 text-primary-600" />
               </div>
               <div>
                 <p className="text-sm text-slate-500 font-bold">مستخدمين نشطين</p>
@@ -284,7 +284,7 @@ export function AuditCompliancePage() {
                          <td className="px-6 py-4">
                            <div className={clsx(
                              "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-sm font-bold",
-                             log.status === 'نجاح' ? "bg-emerald-50 text-emerald-600" : 
+                             log.status === 'نجاح' ? "bg-primary-50 text-primary-600" : 
                              log.status === 'تحذير' ? "bg-amber-50 text-amber-600" : 
                              "bg-rose-50 text-rose-600"
                            )}>
@@ -319,7 +319,7 @@ export function AuditCompliancePage() {
             <div className="absolute top-0 end-0 p-8 opacity-5 group-hover:scale-110 transition-transform duration-700 pointer-events-none">
               <Lock className="w-48 h-48" />
             </div>
-            <div className="w-16 h-16 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center relative z-10">
+            <div className="w-16 h-16 bg-primary-50 text-primary-600 rounded-2xl flex items-center justify-center relative z-10">
               <Lock className="w-8 h-8" />
             </div>
             <div className="relative z-10">
@@ -382,7 +382,7 @@ export function AuditCompliancePage() {
                <div className="p-6 space-y-5">
                   <div className="flex justify-between items-center border-b border-slate-50 pb-4">
                      <span className="text-slate-600 font-bold text-sm">النسخ الاحتياطي التلقائي:</span>
-                     <span className="bg-emerald-100 text-emerald-700 px-3 py-1 rounded-lg text-xs font-black">مفعل 100%</span>
+                     <span className="bg-primary-100 text-primary-700 px-3 py-1 rounded-lg text-xs font-black">مفعل 100%</span>
                   </div>
                   <div className="flex justify-between items-center border-b border-slate-50 pb-4">
                      <span className="text-slate-600 font-bold text-sm">مدة الاحتفاظ بالسجلات:</span>
@@ -405,7 +405,7 @@ export function AuditCompliancePage() {
 
       {toastMsg && (
         <div className="fixed bottom-10 start-1/2 -translate-x-1/2 bg-slate-900 text-white px-6 py-4 rounded-2xl text-sm font-bold shadow-2xl z-[9999] whitespace-nowrap flex items-center gap-3 animate-in slide-in-from-bottom-5">
-          <div className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></div>
+          <div className="w-2.5 h-2.5 rounded-full bg-primary-400 animate-pulse"></div>
           {toastMsg}
         </div>
       )}

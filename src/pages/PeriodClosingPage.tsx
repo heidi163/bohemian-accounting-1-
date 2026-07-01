@@ -129,11 +129,11 @@ export function PeriodClosingPage() {
         <div className="bg-white p-5 rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] border-0 flex flex-col justify-between hover:-translate-y-1 transition-transform duration-300">
           <div className="text-sm font-bold text-slate-500 mb-3 flex justify-between items-center">
             <span>الفترات المفتوحة</span>
-            <div className="w-9 h-9 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-600"><Unlock className="w-4 h-4"/></div>
+            <div className="w-9 h-9 rounded-xl bg-primary-50 flex items-center justify-center text-primary-600"><Unlock className="w-4 h-4"/></div>
           </div>
           <div>
             <div className="text-3xl font-black text-slate-900 tracking-tight" dir="ltr">{openCount}</div>
-            <div className="text-xs font-bold text-emerald-600 mt-2 bg-emerald-50 inline-block px-2 py-1 rounded-lg">شهور قيد العمل</div>
+            <div className="text-xs font-bold text-primary-600 mt-2 bg-primary-50 inline-block px-2 py-1 rounded-lg">شهور قيد العمل</div>
           </div>
         </div>
 
@@ -209,7 +209,7 @@ export function PeriodClosingPage() {
                      </div>
                      <div>
                         {period.status === 'open' ? (
-                           <div className="w-8 h-8 rounded-full bg-emerald-50 text-emerald-500 flex items-center justify-center" title="مفتوح"><Unlock className="w-4 h-4"/></div>
+                           <div className="w-8 h-8 rounded-full bg-primary-50 text-primary-500 flex items-center justify-center" title="مفتوح"><Unlock className="w-4 h-4"/></div>
                         ) : period.status === 'soft_lock' ? (
                            <div className="w-8 h-8 rounded-full bg-amber-50 text-amber-500 flex items-center justify-center" title="إقفال مبدئي"><Lock className="w-4 h-4"/></div>
                         ) : (
@@ -239,7 +239,7 @@ export function PeriodClosingPage() {
                      "px-8 py-6 border-b flex flex-col md:flex-row justify-between items-start md:items-center gap-4 transition-colors",
                      activePeriod.status === 'hard_lock' ? "bg-slate-800 border-slate-800 text-white" :
                      activePeriod.status === 'soft_lock' ? "bg-amber-50 border-amber-100" :
-                     "bg-emerald-50 border-emerald-100"
+                     "bg-primary-50 border-primary-100"
                   )}>
                      <div>
                         <h3 className={clsx("font-black text-3xl", activePeriod.status === 'hard_lock' ? "text-white" : "text-slate-900")}>
@@ -277,13 +277,13 @@ export function PeriodClosingPage() {
                                     activePeriod.status === 'hard_lock' 
                                        ? "bg-slate-50 border-slate-100 cursor-default opacity-80" 
                                        : "cursor-pointer hover:-translate-y-0.5 hover:shadow-sm border-slate-200 bg-white",
-                                    task.isCompleted && activePeriod.status !== 'hard_lock' ? "border-emerald-200 bg-emerald-50/30" : ""
+                                    task.isCompleted && activePeriod.status !== 'hard_lock' ? "border-primary-200 bg-primary-50/30" : ""
                                  )}
                               >
                                  <div className={clsx(
                                     "w-6 h-6 rounded-md flex items-center justify-center border-2 transition-colors shrink-0",
                                     task.isCompleted 
-                                       ? "bg-emerald-500 border-emerald-500 text-white" 
+                                       ? "bg-primary-500 border-primary-500 text-white" 
                                        : "border-slate-300 text-transparent"
                                  )}>
                                     <CheckSquare className="w-4 h-4 stroke-[3]" />
@@ -313,7 +313,7 @@ export function PeriodClosingPage() {
                      <button 
                         onClick={() => updatePeriodStatus('open')}
                         disabled={activePeriod.status === 'open'}
-                        className="flex-1 flex items-center justify-center gap-2 py-3.5 px-4 rounded-xl text-sm font-bold bg-white border-2 border-emerald-100 text-emerald-700 hover:bg-emerald-50 disabled:opacity-50 disabled:cursor-not-allowed transition shadow-sm hover:shadow"
+                        className="flex-1 flex items-center justify-center gap-2 py-3.5 px-4 rounded-xl text-sm font-bold bg-white border-2 border-primary-100 text-primary-700 hover:bg-primary-50 disabled:opacity-50 disabled:cursor-not-allowed transition shadow-sm hover:shadow"
                      >
                         <Unlock className="w-4 h-4"/> إعادة فتح الفترة
                      </button>
@@ -339,7 +339,7 @@ export function PeriodClosingPage() {
 
       {toastMsg && (
         <div className="fixed bottom-10 start-1/2 -translate-x-1/2 bg-slate-900 text-white px-6 py-4 rounded-2xl text-sm font-bold shadow-2xl z-[9999] whitespace-nowrap flex items-center gap-3 animate-in slide-in-from-bottom-5">
-          <div className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></div>
+          <div className="w-2.5 h-2.5 rounded-full bg-primary-400 animate-pulse"></div>
           {toastMsg}
         </div>
       )}

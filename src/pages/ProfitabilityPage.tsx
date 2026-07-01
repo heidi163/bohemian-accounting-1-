@@ -53,7 +53,7 @@ export function ProfitabilityPage() {
         <div className="bg-white p-6 rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] border-0 flex flex-col justify-between min-h-[140px] hover:-translate-y-1 transition-transform duration-300 group">
           <div className="text-sm font-bold text-slate-500 mb-4 flex justify-between items-center">
             <span>إجمالي أرباح أفضل العملاء</span>
-            <div className="w-10 h-10 rounded-2xl bg-emerald-50 flex items-center justify-center text-emerald-600 group-hover:bg-emerald-100 transition-colors"><Trophy className="w-5 h-5"/></div>
+            <div className="w-10 h-10 rounded-2xl bg-primary-50 flex items-center justify-center text-primary-600 group-hover:bg-primary-100 transition-colors"><Trophy className="w-5 h-5"/></div>
           </div>
           <div>
             <div className="text-3xl font-black text-slate-900 tracking-tight" dir="ltr">
@@ -91,7 +91,7 @@ export function ProfitabilityPage() {
          {/* Client Profitability */}
          <div className="space-y-6">
             <h3 className="font-bold text-slate-800 text-lg flex items-center gap-2">
-              <Users className="w-5 h-5 text-emerald-500" />
+              <Users className="w-5 h-5 text-primary-500" />
               أفضل العملاء (Top Clients)
             </h3>
             
@@ -99,11 +99,11 @@ export function ProfitabilityPage() {
               {topClients.map((client, idx) => (
                 <div key={client.client_id} className="p-5 rounded-3xl bg-white shadow-[0_4px_24px_rgb(0,0,0,0.02)] hover:-translate-y-1 hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all duration-300 group border-0 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-5 hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:-translate-y-0.5 transition-all group">
                    <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-black font-mono text-lg shrink-0">
+                      <div className="w-12 h-12 rounded-2xl bg-primary-50 text-primary-600 flex items-center justify-center font-black font-mono text-lg shrink-0">
                          #{idx + 1}
                       </div>
                       <div>
-                         <h4 className="font-bold text-slate-900 text-lg group-hover:text-emerald-600 transition-colors">{client.client_name}</h4>
+                         <h4 className="font-bold text-slate-900 text-lg group-hover:text-primary-600 transition-colors">{client.client_name}</h4>
                          <div className="text-sm font-semibold text-slate-500 mt-1 flex gap-2">
                            <span>إيراد: <span dir="ltr" className="text-slate-700">{new Intl.NumberFormat('ar-EG').format(client.total_revenue)}</span></span>
                            <span className="text-slate-300">•</span>
@@ -114,12 +114,12 @@ export function ProfitabilityPage() {
                    <div className="flex items-center gap-6 w-full sm:w-auto bg-slate-50 sm:bg-transparent p-4 sm:p-0 rounded-2xl">
                       <div className="text-end flex-1 sm:flex-none">
                          <div className="text-[11px] text-slate-400 font-black uppercase tracking-wider mb-1">صافي الربح</div>
-                         <div className="font-black text-emerald-600 text-xl" dir="ltr">{new Intl.NumberFormat('ar-EG').format(client.net_profit)}</div>
+                         <div className="font-black text-primary-600 text-xl" dir="ltr">{new Intl.NumberFormat('ar-EG').format(client.net_profit)}</div>
                       </div>
                       <div className="w-px h-10 bg-slate-200 hidden sm:block"></div>
                       <div className="text-end flex-1 sm:flex-none">
                          <div className="text-[11px] text-slate-400 font-black uppercase tracking-wider mb-1">الهامش</div>
-                         <div className="font-black text-slate-800 text-lg bg-emerald-50 px-3 py-1 rounded-xl inline-block">{client.profit_margin.toFixed(1)}%</div>
+                         <div className="font-black text-slate-800 text-lg bg-primary-50 px-3 py-1 rounded-xl inline-block">{client.profit_margin.toFixed(1)}%</div>
                       </div>
                    </div>
                 </div>
@@ -192,8 +192,8 @@ export function ProfitabilityPage() {
                            </div>
                         </div>
                         <div className="border-r border-slate-200 pr-5 flex flex-col justify-center items-end">
-                           <span className="text-[11px] text-emerald-600/80 font-black uppercase tracking-wider mb-1">صافي الربح (Net)</span>
-                           <span className={clsx("font-mono font-black text-3xl", project.net_profit >= 0 ? "text-emerald-600" : "text-rose-600")} dir="ltr">
+                           <span className="text-[11px] text-primary-600/80 font-black uppercase tracking-wider mb-1">صافي الربح (Net)</span>
+                           <span className={clsx("font-mono font-black text-3xl", project.net_profit >= 0 ? "text-primary-600" : "text-rose-600")} dir="ltr">
                               {new Intl.NumberFormat('ar-EG').format(project.net_profit)}
                            </span>
                         </div>

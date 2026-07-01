@@ -11,7 +11,7 @@ const statusStyles: Record<string, string> = {
   pending_approval: 'bg-amber-100 text-amber-700',
   approved: 'bg-primary-100 text-primary-700',
   partial: 'bg-blue-100 text-blue-700',
-  paid: 'bg-emerald-100 text-emerald-700',
+  paid: 'bg-primary-100 text-primary-700',
   overdue: 'bg-red-100 text-red-700',
   cancelled: 'bg-slate-100 text-slate-500',
 };
@@ -190,7 +190,7 @@ export function PurchasesPage() {
         </div>
         <div className="flex flex-wrap gap-2">
           {selectedBills.size > 0 && (
-            <button onClick={() => openModal('payment')} className="bg-emerald-100 text-emerald-800 px-4 py-2.5 rounded-xl text-sm font-semibold hover:bg-emerald-200 transition flex items-center gap-2">
+            <button onClick={() => openModal('payment')} className="bg-primary-100 text-primary-800 px-4 py-2.5 rounded-xl text-sm font-semibold hover:bg-primary-200 transition flex items-center gap-2">
               <DollarSign className="w-4 h-4" /> سداد مجمع ({selectedBills.size})
             </button>
           )}
@@ -225,9 +225,9 @@ export function PurchasesPage() {
         <div className="bg-white p-5 rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] flex flex-col justify-between hover:-translate-y-1 transition-transform duration-300">
           <div className="text-sm font-bold text-slate-500 mb-3 flex justify-between items-center">
             <span>تم السداد</span>
-            <div className="w-9 h-9 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-600"><DollarSign className="w-4 h-4"/></div>
+            <div className="w-9 h-9 rounded-xl bg-primary-50 flex items-center justify-center text-primary-600"><DollarSign className="w-4 h-4"/></div>
           </div>
-          <div className="text-2xl font-black text-emerald-600" dir="ltr">{new Intl.NumberFormat('ar-EG', { style: 'currency', currency: 'EGP' }).format(bills.reduce((acc, curr) => acc + curr.paid_amount, 0))}</div>
+          <div className="text-2xl font-black text-primary-600" dir="ltr">{new Intl.NumberFormat('ar-EG', { style: 'currency', currency: 'EGP' }).format(bills.reduce((acc, curr) => acc + curr.paid_amount, 0))}</div>
         </div>
       </div>
 
@@ -312,7 +312,7 @@ export function PurchasesPage() {
                     <button 
                       onClick={() => ['approved', 'partial', 'overdue'].includes(bill.status) ? openModal('payment', bill) : undefined} 
                       title="تسجيل صرف" 
-                      className={clsx("p-2 rounded-lg transition", ['approved', 'partial', 'overdue'].includes(bill.status) ? "text-slate-400 hover:bg-emerald-50 hover:text-emerald-600" : "text-slate-200 cursor-not-allowed")}
+                      className={clsx("p-2 rounded-lg transition", ['approved', 'partial', 'overdue'].includes(bill.status) ? "text-slate-400 hover:bg-primary-50 hover:text-primary-600" : "text-slate-200 cursor-not-allowed")}
                     >
                       <DollarSign className="w-4 h-4" />
                     </button>
@@ -371,7 +371,7 @@ export function PurchasesPage() {
               </div>
               <button 
                 onClick={handlePayment}
-                className="w-full bg-emerald-600 text-white font-bold py-3 text-sm rounded-xl hover:bg-emerald-700 transition mt-4"
+                className="w-full bg-primary-600 text-white font-bold py-3 text-sm rounded-xl hover:bg-primary-700 transition mt-4"
               >
                 تأكيد الدفع (Record Payment)
               </button>
@@ -408,7 +408,7 @@ export function PurchasesPage() {
       )}
 
       {toastMsg && (
-        <div className="fixed bottom-6 left-6 bg-emerald-600 text-white px-6 py-3 rounded-xl shadow-lg font-bold text-sm z-50 flex items-center gap-2">
+        <div className="fixed bottom-6 left-6 bg-primary-600 text-white px-6 py-3 rounded-xl shadow-lg font-bold text-sm z-50 flex items-center gap-2">
           {toastMsg}
         </div>
       )}

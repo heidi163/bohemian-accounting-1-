@@ -167,9 +167,9 @@ export function PayrollPage() {
           <div className="flex justify-between items-start">
             <div>
               <p className="text-slate-500 text-sm font-bold mb-1">صافي الرواتب المدفوعة</p>
-              <h3 className="font-black text-emerald-600 text-3xl" dir="ltr">{new Intl.NumberFormat('ar-EG').format(kpiNet)} EGP</h3>
+              <h3 className="font-black text-primary-600 text-3xl" dir="ltr">{new Intl.NumberFormat('ar-EG').format(kpiNet)} EGP</h3>
             </div>
-            <div className="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center">
+            <div className="w-12 h-12 bg-primary-50 text-primary-600 rounded-2xl flex items-center justify-center">
               <CheckCircle2 className="w-6 h-6" />
             </div>
           </div>
@@ -209,13 +209,13 @@ export function PayrollPage() {
                   <td className="px-6 py-4 text-end font-mono font-bold text-rose-600" dir="ltr">
                     -{new Intl.NumberFormat('ar-EG').format(run.total_deductions + run.total_taxes + run.total_social_insurance)}
                   </td>
-                  <td className="px-6 py-4 text-end font-mono font-black text-emerald-600" dir="ltr">
+                  <td className="px-6 py-4 text-end font-mono font-black text-primary-600" dir="ltr">
                     {new Intl.NumberFormat('ar-EG', { style: 'currency', currency: 'EGP' }).format(run.net_salary)}
                   </td>
                   <td className="px-6 py-4 text-start">
                     <span className={clsx(
                       'inline-flex items-center rounded-xl px-3 py-1 text-xs font-black', 
-                      run.status === 'paid' ? 'bg-emerald-50 text-emerald-600' : 'bg-amber-50 text-amber-600'
+                      run.status === 'paid' ? 'bg-primary-50 text-primary-600' : 'bg-amber-50 text-amber-600'
                     )}>
                       {run.status === 'paid' ? 'تم الدفع' : 'تحت المراجعة'}
                     </span>
@@ -229,7 +229,7 @@ export function PayrollPage() {
                            <Send className="w-4 h-4" />
                         </button>
                         {run.status !== 'paid' && (
-                          <button title="اعتماد كشوف الرواتب" className="p-2.5 text-slate-400 hover:bg-emerald-50 hover:text-emerald-600 rounded-xl transition-colors">
+                          <button title="اعتماد كشوف الرواتب" className="p-2.5 text-slate-400 hover:bg-primary-50 hover:text-primary-600 rounded-xl transition-colors">
                              <CheckCircle2 className="w-4 h-4" />
                           </button>
                         )}
@@ -292,9 +292,9 @@ export function PayrollPage() {
             </div>
             <div className="p-6 space-y-4">
               {isTaxesPaid ? (
-                <div className="bg-emerald-50 text-emerald-700 p-6 rounded-2xl border border-emerald-100 flex flex-col items-center justify-center text-center space-y-3 animate-in zoom-in">
-                   <div className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center">
-                     <CheckCircle2 className="w-8 h-8 text-emerald-600" />
+                <div className="bg-primary-50 text-primary-700 p-6 rounded-2xl border border-primary-100 flex flex-col items-center justify-center text-center space-y-3 animate-in zoom-in">
+                   <div className="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center">
+                     <CheckCircle2 className="w-8 h-8 text-primary-600" />
                    </div>
                    <h4 className="font-bold text-lg">تم السداد بالفعل</h4>
                    <p className="text-sm opacity-90 font-medium">تم سداد مستحقات الضرائب والتأمينات لهذا الشهر بالكامل، وتم إصدار قيد اليومية تلقائياً.</p>
@@ -349,7 +349,7 @@ export function PayrollPage() {
       {/* Toast */}
       {toastMsg && (
         <div className="fixed bottom-10 start-1/2 -translate-x-1/2 bg-slate-900 text-white px-6 py-3 rounded-2xl text-sm font-bold shadow-2xl z-[9999] whitespace-nowrap flex items-center gap-2 animate-in slide-in-from-bottom-5">
-          <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></div>
+          <div className="w-2 h-2 rounded-full bg-primary-400 animate-pulse"></div>
           {toastMsg}
         </div>
       )}
