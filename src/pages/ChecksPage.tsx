@@ -15,13 +15,14 @@ interface Check {
   partyName: string; // Payee or Payer
   status: "pending" | "cleared" | "bounced";
   notes?: string;
+  company_id: string;
 }
 
 const mockChecks: Check[] = [
-  { id: "CHK-001", type: "issued", checkNumber: "001234", amount: 25000, date: "2023-10-15", dueDate: "2023-11-15", bankName: "البنك الأهلي", partyName: "شركة الموردين المتحدين", status: "pending" },
-  { id: "CHK-002", type: "received", checkNumber: "998877", amount: 15000, date: "2023-10-20", dueDate: "2023-10-25", bankName: "بنك مصر", partyName: "مؤسسة الأفق", status: "cleared" },
-  { id: "CHK-003", type: "issued", checkNumber: "001235", amount: 8000, date: "2023-10-22", dueDate: "2023-12-01", bankName: "البنك التجاري الدولي", partyName: "الشركة العربية للتجارة", status: "bounced" },
-  { id: "CHK-004", type: "received", checkNumber: "554433", amount: 32000, date: "2023-10-25", dueDate: "2023-11-10", bankName: "بنك القاهرة", partyName: "مجموعة الأندلس", status: "pending" },
+  { id: "CHK-001", type: "issued", checkNumber: "001234", amount: 25000, date: "2023-10-15", dueDate: "2023-11-15", bankName: "البنك الأهلي", partyName: "شركة الموردين المتحدين", status: "pending", company_id: "BGK" },
+  { id: "CHK-002", type: "received", checkNumber: "998877", amount: 15000, date: "2023-10-20", dueDate: "2023-10-25", bankName: "بنك مصر", partyName: "مؤسسة الأفق", status: "cleared", company_id: "O2N" },
+  { id: "CHK-003", type: "issued", checkNumber: "001235", amount: 8000, date: "2023-10-22", dueDate: "2023-12-01", bankName: "البنك التجاري الدولي", partyName: "الشركة العربية للتجارة", status: "bounced", company_id: "BGK" },
+  { id: "CHK-004", type: "received", checkNumber: "554433", amount: 32000, date: "2023-10-25", dueDate: "2023-11-10", bankName: "بنك القاهرة", partyName: "مجموعة الأندلس", status: "pending", company_id: "O2N" },
 ];
 
 export function ChecksPage() {
@@ -38,11 +39,13 @@ export function ChecksPage() {
 
   useEffect(() => {
     const local = localStorage.getItem(getCompanyKey("mock_checks"));
+    const activeCompany = getActiveCompany();
     if (local) {
-      setChecks(JSON.parse(local));
-    } else if (false) {
-            setChecks(mockChecks);
+      const parsed = JSON.parse(local);
+      setChecks(parsed.filter((c: Check) => c.company_id === activeCompany));
+    } else {
       localStorage.setItem(getCompanyKey("mock_checks"), JSON.stringify(mockChecks));
+      setChecks(mockChecks.filter(c => c.company_id === activeCompany));
     }
   }, []);
 
@@ -64,10 +67,13 @@ export function ChecksPage() {
       partyName: newCheck.partyName,
       status: newCheck.status as "pending" | "cleared" | "bounced",
       notes: newCheck.notes,
+      company_id: getActiveCompany()
     };
 
-    const updated = [check, ...checks];
-    setChecks(updated);
+    const local = JSON.parse(localStorage.getItem(getCompanyKey("mock_checks")) || "[]");
+    const updated = [check, ...local];
+    
+    setChecks([check, ...checks]);
     localStorage.setItem(getCompanyKey("mock_checks"), JSON.stringify(updated));
     setIsModalOpen(false);
     setNewCheck({ type: activeTab, status: "pending" });
@@ -76,9 +82,11 @@ export function ChecksPage() {
   };
 
   const handleUpdateStatus = (id: string, newStatus: "pending" | "cleared" | "bounced") => {
-    const updated = checks.map(c => c.id === id ? { ...c, status: newStatus } : c);
-    setChecks(updated);
-    localStorage.setItem(getCompanyKey("mock_checks"), JSON.stringify(updated));
+    const local = JSON.parse(localStorage.getItem(getCompanyKey("mock_checks")) || "[]");
+    const updatedLocal = local.map((c: Check) => c.id === id ? { ...c, status: newStatus } : c);
+    
+    setChecks(checks.map(c => c.id === id ? { ...c, status: newStatus } : c));
+    localStorage.setItem(getCompanyKey("mock_checks"), JSON.stringify(updatedLocal));
   };
 
   const filteredChecks = checks.filter(c => {
