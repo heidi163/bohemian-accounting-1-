@@ -26,6 +26,10 @@ apiClient.interceptors.request.use((config) => {
 
 // Response interceptor to handle 401 Unauthorized errors (token expired)
 apiClient.interceptors.response.use((response) => {
+  // If the server returns HTML instead of JSON (common in Vercel SPA fallbacks), reject so the fallback catch block runs
+  if (typeof response.data === 'string' && response.data.toLowerCase().includes('<html')) {
+    return Promise.reject(new Error('API returned HTML instead of JSON'));
+  }
   return response;
 }, (error) => {
   if (error.response && error.response.status === 401) {

@@ -51,7 +51,11 @@ export function InvoicesPage() {
 
     apiClient.get(`/invoices?company_id=${companyId}`)
       .then((res) => {
-        if (res.data.success) setInvoices(res.data.data);
+        if (res.data && res.data.success) {
+          setInvoices(res.data.data);
+        } else {
+          throw new Error("API failed");
+        }
       })
       .catch(() => {
         const localInvoices = JSON.parse(localStorage.getItem(getCompanyKey('mock_invoices')) || '[]');

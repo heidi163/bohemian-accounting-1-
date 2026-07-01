@@ -26,7 +26,11 @@ export function ContactsPage() {
   const loadCustomers = async () => {
     try {
       const res = await apiClient.get('/customers');
-      setContacts(res.data.data || []);
+      if (res.data && res.data.success) {
+        setContacts(res.data.data || []);
+      } else {
+        throw new Error("API failed");
+      }
     } catch (error) {
       // Fallback to local storage or defaults if API is unreachable
       const localContacts = JSON.parse(localStorage.getItem('mock_contacts') || '[]');
