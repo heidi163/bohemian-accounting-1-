@@ -1,6 +1,6 @@
 import { toast } from 'react-hot-toast';
 import { useState, useEffect } from "react";
-import { FileSignature, Plus, Search, Filter, ArrowUpRight, ArrowDownLeft, Banknote, CalendarDays, Building2, User, Clock, CheckCircle2, AlertCircle, RefreshCw } from "lucide-react";
+import { FileSignature, Plus, Search, Filter, ArrowUpRight, ArrowDownLeft, Banknote, CalendarDays, Building2, User, Clock, CheckCircle2, AlertCircle, RefreshCw, X } from "lucide-react";
 import { clsx } from "clsx";
 import { getCompanyKey, getActiveCompany } from '../utils/storage';
 
@@ -252,19 +252,18 @@ export function ChecksPage() {
 
       {/* Modal */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-900/50 backdrop-blur-sm text-center p-4 sm:p-0">
-          <span className="hidden sm:inline-block sm:h-screen sm:align-middle" aria-hidden="true">&#8203;</span>
-          <div className="inline-block align-bottom bg-white rounded-2xl text-start overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle w-full max-w-2xl animate-fade-in">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm">
+          <div className="bg-white rounded-3xl w-full max-w-xl shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
             <div className="flex items-center justify-between p-6 border-b border-slate-100 bg-slate-50/50">
-              <h3 className="text-lg font-bold text-slate-800 flex items-center gap-2">
+              <h3 className="text-xl font-bold text-slate-800 flex items-center gap-2">
                 <FileSignature className="w-5 h-5 text-primary" />
                 إضافة شيك جديد
               </h3>
               <button 
                 onClick={() => setIsModalOpen(false)}
-                className="text-slate-400 hover:text-slate-500 hover:bg-slate-100 p-1 rounded-lg transition"
+                className="text-slate-400 hover:text-rose-500 hover:bg-rose-50 p-2 rounded-xl transition-colors"
               >
-                <AlertCircle className="w-5 h-5 rotate-45" />
+                <X className="w-5 h-5" />
               </button>
             </div>
             
