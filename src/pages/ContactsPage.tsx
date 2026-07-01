@@ -212,7 +212,39 @@ export function ContactsPage() {
           </div>
         </div>
       </div>
-      <div className="bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col overflow-hidden">
+
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+        <div className="bg-white p-5 rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] flex flex-col justify-between hover:-translate-y-1 transition-transform duration-300">
+          <div className="text-sm font-bold text-slate-500 mb-3 flex justify-between items-center">
+            <span>إجمالي جهات الاتصال</span>
+            <div className="w-9 h-9 rounded-xl bg-slate-50 flex items-center justify-center text-slate-600"><Users className="w-4 h-4"/></div>
+          </div>
+          <div className="text-2xl font-black text-slate-900">{contacts.length} جهة</div>
+        </div>
+        <div className="bg-white p-5 rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] flex flex-col justify-between hover:-translate-y-1 transition-transform duration-300">
+          <div className="text-sm font-bold text-slate-500 mb-3 flex justify-between items-center">
+            <span>إجمالي العملاء</span>
+            <div className="w-9 h-9 rounded-xl bg-primary-50 flex items-center justify-center text-primary-600"><TrendingUp className="w-4 h-4"/></div>
+          </div>
+          <div className="text-2xl font-black text-primary-600">{contacts.filter(c => c.type === 'customer').length} عميل</div>
+        </div>
+        <div className="bg-white p-5 rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] flex flex-col justify-between hover:-translate-y-1 transition-transform duration-300">
+          <div className="text-sm font-bold text-slate-500 mb-3 flex justify-between items-center">
+            <span>إجمالي الموردين</span>
+            <div className="w-9 h-9 rounded-xl bg-amber-50 flex items-center justify-center text-amber-600"><AlertTriangle className="w-4 h-4"/></div>
+          </div>
+          <div className="text-2xl font-black text-amber-600">{contacts.filter(c => c.type === 'supplier').length} مورد</div>
+        </div>
+        <div className="bg-white p-5 rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] flex flex-col justify-between hover:-translate-y-1 transition-transform duration-300">
+          <div className="text-sm font-bold text-slate-500 mb-3 flex justify-between items-center">
+            <span>مستحقات العملاء</span>
+            <div className="w-9 h-9 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-600"><DollarSign className="w-4 h-4"/></div>
+          </div>
+          <div className="text-2xl font-black text-emerald-600" dir="ltr">{new Intl.NumberFormat('ar-EG', { style: 'currency', currency: 'EGP' }).format(contacts.filter(c => c.type === 'customer').reduce((acc, curr) => acc + (curr.outstanding_balance ?? curr.balance), 0))}</div>
+        </div>
+      </div>
+
+      <div className="bg-white rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] flex flex-col overflow-hidden">
         <div className="flex-1 overflow-x-auto">
           <table className="w-full text-start border-collapse">
             <thead className="bg-slate-50 text-slate-400 text-xs uppercase font-bold tracking-widest">
@@ -239,8 +271,8 @@ export function ContactsPage() {
                     )}
                   </td>
                   <td className="px-6 py-4 text-start">
-                    <span className={`inline-flex items-center rounded-md px-2.5 py-1 text-xs font-bold leading-none bg-blue-100 text-blue-700`}>
-                      عميل
+                    <span className={clsx('inline-flex items-center rounded-md px-2.5 py-1 text-xs font-bold leading-none', contact.type === 'customer' ? 'bg-blue-100 text-blue-700' : 'bg-amber-100 text-amber-700')}>
+                      {contact.type === 'customer' ? 'عميل' : 'مورد'}
                     </span>
                   </td>
                   <td className="px-6 py-4 text-start">{contact.email}</td>
