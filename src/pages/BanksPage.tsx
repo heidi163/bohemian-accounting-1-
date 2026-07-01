@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { type BankAccount } from "../types";
 import { useNavigate } from "react-router";
-import { Building2, Landmark, Wallet, ArrowRightLeft, ArrowDownToLine, ArrowUpFromLine, RefreshCcw, FileUp, Filter } from "lucide-react";
+import { Building2, Landmark, Wallet, ArrowRightLeft, ArrowDownToLine, ArrowUpFromLine, RefreshCcw, FileUp, Filter , X} from "lucide-react";
 import { clsx } from "clsx";
 import { getCompanyKey, getActiveCompany } from '../utils/storage';
 
@@ -210,7 +210,7 @@ export function BanksPage() {
           <div className="inline-block align-bottom bg-white rounded-2xl text-start overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle w-full max-w-lg">
             <div className="flex items-center justify-between p-6 border-b border-slate-100">
               <h3 className="text-lg font-bold text-slate-800">تحويل بين الحسابات / البنوك (Transfer)</h3>
-              <button onClick={() => setActiveModal(null)} className="text-slate-400 hover:text-slate-500 transition"></button>
+              <button onClick={() => setActiveModal(null)} className="text-slate-400 hover:text-slate-500 transition"><X className="w-5 h-5" /></button>
             </div>
             <div className="p-6 space-y-4">
               {errorMsg && <div className="bg-rose-50 text-rose-600 p-3 rounded-xl text-sm font-bold">{errorMsg}</div>}
@@ -265,7 +265,7 @@ export function BanksPage() {
               <h3 className="text-lg font-bold text-slate-800">
                 {activeModal === 'deposit' ? 'إيداع بنكي / نقدي (Deposit)' : 'سحب بنكي / نقدي (Withdrawal)'}
               </h3>
-              <button onClick={() => setActiveModal(null)} className="text-slate-400 hover:text-slate-500 transition"></button>
+              <button onClick={() => setActiveModal(null)} className="text-slate-400 hover:text-slate-500 transition"><X className="w-5 h-5" /></button>
             </div>
             <div className="p-6 space-y-4">
                {errorMsg && <div className="bg-rose-50 text-rose-600 p-3 rounded-xl text-sm font-bold">{errorMsg}</div>}
@@ -309,7 +309,7 @@ export function BanksPage() {
                 <h3 className="text-lg font-bold text-slate-800">مطابقة كشف الحساب (Bank Reconciliation)</h3>
                 <p className="text-sm text-slate-500 mt-1">{selectedBank?.name} - {selectedBank?.company_id}</p>
               </div>
-              <button onClick={() => setActiveModal(null)} className="text-slate-400 hover:text-slate-500 transition bg-white p-2 border border-slate-200 rounded-lg"></button>
+              <button onClick={() => setActiveModal(null)} className="text-slate-400 hover:text-slate-500 transition bg-white p-2 border border-slate-200 rounded-lg"><X className="w-5 h-5" /></button>
             </div>
             <div className="p-6 overflow-y-auto flex-1 space-y-6">
               <div className="bg-violet-50 text-violet-800 p-4 rounded-xl border border-violet-100 flex items-start gap-3">

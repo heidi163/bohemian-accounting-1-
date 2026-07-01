@@ -353,7 +353,7 @@ export function ReportBuilderPage() {
                 {actionModal === 'schedule' && 'جدولة التقرير'}
                 {actionModal === 'share' && 'مشاركة التقرير'}
               </h3>
-              <button onClick={() => setActionModal(null)} className="text-slate-400 hover:text-slate-500 transition"></button>
+              <button onClick={() => setActionModal(null)} className="text-slate-400 hover:text-slate-500 transition"><X className="w-5 h-5" /></button>
             </div>
             <div className="p-6 space-y-4">
               {modalError && <div className="bg-rose-50 text-rose-600 p-3 rounded-xl text-sm font-bold">{modalError}</div>}

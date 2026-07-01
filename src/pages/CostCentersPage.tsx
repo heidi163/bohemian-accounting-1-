@@ -270,7 +270,7 @@ export function CostCentersPage() {
           <div className="bg-white rounded-3xl overflow-hidden shadow-2xl w-full max-w-md transform transition-all border border-white">
              <div className="flex items-center justify-between p-6 border-b border-slate-50 bg-slate-50/50">
                <h3 className="text-xl font-bold text-slate-800">إضافة مركز تكلفة جديد</h3>
-               <button onClick={() => setIsModalOpen(false)} className="w-8 h-8 flex items-center justify-center rounded-xl bg-white text-slate-400 hover:text-rose-500 hover:bg-rose-50 transition-colors shadow-sm"></button>
+               <button onClick={() => setIsModalOpen(false)} className="w-8 h-8 flex items-center justify-center rounded-xl bg-white text-slate-400 hover:text-rose-500 hover:bg-rose-50 transition-colors shadow-sm"><X className="w-5 h-5" /></button>
              </div>
              <div className="p-6 space-y-5">
                <div>
