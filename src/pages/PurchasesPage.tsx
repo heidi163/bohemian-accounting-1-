@@ -55,14 +55,14 @@ export function PurchasesPage() {
          const localBills = JSON.parse(localStorage.getItem(getCompanyKey('mock_bills')) || '[]');
          if (localBills.length > 0) {
             setBills(localBills);
-         } else if (false) {
-            setBills([
+         } else {
+            const defaultBills = [
               { id: 1, bill_number: 'BILL-2026-00001', reference_number: 'AWS-INV-001', supplier_name: 'Amazon Web Services', total_amount: 1200, paid_amount: 1200, tax_amount: 0, status: 'paid', bill_date: '2026-05-01', due_date: '2026-05-31', currency: 'USD', project_id: 'PRJ-001' },
               { id: 2, bill_number: 'BILL-2026-00002', reference_number: 'AD-2026', supplier_name: 'Google Ads', total_amount: 15000, paid_amount: 5000, tax_amount: 2100, status: 'partial', bill_date: '2026-06-01', due_date: '2026-06-15', currency: 'EGP', cost_center: 'HQ' },
               { id: 3, bill_number: 'BILL-2026-00003', reference_number: 'RN-1234', supplier_name: 'Digital Ocean', total_amount: 450, paid_amount: 0, tax_amount: 0, status: 'pending_approval', bill_date: '2026-06-10', due_date: '2026-06-25', currency: 'USD' }
-            ]);
-         } else {
-            showToast('لا يمكن الاتصال بالخادم ولا توجد بيانات محلية');
+            ];
+            setBills(defaultBills as any);
+            localStorage.setItem(getCompanyKey('mock_bills'), JSON.stringify(defaultBills));
          }
       });
   };
@@ -200,7 +200,38 @@ export function PurchasesPage() {
         </div>
       </div>
 
-      <div className="bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col overflow-hidden">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+        <div className="bg-white p-5 rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] flex flex-col justify-between hover:-translate-y-1 transition-transform duration-300">
+          <div className="text-sm font-bold text-slate-500 mb-3 flex justify-between items-center">
+            <span>إجمالي المشتريات</span>
+            <div className="w-9 h-9 rounded-xl bg-slate-50 flex items-center justify-center text-slate-600"><FileText className="w-4 h-4"/></div>
+          </div>
+          <div className="text-2xl font-black text-slate-900">{bills.length} فاتورة</div>
+        </div>
+        <div className="bg-white p-5 rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] flex flex-col justify-between hover:-translate-y-1 transition-transform duration-300">
+          <div className="text-sm font-bold text-slate-500 mb-3 flex justify-between items-center">
+            <span>مدفوعات مستحقة</span>
+            <div className="w-9 h-9 rounded-xl bg-rose-50 flex items-center justify-center text-rose-600"><DollarSign className="w-4 h-4"/></div>
+          </div>
+          <div className="text-2xl font-black text-rose-600" dir="ltr">{new Intl.NumberFormat('ar-EG', { style: 'currency', currency: 'EGP' }).format(bills.filter(b => b.status !== 'paid' && b.status !== 'cancelled').reduce((acc, curr) => acc + (curr.total_amount - curr.paid_amount), 0))}</div>
+        </div>
+        <div className="bg-white p-5 rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] flex flex-col justify-between hover:-translate-y-1 transition-transform duration-300">
+          <div className="text-sm font-bold text-slate-500 mb-3 flex justify-between items-center">
+            <span>قيد الاعتماد</span>
+            <div className="w-9 h-9 rounded-xl bg-amber-50 flex items-center justify-center text-amber-600"><ShieldCheck className="w-4 h-4"/></div>
+          </div>
+          <div className="text-2xl font-black text-amber-600">{bills.filter(b => b.status === 'pending_approval').length} فواتير</div>
+        </div>
+        <div className="bg-white p-5 rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] flex flex-col justify-between hover:-translate-y-1 transition-transform duration-300">
+          <div className="text-sm font-bold text-slate-500 mb-3 flex justify-between items-center">
+            <span>تم السداد</span>
+            <div className="w-9 h-9 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-600"><DollarSign className="w-4 h-4"/></div>
+          </div>
+          <div className="text-2xl font-black text-emerald-600" dir="ltr">{new Intl.NumberFormat('ar-EG', { style: 'currency', currency: 'EGP' }).format(bills.reduce((acc, curr) => acc + curr.paid_amount, 0))}</div>
+        </div>
+      </div>
+
+      <div className="bg-white rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] flex flex-col overflow-hidden">
         <div className="flex-1 overflow-x-auto">
           <table className="w-full text-start border-collapse">
             <thead className="bg-slate-50 text-slate-400 text-xs uppercase font-bold tracking-widest">
