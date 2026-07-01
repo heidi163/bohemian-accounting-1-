@@ -56,7 +56,7 @@ export function LoginPage() {
             <ShieldCheck className="w-9 h-9 text-white" />
           </div>
           <h1 className="text-3xl font-black text-white tracking-tight">BGK & O2N</h1>
-          <p className="text-slate-400 mt-1 text-sm">نظام المحاسبة المتكامل — Bohemian Accounting</p>
+          <p className="text-slate-400 mt-1 text-sm">نظام المحاسبة المتكامل</p>
         </div>
 
         {/* Card */}
