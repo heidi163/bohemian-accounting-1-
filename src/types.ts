@@ -54,6 +54,7 @@ export interface Employee {
   allowances: number;
   social_insurance_number?: string;
   bank_account?: string;
+  company_id?: string;
 }
 
 export interface PayrollRun {
