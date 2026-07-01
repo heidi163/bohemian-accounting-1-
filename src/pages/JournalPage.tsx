@@ -5,7 +5,8 @@ import { clsx } from "clsx";
 import { format } from "date-fns";
 import { useNavigate } from "react-router";
 import apiClient from "../api/client";
-import { getCompanyKey } from '../utils/storage';
+import { getCompanyKey, getActiveCompany } from '../utils/storage';
+import { BookOpen, CheckCircle2, Clock, DollarSign } from "lucide-react";
 
 const statusStyles: Record<string, string> = {
   draft: 'bg-slate-100 text-slate-600',
@@ -41,7 +42,9 @@ export function JournalPage() {
           { id: 3, entry_number: 'JE-2026-00003', entry_date: '2026-06-01', description: 'تسوية عهدة موظف', total_debit: 1200, total_credit: 1200, status: 'pending_approval', company_id: 'O2N' }
         ];
         localStorage.setItem(getCompanyKey('mock_journals'), JSON.stringify(defaultJournals));
-        setEntries(defaultJournals);
+        
+        const activeCompany = getActiveCompany();
+        setEntries(defaultJournals.filter(j => j.company_id === activeCompany));
       }
     }
   };
@@ -51,13 +54,48 @@ export function JournalPage() {
   }, []);
 
   return (
-    <div className="bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col overflow-hidden">
-      <div className="p-6 border-b border-slate-100 flex items-center justify-between">
-        <h2 className="font-bold text-slate-800 text-lg">قيود اليومية</h2>
-        <button className="bg-primary-600 text-white px-4 py-2 rounded-xl text-sm font-semibold hover:bg-primary-700 transition" onClick={() => navigate('/journal/new')}>
-          قيد جديد
-        </button>
+    <div className="space-y-6">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+        <div className="bg-white p-5 rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] flex flex-col justify-between hover:-translate-y-1 transition-transform duration-300">
+          <div className="text-sm font-bold text-slate-500 mb-3 flex justify-between items-center">
+            <span>إجمالي القيود</span>
+            <div className="w-9 h-9 rounded-xl bg-slate-50 flex items-center justify-center text-slate-600"><BookOpen className="w-4 h-4"/></div>
+          </div>
+          <div className="text-2xl font-black text-slate-900">{entries.length} قيد</div>
+        </div>
+        <div className="bg-white p-5 rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] flex flex-col justify-between hover:-translate-y-1 transition-transform duration-300">
+          <div className="text-sm font-bold text-slate-500 mb-3 flex justify-between items-center">
+            <span>قيود مرحلة (Posted)</span>
+            <div className="w-9 h-9 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-600"><CheckCircle2 className="w-4 h-4"/></div>
+          </div>
+          <div className="text-2xl font-black text-emerald-600">{entries.filter(e => e.status === 'posted').length} قيد</div>
+        </div>
+        <div className="bg-white p-5 rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] flex flex-col justify-between hover:-translate-y-1 transition-transform duration-300">
+          <div className="text-sm font-bold text-slate-500 mb-3 flex justify-between items-center">
+            <span>قيد المراجعة</span>
+            <div className="w-9 h-9 rounded-xl bg-amber-50 flex items-center justify-center text-amber-600"><Clock className="w-4 h-4"/></div>
+          </div>
+          <div className="text-2xl font-black text-amber-600">{entries.filter(e => e.status === 'pending_approval' || e.status === 'draft').length} قيد</div>
+        </div>
+        <div className="bg-white p-5 rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] flex flex-col justify-between hover:-translate-y-1 transition-transform duration-300">
+          <div className="text-sm font-bold text-slate-500 mb-3 flex justify-between items-center">
+            <span>إجمالي الحركة (مدين)</span>
+            <div className="w-9 h-9 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600"><DollarSign className="w-4 h-4"/></div>
+          </div>
+          <div className="text-2xl font-black text-blue-600" dir="ltr">{new Intl.NumberFormat('ar-EG', { style: 'currency', currency: 'EGP' }).format(entries.reduce((acc, curr) => acc + curr.total_debit, 0))}</div>
+        </div>
       </div>
+
+      <div className="bg-white rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100/50 flex flex-col overflow-hidden">
+        <div className="p-6 border-b border-slate-100 flex items-center justify-between">
+          <div>
+            <h2 className="font-bold text-slate-800 text-xl">قيود اليومية</h2>
+            <p className="text-slate-500 text-sm mt-1">سجل القيود اليومية وعمليات الترحيل والتسوية.</p>
+          </div>
+          <button className="bg-primary-600 text-white px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-primary-700 transition" onClick={() => navigate('/journal/new')}>
+            إضافة قيد جديد
+          </button>
+        </div>
       <div className="flex-1 overflow-x-auto">
         <table className="w-full text-start border-collapse">
           <thead className="bg-slate-50 text-slate-400 text-xs uppercase font-bold tracking-widest">
@@ -112,6 +150,7 @@ export function JournalPage() {
             ))}
           </tbody>
         </table>
+      </div>
       </div>
     </div>
   );
