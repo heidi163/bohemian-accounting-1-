@@ -151,7 +151,7 @@ export function BanksPage() {
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
         {banks.map((bank) => (
           <div key={bank.id} className="bg-white rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] border border-slate-100/50 p-6 hover:-translate-y-1 transition-transform duration-300 group relative overflow-hidden flex flex-col justify-between">
-            <div className={clsx("absolute top-0 start-0 w-1.5 h-full", bank.type === 'bank' ? 'bg-primary-500' : 'bg-primary-500')}></div>
+
             <div>
               <div className="flex items-start justify-between mb-4">
                 <div className="flex items-center space-x-3 ">
