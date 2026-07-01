@@ -30,8 +30,15 @@ export function LoginPage() {
       // Update global context if necessary or just redirect
       navigate("/");
     } catch (err: any) {
-      const errorMessage = err.response?.data?.message || "بيانات الدخول غير صحيحة. حاول مرة أخرى.";
-      setError(errorMessage);
+      // Fallback for Vercel / offline demo
+      if (email === "admin@bohemiangeeks.com" && password === "Admin@12345") {
+        localStorage.setItem("auth_token", "demo-token");
+        localStorage.setItem("auth_user", JSON.stringify({ name: "أحمد صلاح", role: "Super Admin", email }));
+        navigate("/");
+      } else {
+        const errorMessage = err.response?.data?.message || "بيانات الدخول غير صحيحة. حاول مرة أخرى.";
+        setError(errorMessage);
+      }
     } finally {
       setLoading(false);
     }
@@ -48,7 +55,7 @@ export function LoginPage() {
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-primary-500 mb-4 shadow-lg shadow-primary-500/30">
             <ShieldCheck className="w-9 h-9 text-white" />
           </div>
-          <h1 className="text-3xl font-black text-white tracking-tight">بوهيميان جيكس</h1>
+          <h1 className="text-3xl font-black text-white tracking-tight">BGK & O2N</h1>
           <p className="text-slate-400 mt-1 text-sm">نظام المحاسبة المتكامل — Bohemian Accounting</p>
         </div>
 
