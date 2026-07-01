@@ -43,9 +43,12 @@ export function ProfitabilityPage() {
 
   return (
     <div className="space-y-8">
-      <div>
-        <h2 className="font-bold text-slate-800 text-2xl tracking-tight">تحليل الربحية (Profitability Analysis)</h2>
-        <p className="text-slate-500 mt-2 text-sm font-medium">لوحة تحكم تفصيلية لتقييم الأرباح الفعلية للعملاء والمشاريع شاملة التكاليف غير المباشرة.</p>
+      <div className="bg-white rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] border-0 p-6 relative overflow-hidden">
+        <div className="absolute top-0 start-0 w-2 h-full bg-primary-500"></div>
+        <div className="ps-2">
+          <h2 className="font-bold text-slate-800 text-2xl tracking-tight">تحليل الربحية (Profitability Analysis)</h2>
+          <p className="text-slate-500 mt-2 text-sm font-medium">لوحة تحكم تفصيلية لتقييم الأرباح الفعلية للعملاء والمشاريع شاملة التكاليف غير المباشرة.</p>
+        </div>
       </div>
 
       {/* Overview Metrics */}
