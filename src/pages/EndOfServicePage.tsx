@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
-import { Calculator, User, Calendar, DollarSign, FileDown, RefreshCw } from "lucide-react";
+import { Calculator, User, Calendar, DollarSign, FileDown, RefreshCw, FileText, CheckCircle2 } from "lucide-react";
 import { type Employee } from "../types";
-import { getCompanyKey } from '../utils/storage';
+import { getCompanyKey, getActiveCompany } from '../utils/storage';
 
 export function EndOfServicePage() {
   const [employees, setEmployees] = useState<Employee[]>([]);
@@ -27,16 +27,20 @@ export function EndOfServicePage() {
   }>(null);
 
   useEffect(() => {
+    const activeCompany = getActiveCompany();
     fetch("/api/employees")
       .then(res => {
         if (!res.ok) throw new Error();
         return res.json();
       })
-      .then(data => setEmployees(data.data))
+      .then(data => {
+         const emps = data.data || [];
+         setEmployees(emps.filter((e: any) => e.company_id === activeCompany || !e.company_id));
+      })
       .catch(() => {
         const localEmployees = JSON.parse(localStorage.getItem(getCompanyKey('mock_employees')) || '[]');
         if (localEmployees.length > 0) {
-          setEmployees(localEmployees);
+          setEmployees(localEmployees.filter((e: any) => e.company_id === activeCompany || !e.company_id));
         }
       });
   }, []);
@@ -108,6 +112,7 @@ export function EndOfServicePage() {
     setErrorMsg("");
     
     setTimeout(() => {
+      const activeCompany = getActiveCompany();
       const localJournals = JSON.parse(localStorage.getItem(getCompanyKey('mock_journals')) || '[]');
       const emp = employees.find(e => e.id.toString() === form.employee_id);
       const empName = emp ? emp.name : '';
@@ -120,7 +125,7 @@ export function EndOfServicePage() {
         total_debit: result.total,
         total_credit: result.total,
         status: 'draft',
-        company_id: 'BGK'
+        company_id: activeCompany
       };
       
       localJournals.push(newJournal);
@@ -134,113 +139,135 @@ export function EndOfServicePage() {
   const fmt = (n: number) => new Intl.NumberFormat("ar-EG", { style: "currency", currency: "EGP" }).format(n);
 
   return (
-    <div className="space-y-6 max-w-4xl mx-auto">
-      <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
-        <h2 className="font-bold text-slate-800 text-2xl flex items-center gap-2 mb-1">
-          <Calculator className="w-7 h-7 text-primary-600" /> حاسبة نهاية الخدمة (End of Service)
-        </h2>
-        <p className="text-slate-500 text-sm">احتساب مستحقات الموظف وفق قانون العمل المصري.</p>
+    <div className="space-y-6 max-w-5xl mx-auto">
+      {/* Header Container */}
+      <div className="bg-white rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100/50 p-8 flex flex-col items-center justify-center text-center relative overflow-hidden">
+        <div className="absolute top-0 left-1/2 w-64 h-64 bg-primary-50 rounded-full blur-3xl opacity-50 -translate-y-1/2 -translate-x-1/2 pointer-events-none"></div>
+        
+        <div className="relative z-10 flex flex-col items-center">
+          <div className="p-4 bg-primary-100 text-primary-700 rounded-3xl mb-4">
+             <Calculator className="w-8 h-8" />
+          </div>
+          <h2 className="font-black text-slate-800 text-3xl mb-2">
+            حاسبة نهاية الخدمة (End of Service)
+          </h2>
+          <p className="text-slate-500 font-medium max-w-lg">احتساب مستحقات الموظف وفق قانون العمل المصري بشكل دقيق وآلي، مع إمكانية إصدار القيد المحاسبي فوراً.</p>
+        </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Inputs */}
-        <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 space-y-5">
-          <h3 className="font-bold text-slate-800 mb-2">بيانات الموظف</h3>
+        <div className="bg-white rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100/50 p-8 space-y-6 relative overflow-hidden">
+          <h3 className="font-bold text-slate-800 text-xl flex items-center gap-2 border-b border-slate-100 pb-4">
+            <User className="w-5 h-5 text-primary-600" />
+            بيانات الموظف
+          </h3>
 
           {errorMsg && (
-            <div className="bg-rose-50 text-rose-700 p-3 rounded-lg text-sm border border-rose-200">
+            <div className="bg-rose-50 text-rose-700 p-4 rounded-2xl text-sm font-bold border border-rose-200 flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-rose-500 animate-pulse"></span>
               {errorMsg}
             </div>
           )}
 
-          <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">الموظف</label>
-            <select value={form.employee_id} onChange={e => handleEmployeeChange(e.target.value)} className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-primary-500">
-              <option value="">اختر الموظف...</option>
-              {employees.map(emp => (
-                <option key={emp.id} value={emp.id}>{emp.name}</option>
-              ))}
-            </select>
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
+          <div className="space-y-5 relative z-10">
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1 flex items-center gap-1"><Calendar className="w-3.5 h-3.5" /> تاريخ التعيين</label>
-              <input type="date" value={form.hire_date} onChange={e => setForm({ ...form, hire_date: e.target.value })} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm outline-none" />
+              <label className="block text-sm font-bold text-slate-700 mb-2">الموظف</label>
+              <select value={form.employee_id} onChange={e => handleEmployeeChange(e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-primary-500 transition-colors shadow-sm">
+                <option value="">اختر الموظف...</option>
+                {employees.map(emp => (
+                  <option key={emp.id} value={emp.id}>{emp.name}</option>
+                ))}
+              </select>
             </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-bold text-slate-700 mb-2 flex items-center gap-1"><Calendar className="w-4 h-4 text-slate-400" /> تاريخ التعيين</label>
+                <input type="date" value={form.hire_date} onChange={e => setForm({ ...form, hire_date: e.target.value })} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-primary-500 transition-colors shadow-sm" />
+              </div>
+              <div>
+                <label className="block text-sm font-bold text-slate-700 mb-2 flex items-center gap-1"><Calendar className="w-4 h-4 text-slate-400" /> تاريخ المغادرة</label>
+                <input type="date" value={form.exit_date} onChange={e => setForm({ ...form, exit_date: e.target.value })} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-primary-500 transition-colors shadow-sm" />
+              </div>
+            </div>
+
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1 flex items-center gap-1"><Calendar className="w-3.5 h-3.5" /> تاريخ المغادرة</label>
-              <input type="date" value={form.exit_date} onChange={e => setForm({ ...form, exit_date: e.target.value })} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm outline-none" />
+              <label className="block text-sm font-bold text-slate-700 mb-2 flex items-center gap-1"><DollarSign className="w-4 h-4 text-slate-400" /> الراتب الأساسي (EGP)</label>
+              <input type="number" value={form.basic_salary} onChange={e => setForm({ ...form, basic_salary: e.target.value })} placeholder="0.00" className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-primary-500 transition-colors shadow-sm" dir="ltr" />
             </div>
-          </div>
 
-          <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1 flex items-center gap-1"><DollarSign className="w-3.5 h-3.5" /> الراتب الأساسي (EGP)</label>
-            <input type="number" value={form.basic_salary} onChange={e => setForm({ ...form, basic_salary: e.target.value })} placeholder="0.00" className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm outline-none" dir="ltr" />
-          </div>
+            <div>
+              <label className="block text-sm font-bold text-slate-700 mb-2">رصيد الإجازات المتبقية (أيام)</label>
+              <input type="number" value={form.leave_balance} onChange={e => setForm({ ...form, leave_balance: e.target.value })} placeholder="0" className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-primary-500 transition-colors shadow-sm" dir="ltr" />
+            </div>
 
-          <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">رصيد الإجازات المتبقية (أيام)</label>
-            <input type="number" value={form.leave_balance} onChange={e => setForm({ ...form, leave_balance: e.target.value })} placeholder="0" className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm outline-none" dir="ltr" />
-          </div>
+            <div>
+              <label className="block text-sm font-bold text-slate-700 mb-2">سبب المغادرة</label>
+              <select value={form.exit_reason} onChange={e => setForm({ ...form, exit_reason: e.target.value })} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-primary-500 transition-colors shadow-sm">
+                <option value="resignation">استقالة (Resignation)</option>
+                <option value="termination">إنهاء خدمة (Termination)</option>
+                <option value="retirement">تقاعد (Retirement)</option>
+              </select>
+            </div>
 
-          <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">سبب المغادرة</label>
-            <select value={form.exit_reason} onChange={e => setForm({ ...form, exit_reason: e.target.value })} className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-sm outline-none">
-              <option value="resignation">استقالة (Resignation)</option>
-              <option value="termination">إنهاء خدمة (Termination)</option>
-              <option value="retirement">تقاعد (Retirement)</option>
-            </select>
+            <button onClick={calculate} className="w-full bg-primary-600 text-white font-bold py-3.5 rounded-xl hover:bg-primary-700 hover:-translate-y-0.5 shadow-lg shadow-primary-600/20 transition-all flex items-center justify-center gap-2 mt-4">
+              <Calculator className="w-5 h-5" /> احتساب المستحقات
+            </button>
           </div>
-
-          <button onClick={calculate} className="w-full bg-primary-600 text-white font-bold py-3 rounded-xl hover:bg-primary-700 transition flex items-center justify-center gap-2">
-            <Calculator className="w-5 h-5" /> احتساب المستحقات
-          </button>
         </div>
 
         {/* Result */}
-        <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 flex flex-col">
-          <h3 className="font-bold text-slate-800 mb-4">نتيجة الاحتساب</h3>
+        <div className="bg-white rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100/50 p-8 flex flex-col relative overflow-hidden">
+          <h3 className="font-bold text-slate-800 text-xl flex items-center gap-2 border-b border-slate-100 pb-4 mb-6 relative z-10">
+            <FileText className="w-5 h-5 text-primary-600" />
+            نتيجة الاحتساب
+          </h3>
+          
           {result ? (
-            <div className="space-y-4 flex-1">
-              <div className="bg-primary-50 border border-primary-100 rounded-xl p-4 text-center">
-                <div className="text-sm text-primary-700 font-semibold mb-1">مدة الخدمة</div>
-                <div className="text-2xl font-black text-primary-800">{result.years} سنة و {result.months} شهر</div>
+            <div className="space-y-6 flex-1 relative z-10 animate-in fade-in duration-300">
+              <div className="bg-gradient-to-br from-primary-50 to-white border border-primary-100 rounded-3xl p-6 text-center shadow-sm">
+                <div className="text-sm text-primary-600 font-bold mb-2">مدة الخدمة الفعلية</div>
+                <div className="text-3xl font-black text-slate-800">{result.years} سنة <span className="text-primary-600">و</span> {result.months} شهر</div>
               </div>
 
-              <div className="space-y-3">
+              <div className="bg-slate-50/80 rounded-2xl p-5 border border-slate-100 space-y-4">
                 {[
                   { label: "الراتب النسبي عن الشهر الأخير", value: result.prorated_salary, color: "text-slate-800" },
                   { label: "قيمة الإجازات المستحقة", value: result.leave_value, color: "text-slate-800" },
-                  { label: "مكافأة نهاية الخدمة (قانون العمل)", value: result.eos_bonus, color: "text-primary-700" },
+                  { label: "مكافأة نهاية الخدمة (قانون العمل)", value: result.eos_bonus, color: "text-primary-600" },
                 ].map((item) => (
-                  <div key={item.label} className="flex justify-between items-center py-3 border-b border-slate-100">
-                    <span className="text-sm text-slate-600">{item.label}</span>
-                    <span className={`font-mono font-bold ${item.color}`} dir="ltr">{fmt(item.value)}</span>
+                  <div key={item.label} className="flex justify-between items-center pb-4 border-b border-slate-200/60 last:border-0 last:pb-0">
+                    <span className="text-sm font-bold text-slate-600">{item.label}</span>
+                    <span className={`font-mono font-bold text-lg ${item.color}`} dir="ltr">{fmt(item.value)}</span>
                   </div>
                 ))}
-                <div className="flex justify-between items-center pt-4 border-t-2 border-primary-200 bg-primary-50 px-4 py-3 rounded-xl mt-2">
-                  <span className="font-bold text-slate-800 text-lg">الإجمالي المستحق</span>
-                  <span className="font-mono font-black text-2xl text-primary-700" dir="ltr">{fmt(result.total)}</span>
-                </div>
+              </div>
+              
+              <div className="flex justify-between items-center bg-slate-900 text-white px-6 py-5 rounded-2xl shadow-lg">
+                <span className="font-bold text-lg">الإجمالي المستحق</span>
+                <span className="font-mono font-black text-2xl text-emerald-400" dir="ltr">{fmt(result.total)}</span>
               </div>
 
               <div className="flex gap-3 mt-4">
                 {journalCreated ? (
-                   <div className="flex-1 bg-emerald-50 text-emerald-700 font-bold py-2 rounded-xl text-sm flex items-center justify-center border border-emerald-200">
+                   <div className="flex-1 bg-emerald-50 text-emerald-700 font-bold py-3.5 rounded-xl text-sm flex items-center justify-center gap-2 border border-emerald-200 animate-in zoom-in-95">
+                     <CheckCircle2 className="w-5 h-5" />
                      تم إنشاء القيد المحاسبي بنجاح!
                    </div>
                 ) : (
-                  <button onClick={handleCreateJournal} disabled={isProcessingJournal} className="flex-1 bg-emerald-600 text-white font-bold py-2 rounded-xl text-sm flex items-center justify-center gap-2 hover:bg-emerald-700 transition disabled:opacity-50">
-                    {isProcessingJournal ? <><RefreshCw className="w-4 h-4 animate-spin"/> جاري الإنشاء...</> : 'إنشاء قيد محاسبي'}
+                  <button onClick={handleCreateJournal} disabled={isProcessingJournal} className="flex-1 bg-emerald-600 text-white font-bold py-3.5 rounded-xl text-sm flex items-center justify-center gap-2 hover:bg-emerald-700 shadow-lg shadow-emerald-600/20 hover:-translate-y-0.5 transition-all disabled:opacity-50 disabled:hover:translate-y-0">
+                    {isProcessingJournal ? <><RefreshCw className="w-5 h-5 animate-spin"/> جاري الإنشاء...</> : 'تأكيد وإنشاء قيد محاسبي'}
                   </button>
                 )}
               </div>
             </div>
           ) : (
-            <div className="flex-1 flex flex-col items-center justify-center text-center text-slate-400 space-y-3">
-              <Calculator className="w-16 h-16 opacity-20" />
-              <p className="text-sm">أدخل بيانات الموظف وانقر "احتساب المستحقات" لرؤية النتيجة.</p>
+            <div className="flex-1 flex flex-col items-center justify-center text-center text-slate-400 space-y-4">
+              <div className="w-24 h-24 bg-slate-50 rounded-full flex items-center justify-center mb-2">
+                 <Calculator className="w-12 h-12 text-slate-300" />
+              </div>
+              <p className="text-sm font-medium max-w-xs">أدخل بيانات الموظف وانقر "احتساب المستحقات" لرؤية النتيجة هنا.</p>
             </div>
           )}
         </div>
