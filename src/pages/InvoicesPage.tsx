@@ -6,6 +6,7 @@ import { useNavigate } from "react-router";
 import { FileText, Send, Download, DollarSign, Settings, X, Tag } from "lucide-react";
 import { getCompanyKey, getActiveCompany } from '../utils/storage';
 import apiClient from "../api/client";
+import { useTheme } from "../contexts/ThemeContext";
 
 const statusStyles: Record<string, string> = {
   draft: 'bg-slate-100 text-slate-600',
@@ -42,6 +43,8 @@ export function InvoicesPage() {
   const [focusedInvoice, setFocusedInvoice] = useState<Invoice | null>(null);
   const [toastMsg, setToastMsg] = useState('');
   const [paymentAmount, setPaymentAmount] = useState('');
+  
+  const { primaryColor } = useTheme();
   
   const navigate = useNavigate();
 
@@ -220,8 +223,8 @@ export function InvoicesPage() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="bg-gradient-to-br from-slate-900 to-slate-800 p-6 rounded-[2rem] shadow-xl text-white flex flex-col justify-between hover:-translate-y-1 transition-transform duration-300 relative overflow-hidden">
-          <div className="absolute top-0 end-0 p-8 opacity-10 pointer-events-none">
+        <div className="p-6 rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.12)] text-white flex flex-col justify-between hover:-translate-y-1 transition-transform duration-300 relative overflow-hidden" style={{ backgroundColor: primaryColor, backgroundImage: 'linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(0,0,0,0.1) 100%)' }}>
+          <div className="absolute top-0 end-0 p-8 opacity-20 pointer-events-none mix-blend-overlay">
             <DollarSign className="w-32 h-32" />
           </div>
           <div className="text-sm font-medium text-slate-300 mb-4 flex items-center gap-2">
