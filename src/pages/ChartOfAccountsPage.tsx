@@ -1,8 +1,8 @@
 import { toast } from 'react-hot-toast';
 import { useEffect, useState } from "react";
 import { clsx } from "clsx";
-import { Copy, Plus, Filter, Search, ChevronDown, ChevronUp, X } from "lucide-react";
-import { getCompanyKey } from '../utils/storage';
+import { Copy, Plus, Filter, Search, ChevronDown, ChevronUp, X, Briefcase, DollarSign, ShieldCheck, Activity } from "lucide-react";
+import { getCompanyKey, getActiveCompany } from '../utils/storage';
 
 interface Account {
   id: number;
@@ -79,7 +79,10 @@ export function ChartOfAccountsPage() {
       ];
     }
     
-    setAccounts(loadedAccounts);
+    const currentCompany = getActiveCompany();
+    const activeCompanyAccounts = loadedAccounts.filter((acc: Account) => acc.company_id === 'ALL' || acc.company_id === currentCompany);
+
+    setAccounts(activeCompanyAccounts);
     setAccountTypes(typesData);
     if (typesData.length > 0 && !newAccount.type) {
       setNewAccount(prev => ({...prev, type: typesData[0].id.toString()}));
@@ -87,7 +90,7 @@ export function ChartOfAccountsPage() {
     
     setExpandedCodes(prev => {
       const newExpanded = new Set(prev);
-      loadedAccounts.forEach((acc: Account) => {
+      activeCompanyAccounts.forEach((acc: Account) => {
         if (acc.level !== 'detail' && prev.size === 0) {
           newExpanded.add(acc.code);
         }
@@ -154,14 +157,9 @@ export function ChartOfAccountsPage() {
                 )}>{levelTranslations[acc.level]}</span>
               </div>
               <div className="w-1/6 flex items-center justify-center">
-                 {acc.company_id === 'ALL' ? (
-                   <div className="flex gap-1">
-                     <span className="text-xs bg-primary-50 text-primary-700 px-2 py-0.5 rounded border border-primary-100 font-bold">BGK</span>
-                     <span className="text-xs bg-primary-50 text-primary-700 px-2 py-0.5 rounded border border-primary-100 font-bold">O2N</span>
-                   </div>
-                 ) : (
-                   <span className="text-xs bg-primary-50 text-primary-700 px-2 py-0.5 rounded border border-primary-100 font-bold">{acc.company_id}</span>
-                 )}
+                 <span className="text-xs bg-slate-50 text-slate-700 px-2.5 py-1 rounded-md font-bold">
+                   {acc.company_id === 'ALL' ? getActiveCompany() : acc.company_id}
+                 </span>
               </div>
               <div className="w-1/6 text-end">
                 <span className={clsx("text-xs px-2 py-1 rounded inline-block", acc.is_active ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700')}>
@@ -181,8 +179,39 @@ export function ChartOfAccountsPage() {
 
   return (
     <div className="space-y-6">
-      <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
-        <div className="flex flex-col sm:flex-row justify-between gap-4 mb-6">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+        <div className="bg-white p-5 rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] flex flex-col justify-between hover:-translate-y-1 transition-transform duration-300">
+          <div className="text-sm font-bold text-slate-500 mb-3 flex justify-between items-center">
+            <span>إجمالي الحسابات</span>
+            <div className="w-9 h-9 rounded-xl bg-slate-50 flex items-center justify-center text-slate-600"><Briefcase className="w-4 h-4"/></div>
+          </div>
+          <div className="text-2xl font-black text-slate-900">{accounts.length} حساب</div>
+        </div>
+        <div className="bg-white p-5 rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] flex flex-col justify-between hover:-translate-y-1 transition-transform duration-300">
+          <div className="text-sm font-bold text-slate-500 mb-3 flex justify-between items-center">
+            <span>إجمالي الأصول</span>
+            <div className="w-9 h-9 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600"><ShieldCheck className="w-4 h-4"/></div>
+          </div>
+          <div className="text-2xl font-black text-blue-600">{accounts.filter(a => a.type === 'asset').length} حساب</div>
+        </div>
+        <div className="bg-white p-5 rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] flex flex-col justify-between hover:-translate-y-1 transition-transform duration-300">
+          <div className="text-sm font-bold text-slate-500 mb-3 flex justify-between items-center">
+            <span>إجمالي الخصوم</span>
+            <div className="w-9 h-9 rounded-xl bg-rose-50 flex items-center justify-center text-rose-600"><Activity className="w-4 h-4"/></div>
+          </div>
+          <div className="text-2xl font-black text-rose-600">{accounts.filter(a => a.type === 'liability').length} حساب</div>
+        </div>
+        <div className="bg-white p-5 rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] flex flex-col justify-between hover:-translate-y-1 transition-transform duration-300">
+          <div className="text-sm font-bold text-slate-500 mb-3 flex justify-between items-center">
+            <span>إيرادات ومصروفات</span>
+            <div className="w-9 h-9 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-600"><DollarSign className="w-4 h-4"/></div>
+          </div>
+          <div className="text-2xl font-black text-emerald-600">{accounts.filter(a => a.type === 'revenue' || a.type === 'expense').length} حساب</div>
+        </div>
+      </div>
+
+      <div className="bg-white rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100/50 p-6 flex flex-col overflow-hidden">
+        <div className="flex flex-col sm:flex-row justify-between items-start md:items-center gap-4 mb-6">
           <div>
             <h1 className="text-2xl font-bold text-slate-800">شجرة الحسابات</h1>
             <p className="text-slate-500 mt-1">إعدادات الدليل المحاسبي للشركات التابعة</p>
@@ -209,8 +238,8 @@ export function ChartOfAccountsPage() {
           </div>
         </div>
 
-        <div className="border border-slate-200 rounded-xl overflow-hidden">
-          <div className="flex bg-slate-50 text-slate-500 text-xs font-bold uppercase tracking-wider p-3 border-b border-slate-200">
+        <div className="border border-slate-100 rounded-2xl overflow-hidden">
+          <div className="flex bg-slate-50/80 text-slate-500 text-xs font-bold uppercase tracking-wider p-4 border-b border-slate-100">
             <div className="w-1/3 ps-4 text-start">الحساب</div>
             <div className="w-1/6 text-start">النوع</div>
             <div className="w-1/6 text-start">المستوى</div>
