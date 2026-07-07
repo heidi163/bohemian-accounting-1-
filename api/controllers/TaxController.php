@@ -75,8 +75,7 @@ class TaxController {
         $bankAccount = Database::fetch("SELECT * FROM bank_accounts WHERE id = ?", [$data['bank_account_id']]);
         if (!$bankAccount) throw new \App\Core\Exceptions\NotFoundException("Bank account not found");
 
-        Database::beginTransaction();
-        try {
+        Database::transaction(function() use ($id, $data, $tax, $bankAccount) {
             $paymentData = [
                 'tax_id' => $id,
                 'amount' => $data['amount'],
@@ -104,13 +103,9 @@ class TaxController {
             );
 
             Logger::audit('PAY', 'TAX', (int)$id, [], ['amount' => $data['amount'], 'journal_entry_id' => $journalEntryId]);
-            Database::commit();
+        });
 
-            Response::success(null, 'Tax payment recorded successfully');
-        } catch (\Exception $e) {
-            Database::rollBack();
-            throw $e;
-        }
+        Response::success(null, 'Tax payment recorded successfully');
     }
 
     public function post(Request $request, string $id): void {

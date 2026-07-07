@@ -38,6 +38,7 @@ const typeTranslations: Record<string, string> = {
 
 export function InvoicesPage() {
   const [invoices, setInvoices] = useState<Invoice[]>([]);
+  const [loading, setLoading] = useState(true);
   const [selectedInvoices, setSelectedInvoices] = useState<Set<number>>(new Set());
   const [activeModal, setActiveModal] = useState<null | 'payment' | 'email' | 'recurring'>(null);
   const [focusedInvoice, setFocusedInvoice] = useState<Invoice | null>(null);
@@ -49,6 +50,7 @@ export function InvoicesPage() {
   const navigate = useNavigate();
 
   const fetchInvoices = () => {
+    setLoading(true);
     const company = getActiveCompany();
     const companyId = company === "BGK" ? 1 : 2;
 
@@ -66,14 +68,15 @@ export function InvoicesPage() {
           setInvoices(localInvoices);
         } else {
           const defaultInvoices = [
-            { id: 1, invoice_number: 'INV-2026-00001', customer_name: 'Bohemian Geeks', total_amount: 15400, paid_amount: 5400, tax_amount: 1400, status: 'partial', invoice_date: '2026-05-15', due_date: '2026-06-15', type: 'invoice', is_recurring: false },
-            { id: 2, invoice_number: 'QT-2026-00102', customer_name: 'Sealy KSA', total_amount: 45000, paid_amount: 0, tax_amount: 0, status: 'draft', invoice_date: '2026-06-01', due_date: '2026-06-30', type: 'quotation', is_recurring: false },
-            { id: 3, invoice_number: 'INV-2026-00003', customer_name: 'Nola Cupcakes', total_amount: 8200, paid_amount: 8200, tax_amount: 1000, status: 'paid', invoice_date: '2026-06-10', due_date: '2026-06-25', type: 'invoice', is_recurring: true }
+            { id: 1, invoice_number: 'INV-2026-00001', customer_name: 'Bohemian Geeks', total_amount: 15400, paid_amount: 5400, tax_amount: 1400, status: 'partial', invoice_date: '2026-05-15', due_date: '2026-06-15', type: 'invoice', recurring_status: 'none' },
+            { id: 2, invoice_number: 'QT-2026-00102', customer_name: 'Sealy KSA', total_amount: 45000, paid_amount: 0, tax_amount: 0, status: 'draft', invoice_date: '2026-06-01', due_date: '2026-06-30', type: 'quotation', recurring_status: 'none' },
+            { id: 3, invoice_number: 'INV-2026-00003', customer_name: 'Nola Cupcakes', total_amount: 8200, paid_amount: 8200, tax_amount: 1000, status: 'paid', invoice_date: '2026-06-10', due_date: '2026-06-25', type: 'invoice', recurring_status: 'active', recurring_frequency: 'monthly' }
           ];
           setInvoices(defaultInvoices as any);
           localStorage.setItem(getCompanyKey('mock_invoices'), JSON.stringify(defaultInvoices));
         }
-      });
+      })
+      .finally(() => setLoading(false));
   };
 
   const showToast = (msg: string) => {
@@ -205,6 +208,16 @@ export function InvoicesPage() {
 
   return (
     <div className="space-y-6">
+      {loading && (
+        <div className="bg-white rounded-3xl p-12 flex items-center justify-center shadow-sm border border-slate-100">
+          <div className="flex flex-col items-center gap-3 text-slate-400">
+            <div className="w-8 h-8 border-4 border-primary-200 border-t-primary-600 rounded-full animate-spin"></div>
+            <span className="text-sm font-semibold">جاري تحميل الفواتير...</span>
+          </div>
+        </div>
+      )}
+      {!loading && (
+
       <div className="bg-white rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] border-0 p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 relative overflow-hidden">
         <div className="absolute top-0 start-0 w-2 h-full bg-primary-500"></div>
         <div className="ps-2">

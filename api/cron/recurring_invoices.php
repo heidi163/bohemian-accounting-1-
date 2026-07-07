@@ -26,72 +26,69 @@ try {
     );
 
     foreach ($schedules as $schedule) {
-        Database::beginTransaction();
-        
         try {
-            // Generate Invoice via the same logic we would use in Controller
-            // But we simulate a request
-            $lines = json_decode($schedule['template_lines'], true);
-            
-            // Re-use logic or better, abstract the Invoice creation into a Service instead of Controller
-            // For the sake of this cron, we insert directly
-            
-            $subtotal = 0;
-            foreach ($lines as $line) {
-                $subtotal += ($line['quantity'] * $line['unit_price']);
-            }
-            $taxRate = 14; 
-            $taxAmount = $subtotal * ($taxRate / 100);
-            $totalAmount = $subtotal + $taxAmount;
+            Database::transaction(function() use ($schedule, $today) {
+                // Generate Invoice via the same logic we would use in Controller
+                // But we simulate a request
+                $lines = json_decode($schedule['template_lines'], true);
+                
+                // Re-use logic or better, abstract the Invoice creation into a Service instead of Controller
+                // For the sake of this cron, we insert directly
+                
+                $subtotal = 0;
+                foreach ($lines as $line) {
+                    $subtotal += ($line['quantity'] * $line['unit_price']);
+                }
+                $taxRate = 14; 
+                $taxAmount = $subtotal * ($taxRate / 100);
+                $totalAmount = $subtotal + $taxAmount;
 
-            $year = date('Y');
-            $prefix = ($schedule['company_id'] == 1 ? 'BGK' : 'O2N') . "-INV-$year-";
-            $lastInv = Database::fetch("SELECT invoice_number FROM invoices WHERE invoice_number LIKE ? ORDER BY id DESC LIMIT 1", ["$prefix%"]);
-            $newNum = $lastInv ? str_pad((string)((int)substr($lastInv['invoice_number'], -5) + 1), 5, '0', STR_PAD_LEFT) : '00001';
-            $invoiceNumber = $prefix . $newNum;
-            
-            $dueDate = date('Y-m-d', strtotime('+14 days'));
+                $year = date('Y');
+                $prefix = ($schedule['company_id'] == 1 ? 'BGK' : 'O2N') . "-INV-$year-";
+                $lastInv = Database::fetch("SELECT invoice_number FROM invoices WHERE invoice_number LIKE ? ORDER BY id DESC LIMIT 1", ["$prefix%"]);
+                $newNum = $lastInv ? str_pad((string)((int)substr($lastInv['invoice_number'], -5) + 1), 5, '0', STR_PAD_LEFT) : '00001';
+                $invoiceNumber = $prefix . $newNum;
+                
+                $dueDate = date('Y-m-d', strtotime('+14 days'));
 
-            Database::query(
-                "INSERT INTO invoices (invoice_number, customer_id, company_id, project_id, cost_center_id, invoice_date, due_date, type, subtotal, tax_rate, tax_amount, total_amount, status, recurring_schedule_id, created_by)
-                 VALUES (?, ?, ?, ?, ?, ?, ?, 'invoice', ?, ?, ?, ?, 'draft', ?, 1)",
-                [
-                    $invoiceNumber, $schedule['customer_id'], $schedule['company_id'], $schedule['project_id'], $schedule['cost_center_id'], 
-                    $today, $dueDate, $subtotal, $taxRate, $taxAmount, $totalAmount, $schedule['id']
-                ]
-            );
-            $invoiceId = Database::lastInsertId();
-
-            foreach ($lines as $line) {
                 Database::query(
-                    "INSERT INTO invoice_lines (invoice_id, description, quantity, unit_price) VALUES (?, ?, ?, ?)",
-                    [$invoiceId, $line['description'], $line['quantity'], $line['unit_price']]
+                    "INSERT INTO invoices (invoice_number, customer_id, company_id, project_id, cost_center_id, invoice_date, due_date, type, subtotal, tax_rate, tax_amount, total_amount, status, recurring_schedule_id, created_by)
+                     VALUES (?, ?, ?, ?, ?, ?, ?, 'invoice', ?, ?, ?, ?, 'draft', ?, 1)",
+                    [
+                        $invoiceNumber, $schedule['customer_id'], $schedule['company_id'], $schedule['project_id'], $schedule['cost_center_id'], 
+                        $today, $dueDate, $subtotal, $taxRate, $taxAmount, $totalAmount, $schedule['id']
+                    ]
                 );
-            }
+                $invoiceId = Database::lastInsertId();
 
-            // Calculate next run date
-            $nextRun = new \DateTime($schedule['next_run_date']);
-            if ($schedule['frequency'] === 'monthly') {
-                $nextRun->modify('+1 month');
-            } elseif ($schedule['frequency'] === 'quarterly') {
-                $nextRun->modify('+3 months');
-            } elseif ($schedule['frequency'] === 'annual') {
-                $nextRun->modify('+1 year');
-            }
-            
-            Database::query(
-                "UPDATE recurring_invoice_schedules SET next_run_date = ?, total_generated = total_generated + 1 WHERE id = ?",
-                [$nextRun->format('Y-m-d'), $schedule['id']]
-            );
-            
-            Database::commit();
-            Logger::info("Generated recurring invoice #$invoiceNumber for Schedule ID {$schedule['id']}");
-            
-            // If auto_send is true, we should approve and email it
-            // This would normally call the Engine and EmailService
+                foreach ($lines as $line) {
+                    Database::query(
+                        "INSERT INTO invoice_lines (invoice_id, description, quantity, unit_price) VALUES (?, ?, ?, ?)",
+                        [$invoiceId, $line['description'], $line['quantity'], $line['unit_price']]
+                    );
+                }
 
+                // Calculate next run date
+                $nextRun = new \DateTime($schedule['next_run_date']);
+                if ($schedule['frequency'] === 'monthly') {
+                    $nextRun->modify('+1 month');
+                } elseif ($schedule['frequency'] === 'quarterly') {
+                    $nextRun->modify('+3 months');
+                } elseif ($schedule['frequency'] === 'annual') {
+                    $nextRun->modify('+1 year');
+                }
+                
+                Database::query(
+                    "UPDATE recurring_invoice_schedules SET next_run_date = ?, total_generated = total_generated + 1 WHERE id = ?",
+                    [$nextRun->format('Y-m-d'), $schedule['id']]
+                );
+                
+                Logger::info("Generated recurring invoice #$invoiceNumber for Schedule ID {$schedule['id']}");
+                
+                // If auto_send is true, we should approve and email it
+                // This would normally call the Engine and EmailService
+            });
         } catch (\Exception $e) {
-            Database::rollBack();
             Logger::error("Failed to generate recurring invoice for Schedule ID {$schedule['id']}: " . $e->getMessage());
         }
     }

@@ -14,13 +14,14 @@ class Database {
 
     public static function getInstance(): PDO {
         if (self::$instance === null) {
+            $driver = getenv('DB_DRIVER') ?: 'pgsql';
             $host = getenv('DB_HOST') ?: '127.0.0.1';
+            $port = getenv('DB_PORT') ?: '5432';
             $db   = getenv('DB_NAME') ?: 'bohemian_accounting';
-            $user = getenv('DB_USER') ?: 'root';
+            $user = getenv('DB_USER') ?: 'postgres';
             $pass = getenv('DB_PASS') ?: '';
-            $charset = 'utf8mb4';
-
-            $dsn = "mysql:host=$host;dbname=$db;charset=$charset";
+            
+            $dsn = "$driver:host=$host;port=$port;dbname=$db";
             $options = [
                 PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
                 PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
@@ -35,6 +36,18 @@ class Database {
             }
         }
         return self::$instance;
+    }
+
+    public static function transaction(callable $callback): mixed {
+        self::beginTransaction();
+        try {
+            $result = $callback(self::getInstance());
+            self::commit();
+            return $result;
+        } catch (\Throwable $e) {
+            self::rollBack();
+            throw $e;
+        }
     }
 
     public static function beginTransaction(): void {

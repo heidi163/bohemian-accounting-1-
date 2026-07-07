@@ -56,21 +56,7 @@ class JournalController {
             'lines' => 'required' // array validation would be more complex
         ]);
 
-        Database::beginTransaction();
-        try {
-            // Manual entries go through the AccountingEngine to ensure balance & locks
-            // However, AccountingEngine::postEntry is private. 
-            // We should either make it public or add a method for manual entries.
-            // For now, let's assume we added a public method in AccountingEngine or we do it here
-            // using the same strict checks.
-            
-            // To respect DRY, we can just call a public method we add to AccountingEngine
-            // Let's assume we implement postManualEntry in AccountingEngine
-            
-            // For the sake of this file, let's assume AccountingEngine handles it
-            // if we update AccountingEngine. Let's do it manually here for simplicity,
-            // but we must check balance!
-            
+        Database::transaction(function() use ($data, &$entryId, &$entryNum) {
             $totalDebit = 0;
             $totalCredit = 0;
             foreach ($data['lines'] as $line) {
@@ -118,13 +104,9 @@ class JournalController {
             }
 
             Logger::audit('CREATE', 'JOURNAL_ENTRY', (int)$entryId, [], ['entry_number' => $entryNum]);
-            Database::commit();
-            
-            Response::success(['id' => $entryId, 'entry_number' => $entryNum], 'Journal entry created successfully');
-        } catch (\Exception $e) {
-            Database::rollBack();
-            throw $e;
-        }
+        });
+        
+        Response::success(['id' => $entryId, 'entry_number' => $entryNum], 'Journal entry created successfully');
     }
 
     public function post(Request $request, string $id): void {

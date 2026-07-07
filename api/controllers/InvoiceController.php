@@ -62,8 +62,7 @@ class InvoiceController {
             'discount_amount' => 'numeric'
         ]);
 
-        Database::beginTransaction();
-        try {
+        Database::transaction(function() use ($data, &$invoiceId, &$invoiceNumber) {
             // Calculate totals
             $subtotal = 0;
             foreach ($data['lines'] as $line) {
@@ -102,13 +101,9 @@ class InvoiceController {
             }
 
             Logger::audit('CREATE', 'INVOICE', (int)$invoiceId, [], ['invoice_number' => $invoiceNumber]);
-            Database::commit();
-            
-            Response::success(['id' => $invoiceId, 'invoice_number' => $invoiceNumber], 'Invoice created successfully');
-        } catch (\Exception $e) {
-            Database::rollBack();
-            throw $e;
-        }
+        });
+        
+        Response::success(['id' => $invoiceId, 'invoice_number' => $invoiceNumber], 'Invoice created successfully');
     }
 
     public function approve(Request $request, string $id): void {
@@ -118,25 +113,42 @@ class InvoiceController {
         if (!$invoice) throw new NotFoundException("Invoice not found");
         if ($invoice['status'] !== 'draft') throw new \Exception("Only draft invoices can be approved");
 
-        Database::beginTransaction();
-        try {
+        Database::transaction(function() use ($invoice, $id) {
             // Post journal entry via Engine
             $journalEntryId = AccountingEngine::postInvoice($invoice);
             
+            // E-Invoicing Logic
+            $etaStatus = 'not_submitted';
+            $etaSubmissionId = null;
+            $etaUuid = null;
+            $zatcaQr = null;
+
+            if (getenv('EINVOICE_ENABLED') === 'true') {
+                // If the company is Egyptian, use ETA
+                if (($invoice['company_currency'] ?? 'EGP') === 'EGP') {
+                    $etaResult = \App\Services\EInvoiceService::submitToETA($invoice);
+                    $etaStatus = $etaResult['status'];
+                    $etaSubmissionId = $etaResult['submission_id'];
+                    $etaUuid = $etaResult['uuid'];
+                }
+                // If Saudi, use ZATCA
+                if (($invoice['company_currency'] ?? 'SAR') === 'SAR') {
+                    $zatcaQr = \App\Services\EInvoiceService::generateZATCAQr($invoice);
+                }
+            }
+
             // Update Invoice
             Database::query(
-                "UPDATE invoices SET status = 'issued', journal_entry_id = ?, approved_by = ? WHERE id = ?",
-                [$journalEntryId, Auth::id(), $id]
+                "UPDATE invoices SET status = 'issued', journal_entry_id = ?, approved_by = ?, 
+                 eta_status = ?, eta_submission_id = ?, eta_uuid = ?, zatca_qr = ?, einvoice_submitted_at = NOW()
+                 WHERE id = ?",
+                [$journalEntryId, Auth::id(), $etaStatus, $etaSubmissionId, $etaUuid, $zatcaQr, $id]
             );
             
             Logger::audit('APPROVE', 'INVOICE', (int)$id);
-            Database::commit();
-            
-            Response::success(null, 'Invoice approved and posted to ledger');
-        } catch (\Exception $e) {
-            Database::rollBack();
-            throw $e;
-        }
+        });
+        
+        Response::success(null, 'Invoice approved, posted to ledger, and e-invoicing processed');
     }
 
     public function recordPayment(Request $request, string $id): void {
@@ -158,8 +170,7 @@ class InvoiceController {
 
         $bank = Database::fetch("SELECT * FROM bank_accounts WHERE id = ?", [$data['bank_account_id']]);
 
-        Database::beginTransaction();
-        try {
+        Database::transaction(function() use ($id, $data, $invoice, $bank) {
             $paymentId = 0; // In a real app we'd insert into invoice_payments table first
             
             // This would normally insert into invoice_payments first to get an ID.
@@ -183,12 +194,8 @@ class InvoiceController {
             Database::query("UPDATE invoices SET paid_amount = ?, status = ? WHERE id = ?", [$newPaid, $newStatus, $id]);
             
             Logger::audit('PAYMENT', 'INVOICE', (int)$id, ['paid' => $invoice['paid_amount']], ['paid' => $newPaid]);
-            Database::commit();
-            
-            Response::success(null, 'Payment recorded successfully');
-        } catch (\Exception $e) {
-            Database::rollBack();
-            throw $e;
-        }
+        });
+        
+        Response::success(null, 'Payment recorded successfully');
     }
 }

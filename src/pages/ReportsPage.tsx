@@ -81,14 +81,49 @@ export function ReportsPage() {
       const data = await res.json();
       setReportData(data.data);
     } catch {
-      setTimeout(() => {
-        setReportData([
+      // Return distinct mock data based on report type
+      const fallbackData: Record<string, any[]> = {
+        trial_balance: [
           { account: "النقدية بالخزينة", debit: 50000, credit: 0 },
-          { account: "البنك الأهلي", debit: 150000, credit: 0 },
-          { account: "الموردون", debit: 0, credit: 40000 },
-          { account: "رأس المال", debit: 0, credit: 160000 }
-        ]);
-      }, 800);
+          { account: "البنك الأهلي - EGP", debit: 250000, credit: 0 },
+          { account: "ذمم مدينة (عملاء)", debit: 120500, credit: 0 },
+          { account: "مخزون بضاعة", debit: 85000, credit: 0 },
+          { account: "ذمم دائنة (موردون)", debit: 0, credit: 40000 },
+          { account: "قرض بنكي طويل الأجل", debit: 0, credit: 400000 },
+          { account: "رأس المال", debit: 0, credit: 265500 },
+        ],
+        income_statement: [
+          { account: "إيرادات المبيعات", debit: 0, credit: 1606000 },
+          { account: "تكلفة البضاعة المباعة", debit: 450000, credit: 0 },
+          { account: "مصروفات الرواتب", debit: 350000, credit: 0 },
+          { account: "مصروفات الإيجار", debit: 120000, credit: 0 },
+          { account: "مصروفات التسويق", debit: 85000, credit: 0 },
+          { account: "مصروفات الإهلاك", debit: 47222, credit: 0 },
+          { account: "مصروفات متنوعة", debit: 30000, credit: 0 },
+        ],
+        balance_sheet: [
+          { account: "إجمالي الأصول المتداولة", debit: 505500, credit: 0 },
+          { account: "إجمالي الأصول الثابتة (صافي)", debit: 1207778, credit: 0 },
+          { account: "إجمالي الخصوم المتداولة", debit: 0, credit: 40000 },
+          { account: "إجمالي الخصوم طويلة الأجل", debit: 0, credit: 400000 },
+          { account: "رأس المال", debit: 0, credit: 1000000 },
+          { account: "الأرباح المحتجزة", debit: 0, credit: 273278 },
+        ],
+        aging: [
+          { account: "Sealy KSA - 0-30 يوم", debit: 50000, credit: 0 },
+          { account: "Sealy KSA - 31-60 يوم", debit: 70500, credit: 0 },
+          { account: "Tech Solutions - 61-90 يوم", debit: 75000, credit: 0 },
+          { account: "Bohemian Geeks - 0-30 يوم", debit: 10400, credit: 0 },
+        ],
+        gl: [
+          { account: "JE-2026-00001 | فتح الأرصدة", debit: 500000, credit: 500000 },
+          { account: "JE-2026-00002 | إيجار يونيو", debit: 15000, credit: 15000 },
+          { account: "JE-2026-00003 | تحويل بين شركات", debit: 120500, credit: 120500 },
+        ],
+      };
+
+      const data = fallbackData[reportId] || fallbackData['trial_balance'];
+      setTimeout(() => setReportData(data), 600);
     }
   };
 

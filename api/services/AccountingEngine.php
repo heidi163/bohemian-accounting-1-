@@ -51,10 +51,7 @@ class AccountingEngine {
             throw new \Exception("Journal entry is not balanced. Debit: $totalDebit, Credit: $totalCredit");
         }
 
-        $entryId = 0;
-        try {
-            Database::beginTransaction();
-
+        return Database::transaction(function() use ($header, $lines, $totalDebit, $totalCredit) {
             $entryNum = self::generateEntryNumber();
             
             Database::query(
@@ -99,13 +96,8 @@ class AccountingEngine {
                 );
             }
 
-            Database::commit();
-        } catch (\Exception $e) {
-            Database::rollBack();
-            throw $e;
-        }
-
-        return $entryId;
+            return $entryId;
+        });
     }
 
     public static function postInvoice(array $invoice): int {
@@ -275,18 +267,13 @@ class AccountingEngine {
             'reference_id' => $original['id']
         ];
 
-        Database::beginTransaction();
-        try {
+        return Database::transaction(function() use ($header, $newLines, $entryId) {
             $newEntryId = self::postEntry($header, $newLines);
             
             // Mark original as reversed
             Database::query("UPDATE journal_entries SET status = 'reversed' WHERE id = ?", [$entryId]);
             
-            Database::commit();
             return $newEntryId;
-        } catch (\Exception $e) {
-            Database::rollBack();
-            throw $e;
-        }
+        });
     }
 }
