@@ -375,7 +375,7 @@ export function AutomationPage() {
 
       {showAddModal && (
          <div className="fixed inset-0 z-[999] overflow-y-auto bg-slate-900/60 backdrop-blur-sm text-center p-4 flex items-center justify-center animate-in fade-in duration-200">
-          <div className="bg-white rounded-3xl text-start overflow-visible shadow-2xl w-full max-w-md animate-in zoom-in-95 duration-200">
+          <div className="bg-white rounded-3xl text-start overflow-hidden shadow-2xl w-full max-w-md animate-in zoom-in-95 duration-200">
             <div className="p-6 border-b border-slate-50 flex justify-between items-center bg-slate-50/50">
               <h3 className="font-black text-xl text-slate-800 flex items-center gap-3">
                 <div className="w-10 h-10 bg-primary-100 text-primary-600 rounded-xl flex items-center justify-center">

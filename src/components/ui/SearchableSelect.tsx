@@ -80,9 +80,10 @@ export function SearchableSelect({ value, onChange, options, placeholder = "اخ
       ref={dropdownRef}
       className="fixed z-[99999] bg-white border border-slate-200 rounded-xl shadow-2xl overflow-hidden"
       style={{ 
-        top: `${rect.bottom + 4}px`, 
+        top: window.innerHeight - rect.bottom < 250 && rect.top > 250 ? `${rect.top - 4}px` : `${rect.bottom + 4}px`, 
         left: `${rect.left}px`, 
-        width: `${rect.width}px` 
+        width: `${rect.width}px`,
+        transform: window.innerHeight - rect.bottom < 250 && rect.top > 250 ? 'translateY(-100%)' : 'none'
       }}
     >
       <div className="p-2 border-b border-slate-100 flex items-center gap-2 px-3 bg-slate-50/50">
