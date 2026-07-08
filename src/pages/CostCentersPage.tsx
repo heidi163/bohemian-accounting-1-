@@ -88,7 +88,7 @@ export function CostCentersPage() {
   const totalVariance = totalBudget - totalActual;
 
   const chartData = costCentersTree[0]?.children?.map(child => ({
-    name: child.name.split(' (')[0], // Remove bracket part for chart labels
+    name: child.name.split(' (')[0].trim(), // Remove bracket part for chart labels
     الموازنة: child.budget,
     التكلفة: child.actual_cost,
     الإيرادات: child.revenue
@@ -252,9 +252,9 @@ export function CostCentersPage() {
             <h3 className="font-bold text-slate-900 text-lg flex items-center gap-2 mb-6"><Target className="w-5 h-5 text-primary-500" /> أداء المراكز الفرعية</h3>
             <div className="flex-1 min-h-[300px]" style={{ direction: 'ltr' }}>
                <ResponsiveContainer width="100%" height="100%">
-                 <BarChart data={chartData} layout="horizontal" margin={{ top: 10, right: 0, left: 10, bottom: 0 }}>
+                 <BarChart data={chartData} layout="horizontal" margin={{ top: 10, right: 0, left: 10, bottom: 20 }}>
                    <CartesianGrid strokeDasharray="3 3" horizontal={true} vertical={false} stroke="#f1f5f9" opacity={0.5} />
-                   <XAxis type="category" dataKey="name" axisLine={false} tickLine={false} tick={{ fill: '#475569', fontSize: 11, fontWeight: 700 }} />
+                   <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: '#475569', fontSize: 11, fontWeight: 700, textAnchor: 'middle' }} dy={10} />
                    <YAxis type="number" axisLine={false} tickLine={false} tick={{ fill: '#94a3b8', fontSize: 10, fontWeight: 600 }} tickFormatter={(value) => new Intl.NumberFormat('en-US', { notation: 'compact' }).format(value)} width={40} />
                    <Tooltip cursor={{ fill: '#f8fafc', radius: 8 }} contentStyle={{ borderRadius: '1rem', border: 'none', boxShadow: '0 10px 25px -5px rgb(0 0 0 / 0.1)', textAlign: 'right' }} formatter={(value: number) => new Intl.NumberFormat('ar-EG').format(value)} />
                    <Bar dataKey="التكلفة" fill="#f43f5e" radius={[4, 4, 0, 0]} barSize={24} name="التكلفة الفعلية" />
