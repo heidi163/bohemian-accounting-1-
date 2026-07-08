@@ -88,8 +88,7 @@ export function AutomationPage() {
     setJobs(jobs.map(job => 
       job.id === id ? { 
         ...job, 
-        status: job.status === 'active' ? 'inactive' : 'active',
-        nextRun: job.status === 'active' ? '-' : 'تلقائي بناءً على الجدول'
+        status: job.status === 'active' ? 'inactive' : 'active'
       } : job
     ));
     
