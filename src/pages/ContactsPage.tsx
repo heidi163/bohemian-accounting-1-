@@ -438,9 +438,9 @@ export function ContactsPage() {
                  <div className="lg:w-2/3">
                    <div className="flex items-center justify-between mb-3">
                      <h4 className="font-bold text-slate-800">كشف الحساب (Customer Statement)</h4>
-                     <div className="flex items-center gap-4">
-                       <button onClick={() => showToast('تم إرسال كشف الحساب إلى البريد الإلكتروني للعميل بنجاح')} className="text-slate-500 hover:text-primary-600 text-sm font-bold flex items-center gap-1 transition-colors"><Send className="w-3 h-3"/> إرسال بالبريد</button>
-                       <button className="text-primary-600 text-sm font-bold flex items-center gap-1 hover:underline"><Download className="w-3 h-3"/> تحميل كشف الحساب</button>
+                     <div className="flex items-center gap-3">
+                       <button onClick={() => showToast('تم إرسال كشف الحساب إلى البريد الإلكتروني للعميل بنجاح')} className="bg-primary-50 text-primary-700 hover:bg-primary-100 border border-primary-200 px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-colors"><Send className="w-3.5 h-3.5"/> إرسال بالبريد</button>
+                       <button className="bg-slate-50 text-slate-700 hover:bg-slate-100 border border-slate-200 px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-colors"><Download className="w-3.5 h-3.5"/> تحميل كشف الحساب</button>
                      </div>
                    </div>
                    <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
