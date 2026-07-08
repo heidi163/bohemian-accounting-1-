@@ -209,8 +209,8 @@ export function AppLayout() {
       </aside>
 
       {/* Main Content Area */}
-      <main className="flex-1 flex flex-col min-w-0 overflow-hidden md:p-3 md:ps-0 transition-all duration-500">
-        <div className="flex-1 flex flex-col bg-[#F8FAFC] md:rounded-[2rem] shadow-sm overflow-hidden relative border border-slate-100/50">
+      <main className="flex-1 flex flex-col min-w-0 overflow-hidden transition-all duration-500 bg-[#F8FAFC]">
+        <div className="flex-1 flex flex-col overflow-hidden relative">
           
           {/* Topbar (Glassmorphism) */}
           <header className="sticky top-0 z-20 h-14 backdrop-blur-md bg-white/70 flex items-center justify-between px-4 md:px-6 shrink-0 transition-all">
