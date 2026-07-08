@@ -254,7 +254,7 @@ export function CostCentersPage() {
                <ResponsiveContainer width="100%" height="100%">
                  <BarChart data={chartData} layout="horizontal" margin={{ top: 10, right: 0, left: 10, bottom: 20 }}>
                    <CartesianGrid strokeDasharray="3 3" horizontal={true} vertical={false} stroke="#f1f5f9" opacity={0.5} />
-                   <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: '#475569', fontSize: 11, fontWeight: 700, textAnchor: 'middle' }} dy={10} />
+                   <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: '#475569', fontSize: 10, fontWeight: 700 }} dy={10} interval={0} angle={-25} textAnchor="end" height={60} />
                    <YAxis type="number" axisLine={false} tickLine={false} tick={{ fill: '#94a3b8', fontSize: 10, fontWeight: 600 }} tickFormatter={(value) => new Intl.NumberFormat('en-US', { notation: 'compact' }).format(value)} width={40} />
                    <Tooltip cursor={{ fill: '#f8fafc', radius: 8 }} contentStyle={{ borderRadius: '1rem', border: 'none', boxShadow: '0 10px 25px -5px rgb(0 0 0 / 0.1)', textAlign: 'right' }} formatter={(value: number) => new Intl.NumberFormat('ar-EG').format(value)} />
                    <Bar dataKey="التكلفة" fill="#f43f5e" radius={[4, 4, 0, 0]} barSize={24} name="التكلفة الفعلية" />
