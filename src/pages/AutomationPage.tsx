@@ -299,16 +299,16 @@ export function AutomationPage() {
                              onClick={() => triggerJob(job.id, job.name)}
                              disabled={runningJobs.includes(job.id)}
                              className={clsx(
-                               "px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 ms-auto",
+                               "px-4 py-2 rounded-xl text-xs font-bold transition-all duration-300 flex items-center gap-1.5 ms-auto group border",
                                runningJobs.includes(job.id) 
-                                 ? "text-slate-500 bg-slate-100 cursor-not-allowed" 
-                                 : "text-primary-600 bg-primary-50 hover:bg-primary-100"
+                                 ? "text-slate-400 bg-slate-100 border-slate-200 cursor-not-allowed" 
+                                 : "text-slate-700 bg-white border-slate-200 shadow-sm hover:border-primary-600 hover:bg-primary-600 hover:text-white hover:shadow-lg hover:shadow-primary-600/20 hover:-translate-y-0.5"
                              )}
                            >
                              {runningJobs.includes(job.id) ? (
                                <><Loader2 className="w-4 h-4 animate-spin" /> جاري التشغيل...</>
                              ) : (
-                               <><PlayCircle className="w-4 h-4" /> تشغيل الآن</>
+                               <><PlayCircle className="w-4 h-4 text-primary-500 group-hover:text-white transition-colors" /> تشغيل الآن</>
                              )}
                            </button>
                          </td>
