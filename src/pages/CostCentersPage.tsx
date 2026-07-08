@@ -257,8 +257,8 @@ export function CostCentersPage() {
                    <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: '#475569', fontSize: 10, fontWeight: 700 }} dy={10} interval={0} angle={-25} textAnchor="end" height={60} />
                    <YAxis type="number" axisLine={false} tickLine={false} tick={{ fill: '#94a3b8', fontSize: 10, fontWeight: 600 }} tickFormatter={(value) => new Intl.NumberFormat('en-US', { notation: 'compact' }).format(value)} width={40} />
                    <Tooltip cursor={{ fill: '#f8fafc', radius: 8 }} contentStyle={{ borderRadius: '1rem', border: 'none', boxShadow: '0 10px 25px -5px rgb(0 0 0 / 0.1)', textAlign: 'right' }} formatter={(value: number) => new Intl.NumberFormat('ar-EG').format(value)} />
-                   <Bar dataKey="التكلفة" fill="#f43f5e" radius={[4, 4, 0, 0]} barSize={24} name="التكلفة الفعلية" />
-                   <Bar dataKey="الإيرادات" fill="var(--color-primary-500)" radius={[4, 4, 0, 0]} barSize={24} name="الإيرادات" />
+                   <Bar dataKey="التكلفة" fill="#f43f5e" radius={[4, 4, 0, 0]} barSize={12} name="التكلفة الفعلية" />
+                   <Bar dataKey="الإيرادات" fill="var(--color-primary-500)" radius={[4, 4, 0, 0]} barSize={12} name="الإيرادات" />
                  </BarChart>
                </ResponsiveContainer>
             </div>
