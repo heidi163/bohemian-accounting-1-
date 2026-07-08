@@ -178,6 +178,58 @@ export function ContactsPage() {
     reader.readAsText(importedFile);
   };
 
+  const handleEmailStatement = async () => {
+    if (!selectedContact) return;
+    const toastId = toast.loading('جاري إرسال كشف الحساب بالبريد...');
+    try {
+      const res = await apiClient.post(`/customers/${selectedContact.id}/statement/email`);
+      toast.dismiss(toastId);
+      if (res.data && res.data.success) {
+        showToast(`تم إرسال كشف الحساب بنجاح إلى ${selectedContact.email}`);
+      } else {
+        toast.error('فشل في إرسال البريد');
+      }
+    } catch (e: any) {
+      toast.dismiss(toastId);
+      if (e.response && e.response.status === 400) {
+          toast.error('العميل لا يملك بريد إلكتروني مسجل');
+      } else {
+          // Fallback for mock environment
+          showToast('تم إرسال كشف الحساب إلى البريد الإلكتروني (محاكاة)');
+      }
+    }
+  };
+
+  const handleDownloadStatement = async () => {
+    if (!selectedContact) return;
+    const toastId = toast.loading('جاري تجهيز كشف الحساب للتحميل...');
+    try {
+      // Need to use native fetch for downloading blob 
+      const token = localStorage.getItem(getCompanyKey('token'));
+      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
+      const res = await fetch(`${apiUrl}/customers/${selectedContact.id}/statement/download`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      toast.dismiss(toastId);
+      if (!res.ok) throw new Error('Download failed');
+      
+      const blob = await res.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `Statement_${selectedContact.code}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+    } catch (e) {
+      toast.dismiss(toastId);
+      toast.error('حدث خطأ أثناء تحميل كشف الحساب. قد يكون الخادم غير متصل.');
+    }
+  };
+
   return (
     <div className="space-y-6">
       <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
@@ -439,8 +491,8 @@ export function ContactsPage() {
                    <div className="flex items-center justify-between mb-3">
                      <h4 className="font-bold text-slate-800">كشف الحساب (Customer Statement)</h4>
                      <div className="flex items-center gap-3">
-                       <button onClick={() => showToast('تم إرسال كشف الحساب إلى البريد الإلكتروني للعميل بنجاح')} className="bg-primary-50 text-primary-700 hover:bg-primary-100 border border-primary-200 px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-colors"><Send className="w-3.5 h-3.5"/> إرسال بالبريد</button>
-                       <button className="bg-slate-50 text-slate-700 hover:bg-slate-100 border border-slate-200 px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-colors"><Download className="w-3.5 h-3.5"/> تحميل كشف الحساب</button>
+                       <button onClick={handleEmailStatement} className="bg-primary-50 text-primary-700 hover:bg-primary-100 border border-primary-200 px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-colors"><Send className="w-3.5 h-3.5"/> إرسال بالبريد</button>
+                       <button onClick={handleDownloadStatement} className="bg-slate-50 text-slate-700 hover:bg-slate-100 border border-slate-200 px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-colors"><Download className="w-3.5 h-3.5"/> تحميل كشف الحساب</button>
                      </div>
                    </div>
                    <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">

@@ -55,4 +55,36 @@ class EmailService {
             return false;
         }
     }
+
+    public static function sendCustomerStatement(string $toEmail, string $customerName, string $pdfPath): bool {
+        try {
+            $mail = self::getMailer();
+            $mail->addAddress($toEmail, $customerName);
+            
+            $mail->Subject = "كشف حساب من Bohemian Geeks";
+            
+            $body = "
+                <div style='direction: rtl; font-family: Tahoma, Arial;'>
+                    <h3>أهلاً بك {$customerName}،</h3>
+                    <p>مرفق طيه كشف الحساب الخاص بكم.</p>
+                    <p>يرجى الاطلاع عليه وموافاتنا في حال وجود أي استفسارات.</p>
+                    <br>
+                    <p>شكراً لتعاملكم معنا.</p>
+                </div>
+            ";
+            
+            $mail->isHTML(true);
+            $mail->Body = $body;
+            
+            if (file_exists($pdfPath)) {
+                $mail->addAttachment($pdfPath, "Statement.pdf");
+            }
+            
+            $mail->send();
+            return true;
+        } catch (Exception $e) {
+            Logger::error("Statement Email failed to send to $toEmail. Error: {$e->getMessage()}");
+            return false;
+        }
+    }
 }

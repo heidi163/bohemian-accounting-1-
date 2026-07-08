@@ -28,6 +28,8 @@ $router->group(['prefix' => '/api', 'middleware' => [\App\Core\Middleware\AuthMi
     $router->get('/customers', [\App\Controllers\CustomerController::class, 'index']);
     $router->post('/customers', [\App\Controllers\CustomerController::class, 'store']);
     $router->get('/customers/{id}/statement', [\App\Controllers\CustomerController::class, 'statement']);
+    $router->get('/customers/{id}/statement/download', [\App\Controllers\CustomerController::class, 'downloadStatement']);
+    $router->post('/customers/{id}/statement/email', [\App\Controllers\CustomerController::class, 'emailStatement']);
     $router->get('/customers/{id}/aging', [\App\Controllers\CustomerController::class, 'aging']);
     
     // Journal Entries

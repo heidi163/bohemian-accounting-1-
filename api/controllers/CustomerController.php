@@ -61,14 +61,10 @@ class CustomerController {
         Response::success(['id' => $customerId, 'code' => $code], 'Customer created successfully');
     }
 
-    public function statement(Request $request, string $id): void {
-        Permission::check('customers', 'view');
-        
-        // Ensure customer exists
+    private function getStatementData(string $id): array {
         $customer = Database::fetch("SELECT * FROM customers WHERE id = ?", [$id]);
         if (!$customer) throw new \App\Core\Exceptions\NotFoundException("Customer not found");
 
-        // Fetch statement from journal lines
         $statement = Database::fetchAll(
             "SELECT jl.id, je.entry_date, je.description, je.reference_type, je.reference_id, jl.debit, jl.credit
              FROM journal_lines jl
@@ -78,18 +74,110 @@ class CustomerController {
             [$id]
         );
 
-        // Calculate running balance
         $runningBalance = 0;
         foreach ($statement as &$row) {
             $runningBalance += ($row['debit'] - $row['credit']);
             $row['balance'] = $runningBalance;
         }
 
-        Response::success([
+        $invoices = Database::fetchAll(
+            "SELECT (total_amount - paid_amount) as remaining,
+             DATEDIFF(CURDATE(), due_date) as days_overdue
+             FROM invoices 
+             WHERE customer_id = ? AND status IN ('issued', 'partial', 'overdue')",
+            [$id]
+        );
+
+        $aging = ['0_30' => 0, '31_60' => 0, '61_90' => 0, '90_plus' => 0, 'current' => 0];
+        foreach ($invoices as $inv) {
+            if ($inv['days_overdue'] <= 0) {
+                $aging['current'] += $inv['remaining'];
+            } elseif ($inv['days_overdue'] <= 30) {
+                $aging['0_30'] += $inv['remaining'];
+            } elseif ($inv['days_overdue'] <= 60) {
+                $aging['31_60'] += $inv['remaining'];
+            } elseif ($inv['days_overdue'] <= 90) {
+                $aging['61_90'] += $inv['remaining'];
+            } else {
+                $aging['90_plus'] += $inv['remaining'];
+            }
+        }
+
+        return [
             'customer' => $customer,
             'statement' => $statement,
-            'closing_balance' => $runningBalance
+            'closing_balance' => $runningBalance,
+            'aging_summary' => $aging
+        ];
+    }
+
+    public function statement(Request $request, string $id): void {
+        Permission::check('customers', 'view');
+        
+        $data = $this->getStatementData($id);
+
+        Response::success([
+            'customer' => $data['customer'],
+            'statement' => $data['statement'],
+            'closing_balance' => $data['closing_balance']
         ]);
+    }
+
+    public function downloadStatement(Request $request, string $id): void {
+        Permission::check('customers', 'view');
+        
+        $data = $this->getStatementData($id);
+        
+        try {
+            $pdfPath = \App\Services\PDFService::generateCustomerStatementPdf(
+                $data['customer'], 
+                $data['statement'], 
+                $data['closing_balance'], 
+                $data['aging_summary']
+            );
+            
+            header('Content-Type: application/pdf');
+            header('Content-Disposition: attachment; filename="Statement_' . $data['customer']['code'] . '.pdf"');
+            header('Content-Length: ' . filesize($pdfPath));
+            readfile($pdfPath);
+            exit;
+        } catch (\Exception $e) {
+            Response::error("Failed to generate PDF: " . $e->getMessage(), 500);
+        }
+    }
+
+    public function emailStatement(Request $request, string $id): void {
+        Permission::check('customers', 'view');
+        
+        $data = $this->getStatementData($id);
+        
+        if (empty($data['customer']['email'])) {
+            Response::error("Customer does not have an email address set.", 400);
+            return;
+        }
+        
+        try {
+            $pdfPath = \App\Services\PDFService::generateCustomerStatementPdf(
+                $data['customer'], 
+                $data['statement'], 
+                $data['closing_balance'], 
+                $data['aging_summary']
+            );
+            
+            $success = \App\Services\EmailService::sendCustomerStatement(
+                $data['customer']['email'],
+                $data['customer']['name'],
+                $pdfPath
+            );
+            
+            if ($success) {
+                Response::success(null, "Statement sent successfully to {$data['customer']['email']}");
+            } else {
+                Response::error("Failed to send email statement", 500);
+            }
+        } catch (\Exception $e) {
+            Response::error("Failed to generate PDF or send email: " . $e->getMessage(), 500);
+        }
     }
 
     public function aging(Request $request, string $id): void {
