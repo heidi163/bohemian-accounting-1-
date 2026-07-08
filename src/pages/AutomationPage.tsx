@@ -382,13 +382,13 @@ export function AutomationPage() {
                                "text-xs font-bold transition-all duration-300 ms-auto hover:underline underline-offset-4",
                                runningJobs.includes(job.id) 
                                  ? "text-slate-400 cursor-not-allowed" 
-                                 : "text-primary-600 hover:text-primary-700"
+                                 : "text-primary-600 hover:text-primary-800"
                              )}
                            >
                              {runningJobs.includes(job.id) ? (
                                <span className="flex items-center gap-1.5 justify-end"><Loader2 className="w-3.5 h-3.5 animate-spin" /> جاري التنفيذ...</span>
                              ) : (
-                               "تنفيذ فوري"
+                               "تنفيذ"
                              )}
                            </button>
                          </td>
