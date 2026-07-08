@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { type CostCenter } from "../types";
 import { clsx } from "clsx";
-import { Target, Users, FolderTree, ArrowDownRight, ArrowUpRight, ChevronRight, ChevronDown, Activity, DollarSign, Wallet, PieChart as PieChartIcon } from "lucide-react";
+import { Target, Users, FolderTree, ArrowDownRight, ArrowUpRight, ChevronRight, ChevronDown, Activity, DollarSign, Wallet, PieChart as PieChartIcon, X } from "lucide-react";
 import { getCompanyKey, getActiveCompany } from '../utils/storage';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
