@@ -241,7 +241,7 @@ export function AppLayout() {
       </main>
       {/* Global Toast */}
       {globalToast && (
-        <div className="fixed top-8 start-1/2 -translate-x-1/2 bg-white text-primary-600 px-6 py-3.5 rounded-2xl shadow-xl font-bold text-sm z-[99999] flex items-center gap-3 border border-primary-200 animate-in slide-in-from-top-4">
+        <div className="fixed top-8 inset-x-0 mx-auto w-fit bg-white text-primary-600 px-6 py-3.5 rounded-2xl shadow-xl font-bold text-sm z-[99999] flex items-center gap-3 border border-primary-200 animate-in slide-in-from-top-4">
           <div className="w-2 h-2 rounded-full bg-primary-500 animate-pulse"></div>
           {globalToast}
         </div>
