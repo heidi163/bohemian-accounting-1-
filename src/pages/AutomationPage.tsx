@@ -379,10 +379,10 @@ export function AutomationPage() {
                              onClick={() => triggerJob(job.id, job.name)}
                              disabled={runningJobs.includes(job.id)}
                              className={clsx(
-                               "text-xs font-bold transition-all duration-300 ms-auto hover:underline underline-offset-4",
+                               "px-3 py-1.5 rounded-lg text-xs font-bold transition-all duration-300 ms-auto",
                                runningJobs.includes(job.id) 
                                  ? "text-slate-400 cursor-not-allowed" 
-                                 : "text-primary-600 hover:text-primary-800"
+                                 : "text-primary-600 hover:bg-primary-50 hover:text-primary-800"
                              )}
                            >
                              {runningJobs.includes(job.id) ? (
