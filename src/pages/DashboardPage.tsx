@@ -176,16 +176,13 @@ export function DashboardPage() {
         <div className="lg:col-span-8 bg-white rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)] hover:-translate-y-1 hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all duration-300 group border-0 flex flex-col min-h-[400px]">
           <div className="p-6 md:p-8 flex items-center justify-between">
             <h2 className="text-lg font-bold text-slate-900 tracking-tight">حركة المبيعات والتدفقات</h2>
-            <select className="bg-slate-50 border-0 text-sm font-medium rounded-full px-4 py-1.5 text-slate-600 outline-none cursor-pointer focus:ring-2 focus:ring-primary/20 transition-all hover:bg-slate-100">
-              <option>2026</option>
-              <option>2025</option>
-            </select>
           </div>
           <div className="flex-1 px-4 md:px-8 pb-6" style={{ direction: 'ltr' }}>
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={data} barSize={24}>
+              <BarChart data={data} barSize={24} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" opacity={0.5} />
                 <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: '#94a3b8', fontSize: 11, fontWeight: 500 }} dy={10} />
+                <YAxis type="number" axisLine={false} tickLine={false} tick={{ fill: '#94a3b8', fontSize: 10, fontWeight: 600 }} tickFormatter={(value) => new Intl.NumberFormat('en-US', { notation: 'compact' }).format(value)} width={40} />
                 <Tooltip cursor={{ fill: '#f8fafc', radius: 12 }} contentStyle={{ borderRadius: '1rem', border: 'none', boxShadow: '0 10px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)' }} />
                 <Bar dataKey="إيرادات" fill="var(--color-primary-500)" radius={[12, 12, 12, 12]} background={{ fill: 'var(--color-primary-50)', radius: [12, 12, 12, 12] }} />
               </BarChart>
