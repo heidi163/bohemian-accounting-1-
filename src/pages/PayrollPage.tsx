@@ -14,11 +14,9 @@ export function PayrollPage() {
   const [selectedBankId, setSelectedBankId] = useState<string>('');
   const [isProcessing, setIsProcessing] = useState(false);
   const [isTaxesPaid, setIsTaxesPaid] = useState(false);
-  const [toastMsg, setToastMsg] = useState('');
-  
+    
   const showToast = (msg: string) => {
-    setToastMsg(msg);
-    setTimeout(() => setToastMsg(''), 4000);
+    window.dispatchEvent(new CustomEvent("show-toast", { detail: msg }));
   };
 
   const fetchPayrolls = () => {
@@ -347,12 +345,7 @@ export function PayrollPage() {
       )}
 
       {/* Toast */}
-      {toastMsg && (
-        <div className="fixed top-8 start-1/2 -translate-x-1/2 bg-white text-primary-600 px-6 py-3.5 rounded-2xl shadow-xl font-bold text-sm z-[9999] flex items-center gap-3 border border-primary-200 animate-in slide-in-from-top-4">
-          <div className="w-2 h-2 rounded-full bg-primary-500 animate-pulse"></div>
-          {toastMsg}
-        </div>
-      )}
+      
     </div>
   );
 }
