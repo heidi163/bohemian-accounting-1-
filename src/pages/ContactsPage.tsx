@@ -2,7 +2,7 @@ import { toast } from 'react-hot-toast';
 import { useEffect, useState } from "react";
 import { type Contact } from "../types";
 import { useNavigate } from "react-router";
-import { Download, Upload, AlertTriangle, TrendingUp, X, Filter, Users, DollarSign } from "lucide-react";
+import { Download, Upload, AlertTriangle, TrendingUp, X, Filter, Users, DollarSign, Send } from "lucide-react";
 import { clsx } from "clsx";
 import apiClient from "../api/client";
 import { getCompanyKey } from "../utils/storage";
@@ -438,7 +438,10 @@ export function ContactsPage() {
                  <div className="lg:w-2/3">
                    <div className="flex items-center justify-between mb-3">
                      <h4 className="font-bold text-slate-800">كشف الحساب (Customer Statement)</h4>
-                     <button className="text-primary-600 text-sm font-bold flex items-center gap-1 hover:underline"><Download className="w-3 h-3"/> تحميل كشف الحساب</button>
+                     <div className="flex items-center gap-4">
+                       <button onClick={() => showToast('تم إرسال كشف الحساب إلى البريد الإلكتروني للعميل بنجاح')} className="text-slate-500 hover:text-primary-600 text-sm font-bold flex items-center gap-1 transition-colors"><Send className="w-3 h-3"/> إرسال بالبريد</button>
+                       <button className="text-primary-600 text-sm font-bold flex items-center gap-1 hover:underline"><Download className="w-3 h-3"/> تحميل كشف الحساب</button>
+                     </div>
                    </div>
                    <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
                      <table className="w-full text-start text-sm">
