@@ -106,27 +106,32 @@ export function ChecksPage() {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <div>
-          <h1 className="text-2xl font-bold text-slate-800 flex items-center gap-3">
-            <div className="p-2.5 bg-primary/10 text-primary rounded-xl">
-              <FileSignature className="w-6 h-6" />
+      {/* Header Container */}
+      <div className="bg-white rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100/50 p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-64 h-64 bg-primary-50 rounded-full blur-3xl opacity-50 -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
+        
+        <div className="relative z-10">
+          <h2 className="font-bold text-slate-800 text-2xl flex items-center gap-3">
+            <div className="p-3 bg-primary-100 text-primary-700 rounded-2xl">
+               <FileSignature className="w-6 h-6" />
             </div>
             إدارة الشيكات
-          </h1>
-          <p className="text-slate-500 mt-1 text-sm">متابعة الشيكات الصادرة والواردة وتواريخ استحقاقها</p>
+          </h2>
+          <p className="text-slate-500 mt-2 font-medium">متابعة الشيكات الصادرة والواردة وتواريخ استحقاقها</p>
         </div>
-        <button 
-          onClick={() => {
-            setNewCheck({ type: activeTab, status: "pending" });
-            setIsModalOpen(true);
-          }}
-          className="bg-primary hover:bg-primary/90 text-white px-5 py-2.5 rounded-xl text-sm font-bold flex items-center gap-2 transition-all shadow-sm hover:shadow-md"
-        >
-          <Plus className="w-5 h-5" />
-          إضافة شيك جديد
-        </button>
+        
+        <div className="relative z-10 flex flex-wrap gap-3">
+          <button 
+            onClick={() => {
+              setNewCheck({ type: activeTab, status: "pending" });
+              setIsModalOpen(true);
+            }}
+            className="bg-primary-600 shadow-lg shadow-primary-600/20 text-white px-6 py-3 rounded-2xl text-sm font-bold hover:bg-primary-700 hover:-translate-y-0.5 transition-all flex items-center gap-2"
+          >
+            <Plus className="w-5 h-5" />
+            إضافة شيك جديد
+          </button>
+        </div>
       </div>
 
       {/* Tabs & Filters */}
@@ -138,7 +143,7 @@ export function ChecksPage() {
               onClick={() => setActiveTab("issued")}
               className={clsx(
                 "flex-1 md:flex-none px-6 py-2.5 rounded-lg text-sm font-bold transition-all flex items-center justify-center gap-2",
-                activeTab === "issued" ? "bg-white text-primary shadow-sm" : "text-slate-500 hover:text-slate-700"
+                activeTab === "issued" ? "bg-white text-primary-600 shadow-sm" : "text-slate-500 hover:text-slate-700"
               )}
             >
               <ArrowUpRight className="w-4 h-4" />
@@ -164,13 +169,13 @@ export function ChecksPage() {
                 placeholder="بحث برقم الشيك أو الاسم..." 
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full bg-slate-50 border border-slate-200 text-slate-900 text-sm rounded-xl px-10 py-2.5 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
+                className="w-full bg-slate-50 border border-slate-200 text-slate-900 text-sm rounded-xl px-10 py-2.5 focus:ring-2 focus:ring-primary-600/20 focus:border-primary-600 outline-none transition-all"
               />
             </div>
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="bg-slate-50 border border-slate-200 text-slate-700 text-sm rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
+              className="bg-slate-50 border border-slate-200 text-slate-700 text-sm rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-primary-600/20 focus:border-primary-600 outline-none transition-all"
             >
               <option value="all">كل الحالات</option>
               <option value="pending">معلق</option>
@@ -201,7 +206,7 @@ export function ChecksPage() {
                   <tr key={check.id} className="hover:bg-slate-50 transition-colors">
                     <td className="px-4 py-4">
                       <div className="flex items-center gap-3">
-                        <div className={clsx("p-2 rounded-lg", activeTab === 'issued' ? 'bg-primary/10 text-primary' : 'bg-primary-100 text-primary-600')}>
+                        <div className={clsx("p-2 rounded-lg", activeTab === 'issued' ? 'bg-primary-100 text-primary-600' : 'bg-primary-100 text-primary-600')}>
                           <Banknote className="w-4 h-4" />
                         </div>
                         <div>
@@ -233,7 +238,7 @@ export function ChecksPage() {
                       <select
                         value={check.status}
                         onChange={(e) => handleUpdateStatus(check.id, e.target.value as any)}
-                        className="bg-white border border-slate-200 text-slate-700 text-xs font-bold rounded-lg px-2 py-1.5 outline-none hover:border-primary cursor-pointer transition-all"
+                        className="bg-white border border-slate-200 text-slate-700 text-xs font-bold rounded-lg px-2 py-1.5 outline-none hover:border-primary-600 cursor-pointer transition-all"
                       >
                         <option value="pending">تغيير لـ معلق</option>
                         <option value="cleared">تغيير لـ محصل/مصروف</option>
@@ -264,7 +269,7 @@ export function ChecksPage() {
           <div className="bg-white rounded-3xl w-full max-w-xl shadow-2xl flex flex-col max-h-[90vh] overflow-hidden animate-in fade-in zoom-in-95 duration-200">
             <div className="flex items-center justify-between p-6 border-b border-slate-100 bg-slate-50/50 shrink-0">
               <h3 className="text-xl font-bold text-slate-800 flex items-center gap-2">
-                <FileSignature className="w-5 h-5 text-primary" />
+                <FileSignature className="w-5 h-5 text-primary-600" />
                 إضافة شيك جديد
               </h3>
               <button 
@@ -282,7 +287,7 @@ export function ChecksPage() {
                   <select
                     value={newCheck.type}
                     onChange={(e) => setNewCheck({...newCheck, type: e.target.value as any})}
-                    className="w-full bg-white border border-slate-200 text-slate-900 text-sm rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
+                    className="w-full bg-white border border-slate-200 text-slate-900 text-sm rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-primary-600/20 focus:border-primary-600 outline-none transition-all"
                   >
                     <option value="issued">شيك صادر (دفع)</option>
                     <option value="received">شيك وارد (قبض)</option>
@@ -295,7 +300,7 @@ export function ChecksPage() {
                     required
                     value={newCheck.checkNumber || ""}
                     onChange={(e) => setNewCheck({...newCheck, checkNumber: e.target.value})}
-                    className="w-full bg-white border border-slate-200 text-slate-900 text-sm rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
+                    className="w-full bg-white border border-slate-200 text-slate-900 text-sm rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-primary-600/20 focus:border-primary-600 outline-none transition-all"
                     placeholder="مثال: 1002938"
                     dir="ltr"
                   />
@@ -307,7 +312,7 @@ export function ChecksPage() {
                     required
                     value={newCheck.bankName || ""}
                     onChange={(e) => setNewCheck({...newCheck, bankName: e.target.value})}
-                    className="w-full bg-white border border-slate-200 text-slate-900 text-sm rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
+                    className="w-full bg-white border border-slate-200 text-slate-900 text-sm rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-primary-600/20 focus:border-primary-600 outline-none transition-all"
                     placeholder="مثال: البنك الأهلي"
                   />
                 </div>
@@ -318,7 +323,7 @@ export function ChecksPage() {
                     required
                     value={newCheck.partyName || ""}
                     onChange={(e) => setNewCheck({...newCheck, partyName: e.target.value})}
-                    className="w-full bg-white border border-slate-200 text-slate-900 text-sm rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
+                    className="w-full bg-white border border-slate-200 text-slate-900 text-sm rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-primary-600/20 focus:border-primary-600 outline-none transition-all"
                     placeholder="اسم الشركة أو الشخص..."
                   />
                 </div>
@@ -329,7 +334,7 @@ export function ChecksPage() {
                     required
                     value={newCheck.date || ""}
                     onChange={(e) => setNewCheck({...newCheck, date: e.target.value})}
-                    className="w-full bg-white border border-slate-200 text-slate-900 text-sm rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
+                    className="w-full bg-white border border-slate-200 text-slate-900 text-sm rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-primary-600/20 focus:border-primary-600 outline-none transition-all"
                   />
                 </div>
                 <div>
@@ -339,7 +344,7 @@ export function ChecksPage() {
                     required
                     value={newCheck.dueDate || ""}
                     onChange={(e) => setNewCheck({...newCheck, dueDate: e.target.value})}
-                    className="w-full bg-white border border-slate-200 text-slate-900 text-sm rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
+                    className="w-full bg-white border border-slate-200 text-slate-900 text-sm rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-primary-600/20 focus:border-primary-600 outline-none transition-all"
                   />
                 </div>
                 <div>
@@ -347,7 +352,7 @@ export function ChecksPage() {
                   <select
                     value={newCheck.status}
                     onChange={(e) => setNewCheck({...newCheck, status: e.target.value as any})}
-                    className="w-full bg-white border border-slate-200 text-slate-900 text-sm rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
+                    className="w-full bg-white border border-slate-200 text-slate-900 text-sm rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-primary-600/20 focus:border-primary-600 outline-none transition-all"
                   >
                     <option value="pending">معلق</option>
                     <option value="cleared">محصل / مصروف</option>
@@ -363,7 +368,7 @@ export function ChecksPage() {
                       min="0"
                       value={newCheck.amount || ""}
                       onChange={(e) => setNewCheck({...newCheck, amount: Number(e.target.value)})}
-                      className="w-full bg-white border border-slate-200 text-slate-900 text-sm font-bold rounded-xl px-4 py-2.5 pe-12 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
+                      className="w-full bg-white border border-slate-200 text-slate-900 text-sm font-bold rounded-xl px-4 py-2.5 pe-12 focus:ring-2 focus:ring-primary-600/20 focus:border-primary-600 outline-none transition-all"
                       placeholder="0.00"
                     />
                     <span className="absolute end-4 top-1/2 -translate-y-1/2 text-sm font-bold text-slate-400">ر.س</span>
@@ -374,7 +379,7 @@ export function ChecksPage() {
               <div className="flex gap-3 pt-4 mt-6 border-t border-slate-100 shrink-0">
                 <button 
                   type="submit"
-                  className="flex-1 bg-primary text-white py-2.5 rounded-xl text-sm font-bold hover:bg-primary/90 transition shadow-sm"
+                  className="flex-1 bg-primary-600 text-white py-2.5 rounded-xl text-sm font-bold hover:bg-primary-700 transition shadow-sm"
                 >
                   حفظ الشيك
                 </button>
