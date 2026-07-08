@@ -5,6 +5,7 @@ import { clsx } from "clsx";
 import { format } from "date-fns";
 import { PlayCircle, Download, Send, CheckCircle2, FileText, Banknote, X, RefreshCw, Calculator, Receipt } from "lucide-react";
 import { getCompanyKey, getActiveCompany } from '../utils/storage';
+import apiClient from '../api/client';
 
 export function PayrollPage() {
   const [payrolls, setPayrolls] = useState<PayrollRun[]>([]);
@@ -19,16 +20,26 @@ export function PayrollPage() {
     window.dispatchEvent(new CustomEvent("show-toast", { detail: msg }));
   };
 
-  const fetchPayrolls = () => {
+  const fetchPayrolls = async () => {
     const activeCompany = getActiveCompany();
+    const companyId = activeCompany === 'O2N' ? 1 : 2; // Map string to DB ID for now
+    
     const defaults: PayrollRun[] = [
       { id: 1, period: "2026-05", date: "2026-05-28", total_basic: 70000, total_allowances: 15000, total_bonuses: 4000, total_deductions: 2000, total_taxes: 8000, total_social_insurance: 7700, net_salary: 71300, status: "paid", company_id: 'O2N' },
-      { id: 2, period: "2026-06", date: "2026-06-29", total_basic: 72000, total_allowances: 15500, total_bonuses: 0, total_deductions: 500, total_taxes: 8200, total_social_insurance: 7900, net_salary: 70900, status: "under_review", company_id: 'O2N' },
-      { id: 3, period: "2026-05", date: "2026-05-28", total_basic: 45000, total_allowances: 5000, total_bonuses: 0, total_deductions: 0, total_taxes: 4000, total_social_insurance: 3000, net_salary: 43000, status: "paid", company_id: 'BGK' }
+      { id: 2, period: "2026-06", date: "2026-06-29", total_basic: 72000, total_allowances: 15500, total_bonuses: 0, total_deductions: 500, total_taxes: 8200, total_social_insurance: 7900, net_salary: 70900, status: "under_review", company_id: 'O2N' }
     ];
 
+    try {
+      const res = await apiClient.get(`/payroll?company_id=${companyId}`);
+      if (res.data && res.data.success) {
+        setPayrolls(res.data.data);
+        return;
+      }
+    } catch (e) {
+      console.error('Failed to fetch payrolls from API, falling back to mock data');
+    }
+
     const localPayrolls = JSON.parse(localStorage.getItem(getCompanyKey('mock_payrolls')) || '[]');
-    
     if (localPayrolls.length > 0) {
       setPayrolls(localPayrolls.filter((p: any) => p.company_id === activeCompany || !p.company_id));
     } else {
@@ -42,9 +53,7 @@ export function PayrollPage() {
     const activeCompany = getActiveCompany();
     const localBanks = JSON.parse(localStorage.getItem(getCompanyKey('mock_banks')) || '[]');
     
-    // Filter banks by company
     const filteredBanks = localBanks.filter((b: any) => b.company_id === activeCompany || !b.company_id);
-    
     if (filteredBanks.length > 0) {
       setBanks(filteredBanks);
       setSelectedBankId(filteredBanks[0].id.toString());
@@ -59,32 +68,27 @@ export function PayrollPage() {
 
   const handleCreateRun = async () => {
     setIsProcessing(true);
-    setTimeout(() => {
-      const activeCompany = getActiveCompany();
-      const localPayrolls = JSON.parse(localStorage.getItem(getCompanyKey('mock_payrolls')) || '[]');
-      const newRun: PayrollRun = {
-        id: Date.now(),
-        period: selectedMonth,
-        date: new Date().toISOString().split('T')[0],
-        total_basic: 70000,
-        total_allowances: 15000,
-        total_bonuses: 0,
-        total_deductions: 0,
-        total_taxes: 8000,
-        total_social_insurance: 7700,
-        net_salary: 70000 + 15000 - 8000 - 7700,
-        status: 'under_review',
-        company_id: activeCompany
-      };
-      
-      const updated = [newRun, ...localPayrolls];
-      localStorage.setItem(getCompanyKey('mock_payrolls'), JSON.stringify(updated));
-      
-      setPayrolls([newRun, ...payrolls]);
-      setActiveModal(null);
-      showToast('تم إعداد مسير الرواتب بنجاح');
-      setIsProcessing(false);
-    }, 1000);
+    const activeCompany = getActiveCompany();
+    const companyId = activeCompany === 'O2N' ? 1 : 2;
+    
+    try {
+      const res = await apiClient.post('/payroll', {
+        company_id: companyId,
+        period: selectedMonth
+      });
+      if (res.data && res.data.success) {
+        showToast('تم إعداد مسير الرواتب بنجاح');
+        fetchPayrolls();
+        setActiveModal(null);
+      }
+    } catch (e: any) {
+      if (e.response && e.response.status === 400) {
+        toast.error(e.response.data.message || 'مسير الرواتب موجود بالفعل لهذا الشهر');
+      } else {
+        toast.error('حدث خطأ أثناء إنشاء مسير الرواتب');
+      }
+    }
+    setIsProcessing(false);
   };
 
   const handlePayTaxes = async () => {
@@ -103,17 +107,65 @@ export function PayrollPage() {
     }, 1000);
   };
 
-  const handleApproveRun = (id: number) => {
+  const handleApproveRun = async (id: number) => {
     setIsProcessing(true);
     const toastId = toast.loading('جاري اعتماد مسير الرواتب...');
-    setTimeout(() => {
+    try {
+      await apiClient.post(`/payroll/${id}/approve`);
+      toast.dismiss(toastId);
+      showToast('تم اعتماد مسير الرواتب وإصدار القيود المحاسبية بنجاح');
+      fetchPayrolls();
+    } catch (e) {
+      toast.dismiss(toastId);
+      // Fallback to local storage for mock data
       const updatedPayrolls = payrolls.map(p => p.id === id ? { ...p, status: 'paid' } : p);
       setPayrolls(updatedPayrolls as PayrollRun[]);
       localStorage.setItem(getCompanyKey('mock_payrolls'), JSON.stringify(updatedPayrolls));
+      showToast('تم اعتماد مسير الرواتب (محاكاة)');
+    }
+    setIsProcessing(false);
+  };
+  
+  const handleExportRun = async (id: number) => {
+    const toastId = toast.loading('جاري تجهيز قسائم الرواتب للتحميل...');
+    try {
+      const token = localStorage.getItem('auth_token');
+      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
+      const res = await fetch(`${apiUrl}/payroll/${id}/export`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
       toast.dismiss(toastId);
-      showToast('تم اعتماد مسير الرواتب وإصدار القيود المحاسبية بنجاح');
-      setIsProcessing(false);
-    }, 1000);
+      if (!res.ok) throw new Error('Download failed');
+      
+      const blob = await res.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `Payslips_${id}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+    } catch (e) {
+      toast.dismiss(toastId);
+      toast.error('حدث خطأ أثناء تحميل قسائم الرواتب. تأكد من أن الـ Backend يعمل.');
+    }
+  };
+  
+  const handleEmailRun = async (id: number) => {
+    const toastId = toast.loading('جاري إرسال قسائم الرواتب بالبريد الإلكتروني...');
+    try {
+      const res = await apiClient.post(`/payroll/${id}/email`);
+      toast.dismiss(toastId);
+      if (res.data && res.data.success) {
+        showToast('تم إرسال قسائم الرواتب عبر البريد بنجاح');
+      } else {
+        toast.error('فشل في إرسال البريد');
+      }
+    } catch (e) {
+      toast.dismiss(toastId);
+      toast.error('حدث خطأ أثناء إرسال الإيميلات. تأكد من إعدادات الـ SMTP.');
+    }
   };
 
   // Calculate KPIs
@@ -233,13 +285,13 @@ export function PayrollPage() {
                   </td>
                   <td className="px-6 py-4 text-center">
                      <div className="flex items-center justify-center gap-2">
-                        <button onClick={() => showToast('جاري تصدير قسائم الرواتب (PDF)...')} title="تصدير مجمع PDF" className="p-2.5 text-slate-400 hover:bg-rose-50 hover:text-rose-600 rounded-xl transition-colors">
+                        <button onClick={() => handleExportRun(run.id)} title="تصدير مجمع PDF" className="p-2.5 text-slate-400 hover:bg-rose-50 hover:text-rose-600 rounded-xl transition-colors">
                            <Download className="w-4 h-4" />
                         </button>
-                        <button onClick={() => showToast('تم إرسال قسائم الرواتب عبر البريد الإلكتروني للموظفين')} title="إرسال عبر الإيميل (Auto Email)" className="p-2.5 text-slate-400 hover:bg-blue-50 hover:text-blue-600 rounded-xl transition-colors">
+                        <button onClick={() => handleEmailRun(run.id)} title="إرسال عبر الإيميل (Auto Email)" className="p-2.5 text-slate-400 hover:bg-blue-50 hover:text-blue-600 rounded-xl transition-colors">
                            <Send className="w-4 h-4" />
                         </button>
-                        {run.status !== 'paid' && (
+                        {run.status !== 'paid' && run.status !== 'approved' && (
                           <button onClick={() => handleApproveRun(run.id)} title="اعتماد كشوف الرواتب" className="p-2.5 text-slate-400 hover:bg-primary-50 hover:text-primary-600 rounded-xl transition-colors">
                              <CheckCircle2 className="w-4 h-4" />
                           </button>

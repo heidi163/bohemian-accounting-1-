@@ -59,4 +59,10 @@ $router->group(['prefix' => '/api', 'middleware' => [\App\Core\Middleware\AuthMi
     $router->post('/automations/{id}/toggle', [\App\Controllers\AutomationController::class, 'toggle']);
     $router->post('/automations/{id}/run', [\App\Controllers\AutomationController::class, 'run']);
     
+    // Payroll
+    $router->get('/payroll', [\App\Controllers\PayrollController::class, 'index']);
+    $router->post('/payroll', [\App\Controllers\PayrollController::class, 'store']);
+    $router->post('/payroll/{id}/approve', [\App\Controllers\PayrollController::class, 'approve']);
+    $router->get('/payroll/{id}/export', [\App\Controllers\PayrollController::class, 'exportPdf']);
+    $router->post('/payroll/{id}/email', [\App\Controllers\PayrollController::class, 'emailPayslips']);
 });

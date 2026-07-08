@@ -87,4 +87,47 @@ class EmailService {
             return false;
         }
     }
+
+    public static function sendPayslip(string $toEmail, string $employeeName, int $year, int $month, string $pdfPath): bool {
+        try {
+            $mail = new PHPMailer(true);
+            $mail->isSMTP();
+            $mail->Host       = 'smtp.gmail.com'; // Change to actual SMTP
+            $mail->SMTPAuth   = true;
+            $mail->Username   = 'bgk@bohemiangeeks.com'; // Change to actual
+            $mail->Password   = '123456789'; // Change to actual
+            $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+            $mail->Port       = 587;
+            $mail->CharSet    = 'UTF-8';
+            
+            $mail->setFrom('bgk@bohemiangeeks.com', 'Bohemian Accounting');
+            $mail->addAddress($toEmail, $employeeName);
+            
+            $period = "{$year}-" . str_pad((string)$month, 2, '0', STR_PAD_LEFT);
+            $mail->Subject = "Bohemian Accounting - قسيمة راتب شهر $period";
+            
+            $body = "
+                <div dir='rtl' style='font-family: Cairo, Arial, sans-serif;'>
+                    <h3>مرحباً $employeeName،</h3>
+                    <p>مرفق طيه قسيمة الراتب (Payslip) الخاصة بك لشهر $period.</p>
+                    <p>هذا المستند صادر إلكترونياً من نظام Bohemian Accounting.</p>
+                    <br>
+                    <p>مع خالص التحيات،<br>فريق الموارد البشرية</p>
+                </div>
+            ";
+            
+            $mail->isHTML(true);
+            $mail->Body = $body;
+            
+            if (file_exists($pdfPath)) {
+                $mail->addAttachment($pdfPath, "Payslip_$period.pdf");
+            }
+            
+            $mail->send();
+            return true;
+        } catch (Exception $e) {
+            Logger::error("Payslip Email failed to send to $toEmail. Error: {$e->getMessage()}");
+            return false;
+        }
+    }
 }

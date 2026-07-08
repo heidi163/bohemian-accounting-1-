@@ -177,4 +177,109 @@ class PDFService {
 
         return $html;
     }
+
+    public static function generatePayslipsPdf(array $payroll, array $items, bool $single = false): string {
+        $mpdf = new \Mpdf\Mpdf([
+            'mode' => 'utf-8',
+            'format' => 'A4',
+            'default_font' => 'cairo',
+            'default_font_size' => 12,
+            'directionality' => 'rtl',
+            'margin_left' => 15,
+            'margin_right' => 15,
+            'margin_top' => 15,
+            'margin_bottom' => 15
+        ]);
+
+        $mpdf->autoScriptToLang = true;
+        $mpdf->autoLangToFont = true;
+        
+        $month = str_pad((string)$payroll['month'], 2, '0', STR_PAD_LEFT);
+        $period = "{$payroll['year']}-{$month}";
+
+        foreach ($items as $index => $item) {
+            $html = self::getPayslipHtmlTemplate($period, $item);
+            $mpdf->WriteHTML($html);
+            
+            if ($index < count($items) - 1) {
+                $mpdf->AddPage();
+            }
+        }
+
+        $pdfDir = __DIR__ . '/../../public/uploads/pdfs';
+        if (!is_dir($pdfDir)) {
+            mkdir($pdfDir, 0777, true);
+        }
+
+        $fileName = 'Payslips_' . $period . '_' . time() . '.pdf';
+        if ($single) {
+            $fileName = 'Payslip_' . $items[0]['employee_code'] . '_' . $period . '.pdf';
+        }
+        $filePath = $pdfDir . '/' . $fileName;
+        
+        $mpdf->Output($filePath, \Mpdf\Output\Destination::FILE);
+
+        return $filePath;
+    }
+
+    private static function getPayslipHtmlTemplate(string $period, array $item): string {
+        $gross = number_format((float)$item['gross_salary'], 2);
+        $bonuses = number_format((float)$item['bonuses'], 2);
+        $deductions = number_format((float)$item['deductions'], 2);
+        $taxes = number_format((float)$item['taxes'], 2);
+        $net = number_format((float)$item['net_salary'], 2);
+        
+        return "
+        <div style='font-family: Cairo, sans-serif; direction: rtl;'>
+            <div style='text-align: center; border-bottom: 2px solid #0f172a; padding-bottom: 20px; margin-bottom: 30px;'>
+                <h1 style='color: #0f172a; margin: 0;'>Bohemian Accounting</h1>
+                <h2 style='color: #475569; margin: 10px 0 0 0;'>قسيمة راتب (Payslip)</h2>
+                <p style='color: #64748b; margin: 5px 0 0 0;'>عن شهر: $period</p>
+            </div>
+
+            <table style='width: 100%; margin-bottom: 30px;'>
+                <tr>
+                    <td style='width: 50%;'>
+                        <strong>اسم الموظف:</strong> {$item['employee_name']}<br>
+                        <strong>كود الموظف:</strong> {$item['employee_code']}<br>
+                        <strong>المسمى الوظيفي:</strong> {$item['position']}
+                    </td>
+                    <td style='width: 50%; text-align: left;'>
+                        <strong>تاريخ الإصدار:</strong> " . date('Y-m-d') . "
+                    </td>
+                </tr>
+            </table>
+
+            <table style='width: 100%; border-collapse: collapse; margin-bottom: 30px;'>
+                <tr style='background-color: #f8fafc;'>
+                    <th style='padding: 12px; text-align: right; border: 1px solid #e2e8f0; width: 50%;'>البيان</th>
+                    <th style='padding: 12px; text-align: left; border: 1px solid #e2e8f0; width: 50%;'>المبلغ (EGP)</th>
+                </tr>
+                <tr>
+                    <td style='padding: 12px; border: 1px solid #e2e8f0;'>الراتب الأساسي + البدلات (Gross Salary)</td>
+                    <td style='padding: 12px; text-align: left; border: 1px solid #e2e8f0;'>$gross</td>
+                </tr>
+                <tr>
+                    <td style='padding: 12px; border: 1px solid #e2e8f0;'>المكافآت والإضافي (Bonuses)</td>
+                    <td style='padding: 12px; text-align: left; border: 1px solid #e2e8f0;'>$bonuses</td>
+                </tr>
+                <tr>
+                    <td style='padding: 12px; border: 1px solid #e2e8f0; color: #dc2626;'>الخصومات والتأمينات (Deductions)</td>
+                    <td style='padding: 12px; text-align: left; border: 1px solid #e2e8f0; color: #dc2626;'>-$deductions</td>
+                </tr>
+                <tr>
+                    <td style='padding: 12px; border: 1px solid #e2e8f0; color: #dc2626;'>الضرائب (Taxes)</td>
+                    <td style='padding: 12px; text-align: left; border: 1px solid #e2e8f0; color: #dc2626;'>-$taxes</td>
+                </tr>
+                <tr style='background-color: #f1f5f9; font-weight: bold;'>
+                    <td style='padding: 15px; border: 1px solid #e2e8f0; color: #0284c7; font-size: 16px;'>صافي الراتب المستحق (Net Salary)</td>
+                    <td style='padding: 15px; text-align: left; border: 1px solid #e2e8f0; color: #0284c7; font-size: 16px;'>$net</td>
+                </tr>
+            </table>
+
+            <div style='margin-top: 50px; padding-top: 20px; border-top: 1px solid #e2e8f0; font-size: 12px; color: #64748b; text-align: center;'>
+                هذا المستند معتمد إلكترونياً من نظام Bohemian Accounting ولا يحتاج إلى توقيع.
+            </div>
+        </div>";
+    }
 }
