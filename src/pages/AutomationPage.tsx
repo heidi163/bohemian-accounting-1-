@@ -2,7 +2,7 @@ import { useState } from "react";
 import { 
   Bot, Clock, RotateCcw, Send, Settings, Database, CloudLightning, 
   Mail, CalendarRange, ToggleLeft, ToggleRight, PlayCircle, Plus, 
-  Search, ShieldAlert, Activity, CheckCircle2, XCircle, AlertCircle, TrendingUp
+  Search, ShieldAlert, Activity, CheckCircle2, XCircle, AlertCircle, TrendingUp, Loader2
 } from "lucide-react";
 import { clsx } from "clsx";
 import { SearchableSelect } from "../components/ui/SearchableSelect";
@@ -25,6 +25,7 @@ export function AutomationPage() {
   const [newTaskName, setNewTaskName] = useState('');
   const [newTaskType, setNewTaskType] = useState('Custom Task');
   const [newTaskSchedule, setNewTaskSchedule] = useState('يومياً (00:00)');
+  const [runningJobs, setRunningJobs] = useState<number[]>([]);
 
   const showToast = (msg: string) => {
     setToastMsg(msg);
@@ -52,8 +53,26 @@ export function AutomationPage() {
     showToast('تم تحديث حالة المهمة المجدولة بنجاح');
   };
 
-  const triggerJob = (name: string) => {
-    showToast(`تم بدء تشغيل (${name}) يدوياً... يرجى الانتظار`);
+  const triggerJob = (id: number, name: string) => {
+    if (runningJobs.includes(id)) return;
+    
+    setRunningJobs(prev => [...prev, id]);
+    showToast(`جاري تشغيل (${name})...`);
+    
+    setTimeout(() => {
+      const now = new Date();
+      const formattedDate = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+      
+      setJobs(prevJobs => prevJobs.map(job => 
+        job.id === id ? {
+          ...job,
+          lastRun: formattedDate,
+          lastStatus: 'success'
+        } : job
+      ));
+      setRunningJobs(prev => prev.filter(jobId => jobId !== id));
+      showToast(`تم اكتمال تشغيل (${name}) بنجاح`);
+    }, 2000);
   };
 
   const handleAddJob = (e: React.FormEvent) => {
@@ -248,10 +267,16 @@ export function AutomationPage() {
                          </td>
                          <td className="px-6 py-4">
                            <div className="flex items-center gap-2">
-                              {job.lastStatus === 'success' && <div className="w-2.5 h-2.5 rounded-full bg-primary-500 shadow-sm shadow-primary-500/50" title="تم بنجاح"></div>}
-                              {job.lastStatus === 'failed' && <div className="w-2.5 h-2.5 rounded-full bg-rose-500 shadow-sm shadow-rose-500/50 animate-pulse" title="فشل"></div>}
-                              {job.lastStatus === 'pending' && <div className="w-2.5 h-2.5 rounded-full bg-slate-300" title="لم يعمل بعد"></div>}
-                              <span className="font-mono text-slate-500 text-xs">{job.lastRun}</span>
+                              {runningJobs.includes(job.id) ? (
+                                <div className="w-2.5 h-2.5 rounded-full bg-amber-500 shadow-sm shadow-amber-500/50 animate-pulse" title="قيد التشغيل"></div>
+                              ) : job.lastStatus === 'success' ? (
+                                <div className="w-2.5 h-2.5 rounded-full bg-primary-500 shadow-sm shadow-primary-500/50" title="تم بنجاح"></div>
+                              ) : job.lastStatus === 'failed' ? (
+                                <div className="w-2.5 h-2.5 rounded-full bg-rose-500 shadow-sm shadow-rose-500/50 animate-pulse" title="فشل"></div>
+                              ) : (
+                                <div className="w-2.5 h-2.5 rounded-full bg-slate-300" title="لم يعمل بعد"></div>
+                              )}
+                              <span className="font-mono text-slate-500 text-xs">{runningJobs.includes(job.id) ? '...' : job.lastRun}</span>
                            </div>
                          </td>
                          <td className="px-6 py-4 font-mono text-slate-500 text-xs bg-slate-50/50 rounded-lg group-hover:bg-white transition-colors">
@@ -271,10 +296,20 @@ export function AutomationPage() {
                          </td>
                          <td className="px-6 py-4 text-end">
                            <button 
-                             onClick={() => triggerJob(job.name)}
-                             className="text-primary-600 bg-primary-50 hover:bg-primary-100 px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 ms-auto"
+                             onClick={() => triggerJob(job.id, job.name)}
+                             disabled={runningJobs.includes(job.id)}
+                             className={clsx(
+                               "px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 ms-auto",
+                               runningJobs.includes(job.id) 
+                                 ? "text-slate-500 bg-slate-100 cursor-not-allowed" 
+                                 : "text-primary-600 bg-primary-50 hover:bg-primary-100"
+                             )}
                            >
-                             <PlayCircle className="w-4 h-4" /> تشغيل الآن
+                             {runningJobs.includes(job.id) ? (
+                               <><Loader2 className="w-4 h-4 animate-spin" /> جاري التشغيل...</>
+                             ) : (
+                               <><PlayCircle className="w-4 h-4" /> تشغيل الآن</>
+                             )}
                            </button>
                          </td>
                        </tr>
