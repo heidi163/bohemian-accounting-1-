@@ -280,7 +280,7 @@ export function PurchasesPage() {
                     <div>{new Intl.NumberFormat('ar-EG', { style: 'currency', currency: bill.currency }).format(bill.total_amount)}</div>
                     {bill.tax_amount ? (
                       <div className="text-[10px] text-slate-500 font-normal mt-1 flex gap-1 justify-end">
-                        <span className="text-rose-500">+{bill.tax_amount} VAT</span>
+                        <span className="text-rose-500">+{Number(bill.tax_amount).toLocaleString('ar-EG', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} VAT</span>
                       </div>
                     ) : null}
                   </td>
