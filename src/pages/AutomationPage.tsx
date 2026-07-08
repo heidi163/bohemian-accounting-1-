@@ -35,6 +35,7 @@ export function AutomationPage() {
   
   const [jobs, setJobs] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isMockMode, setIsMockMode] = useState(false);
 
   const getIconForType = (type: string) => {
     if (type.includes('Backup')) return Database;
@@ -64,6 +65,7 @@ export function AutomationPage() {
       setLoading(false);
     }).catch(err => {
       // Fallback if API is unreachable (Database not set up yet)
+      setIsMockMode(true);
       setJobs([
         { id: 1, name: 'تحديث أسعار الصرف', type: 'Exchange Rate Updates', schedule: 'يومياً (00:00)', status: 'active', lastRun: '2026-06-16 00:00', nextRun: '2026-06-17 00:00', lastStatus: 'success', icon: CloudLightning },
         { id: 2, name: 'النسخ الاحتياطي اليومي', type: 'Daily Backups', schedule: 'يومياً (02:00)', status: 'active', lastRun: '2026-06-16 02:00', nextRun: '2026-06-17 02:00', lastStatus: 'success', icon: Database },
@@ -94,8 +96,12 @@ export function AutomationPage() {
     apiClient.post(`/automations/${id}/toggle`).then(() => {
       showToast('تم تحديث حالة المهمة المجدولة بنجاح');
     }).catch(() => {
-      showToast('حدث خطأ أثناء تحديث الحالة');
-      fetchJobs(); // revert
+      if (isMockMode) {
+        showToast('تم تحديث الحالة بنجاح (وضع تجريبي)');
+      } else {
+        showToast('حدث خطأ أثناء تحديث الحالة');
+        fetchJobs(); // revert
+      }
     });
   };
 
