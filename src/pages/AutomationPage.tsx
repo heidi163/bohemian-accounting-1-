@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { 
   Bot, Clock, RotateCcw, Send, Settings, Database, CloudLightning, 
   Mail, CalendarRange, ToggleLeft, ToggleRight, PlayCircle, Plus, 
-  Search, ShieldAlert, Activity, CheckCircle2, XCircle, AlertCircle, TrendingUp, Loader2
+  Search, ShieldAlert, Activity, CheckCircle2, XCircle, AlertCircle, TrendingUp, Loader2, Zap
 } from "lucide-react";
 import { clsx } from "clsx";
 import { SearchableSelect } from "../components/ui/SearchableSelect";
@@ -346,16 +346,16 @@ export function AutomationPage() {
                              onClick={() => triggerJob(job.id, job.name)}
                              disabled={runningJobs.includes(job.id)}
                              className={clsx(
-                               "px-4 py-2 rounded-xl text-xs font-bold transition-all duration-300 flex items-center gap-1.5 ms-auto group border",
+                               "px-4 py-2 rounded-xl text-xs font-bold transition-all duration-300 flex items-center gap-1.5 ms-auto shadow-sm group",
                                runningJobs.includes(job.id) 
-                                 ? "text-slate-400 bg-slate-100 border-slate-200 cursor-not-allowed" 
-                                 : "text-slate-700 bg-white border-slate-200 shadow-sm hover:border-primary-600 hover:bg-primary-600 hover:text-white hover:shadow-lg hover:shadow-primary-600/20 hover:-translate-y-0.5"
+                                 ? "text-slate-400 bg-slate-100 cursor-not-allowed" 
+                                 : "text-white bg-slate-800 hover:bg-slate-900 hover:shadow-lg hover:shadow-slate-900/20 hover:-translate-y-0.5"
                              )}
                            >
                              {runningJobs.includes(job.id) ? (
-                               <><Loader2 className="w-4 h-4 animate-spin" /> جاري التشغيل...</>
+                               <><Loader2 className="w-3.5 h-3.5 animate-spin text-slate-400" /> جاري التنفيذ...</>
                              ) : (
-                               <><PlayCircle className="w-4 h-4 text-primary-500 group-hover:text-white transition-colors" /> تشغيل الآن</>
+                               <><Zap className="w-3.5 h-3.5 text-amber-400 group-hover:scale-110 transition-transform" /> تنفيذ فوري</>
                              )}
                            </button>
                          </td>
