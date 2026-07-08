@@ -348,8 +348,8 @@ export function PayrollPage() {
 
       {/* Toast */}
       {toastMsg && (
-        <div className="fixed bottom-10 start-1/2 -translate-x-1/2 bg-slate-900 text-white px-6 py-3 rounded-2xl text-sm font-bold shadow-2xl z-[9999] whitespace-nowrap flex items-center gap-2 animate-in slide-in-from-bottom-5">
-          <div className="w-2 h-2 rounded-full bg-primary-400 animate-pulse"></div>
+        <div className="fixed top-8 start-1/2 -translate-x-1/2 bg-white text-primary-600 px-6 py-3.5 rounded-2xl shadow-xl font-bold text-sm z-[9999] flex items-center gap-3 border border-primary-200 animate-in slide-in-from-top-4">
+          <div className="w-2 h-2 rounded-full bg-primary-500 animate-pulse"></div>
           {toastMsg}
         </div>
       )}
