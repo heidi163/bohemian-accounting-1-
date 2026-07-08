@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { 
   Bot, Clock, RotateCcw, Send, Settings, Database, CloudLightning, 
   Mail, CalendarRange, ToggleLeft, ToggleRight, PlayCircle, Plus, 
@@ -6,6 +6,7 @@ import {
 } from "lucide-react";
 import { clsx } from "clsx";
 import { SearchableSelect } from "../components/ui/SearchableSelect";
+import apiClient from "../api/client";
 
 export function AutomationPage() {
   const [activeTab, setActiveTab] = useState<'jobs' | 'settings'>('jobs');
@@ -32,17 +33,47 @@ export function AutomationPage() {
     setTimeout(() => setToastMsg(''), 4000);
   };
   
-  const [jobs, setJobs] = useState([
-    { id: 1, name: 'تحديث أسعار الصرف', type: 'Exchange Rate Updates', schedule: 'يومياً (00:00)', status: 'active', lastRun: '2026-06-16 00:00', nextRun: '2026-06-17 00:00', lastStatus: 'success', icon: CloudLightning },
-    { id: 2, name: 'النسخ الاحتياطي اليومي', type: 'Daily Backups', schedule: 'يومياً (02:00)', status: 'active', lastRun: '2026-06-16 02:00', nextRun: '2026-06-17 02:00', lastStatus: 'success', icon: Database },
-    { id: 3, name: 'إرسال ملخص يومي', type: 'Daily Summary Emails', schedule: 'يومياً (08:00)', status: 'active', lastRun: '2026-06-16 08:00', nextRun: '2026-06-17 08:00', lastStatus: 'success', icon: Mail },
-    { id: 4, name: 'إنشاء الفواتير المتكررة', type: 'Recurring Invoices', schedule: 'شهرياً (يوم 1)', status: 'active', lastRun: '2026-06-01 00:00', nextRun: '2026-07-01 00:00', lastStatus: 'success', icon: RotateCcw },
-    { id: 5, name: 'تسجيل القيود المتكررة', type: 'Recurring Journal Entries', schedule: 'شهرياً (يوم 28)', status: 'active', lastRun: '2026-05-28 00:00', nextRun: '2026-06-28 00:00', lastStatus: 'failed', icon: RotateCcw },
-    { id: 6, name: 'حساب الإهلاك الشهري', type: 'Monthly Depreciation', schedule: 'نهاية كل شهر', status: 'active', lastRun: '2026-05-31 23:59', nextRun: '2026-06-30 23:59', lastStatus: 'pending', icon: CalendarRange },
-    { id: 7, name: 'تذكير بالمدفوعات المتأخرة', type: 'Payment Reminders', schedule: 'أسبوعياً (الأحد)', status: 'inactive', lastRun: '-', nextRun: '-', lastStatus: 'pending', icon: Send },
-  ]);
+  const [jobs, setJobs] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const getIconForType = (type: string) => {
+    if (type.includes('Backup')) return Database;
+    if (type.includes('Email')) return Mail;
+    if (type.includes('Invoice') || type.includes('Journal')) return RotateCcw;
+    if (type.includes('Exchange')) return CloudLightning;
+    if (type.includes('Depreciation')) return CalendarRange;
+    if (type.includes('Reminder')) return Send;
+    return Settings;
+  };
+
+  const fetchJobs = () => {
+    setLoading(true);
+    apiClient.get('/automations').then(res => {
+      const mappedJobs = res.data.data.map((job: any) => ({
+        id: job.id,
+        name: job.name,
+        type: job.type,
+        schedule: job.schedule_cron,
+        status: job.status,
+        lastRun: job.last_run ? job.last_run.substring(0, 16) : '-',
+        nextRun: job.next_run ? job.next_run.substring(0, 16) : '-',
+        lastStatus: job.last_status,
+        icon: getIconForType(job.type)
+      }));
+      setJobs(mappedJobs);
+      setLoading(false);
+    }).catch(err => {
+      showToast('فشل في جلب المهام من الخادم');
+      setLoading(false);
+    });
+  };
+
+  useEffect(() => {
+    fetchJobs();
+  }, []);
 
   const toggleStatus = (id: number) => {
+    // Optimistic update
     setJobs(jobs.map(job => 
       job.id === id ? { 
         ...job, 
@@ -50,7 +81,13 @@ export function AutomationPage() {
         nextRun: job.status === 'active' ? '-' : 'تلقائي بناءً على الجدول'
       } : job
     ));
-    showToast('تم تحديث حالة المهمة المجدولة بنجاح');
+    
+    apiClient.post(`/automations/${id}/toggle`).then(() => {
+      showToast('تم تحديث حالة المهمة المجدولة بنجاح');
+    }).catch(() => {
+      showToast('حدث خطأ أثناء تحديث الحالة');
+      fetchJobs(); // revert
+    });
   };
 
   const triggerJob = (id: number, name: string) => {
@@ -59,42 +96,43 @@ export function AutomationPage() {
     setRunningJobs(prev => [...prev, id]);
     showToast(`جاري تشغيل (${name})...`);
     
-    setTimeout(() => {
-      const now = new Date();
-      const formattedDate = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
-      
-      setJobs(prevJobs => prevJobs.map(job => 
-        job.id === id ? {
-          ...job,
-          lastRun: formattedDate,
-          lastStatus: 'success'
-        } : job
-      ));
-      setRunningJobs(prev => prev.filter(jobId => jobId !== id));
-      showToast(`تم اكتمال تشغيل (${name}) بنجاح`);
-    }, 2000);
+    apiClient.post(`/automations/${id}/run`).then(res => {
+       const updatedData = res.data.data;
+       setJobs(prevJobs => prevJobs.map(job => 
+         job.id === id ? {
+           ...job,
+           lastRun: updatedData.last_run ? updatedData.last_run.substring(0, 16) : '-',
+           lastStatus: updatedData.last_status
+         } : job
+       ));
+       setRunningJobs(prev => prev.filter(jobId => jobId !== id));
+       if (updatedData.last_status === 'success') {
+         showToast(`تم اكتمال تشغيل (${name}) بنجاح`);
+       } else {
+         showToast(`فشل في تشغيل (${name})`);
+       }
+    }).catch(err => {
+       setRunningJobs(prev => prev.filter(jobId => jobId !== id));
+       showToast(`حدث خطأ أثناء تشغيل (${name})`);
+    });
   };
 
   const handleAddJob = (e: React.FormEvent) => {
     e.preventDefault();
     if (!newTaskName) return;
     
-    const newJob = {
-      id: Date.now(),
+    apiClient.post('/automations', {
       name: newTaskName,
       type: newTaskType,
-      schedule: newTaskSchedule,
-      status: 'active',
-      lastRun: '-',
-      nextRun: 'قريباً',
-      lastStatus: 'pending',
-      icon: Settings
-    };
-    
-    setJobs([newJob, ...jobs]);
-    setShowAddModal(false);
-    setNewTaskName('');
-    showToast('تمت إضافة المهمة المجدولة بنجاح');
+      schedule_cron: newTaskSchedule
+    }).then(res => {
+      setShowAddModal(false);
+      setNewTaskName('');
+      showToast('تمت إضافة المهمة المجدولة بنجاح');
+      fetchJobs();
+    }).catch(() => {
+      showToast('فشل في إضافة المهمة');
+    });
   };
 
   const normalizeArabic = (text: string) => {
@@ -246,7 +284,16 @@ export function AutomationPage() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
-                  {filteredJobs.length > 0 ? (
+                  {loading ? (
+                    <tr>
+                      <td colSpan={6} className="px-6 py-20 text-center">
+                        <div className="flex flex-col items-center justify-center text-slate-400 space-y-4">
+                          <Loader2 className="w-10 h-10 animate-spin text-primary-500" />
+                          <span className="font-bold text-lg">جاري تحميل المهام...</span>
+                        </div>
+                      </td>
+                    </tr>
+                  ) : filteredJobs.length > 0 ? (
                      filteredJobs.map(job => (
                        <tr key={job.id} className="hover:bg-slate-50/80 transition-colors group">
                          <td className="px-6 py-4">

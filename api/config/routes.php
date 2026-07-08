@@ -51,4 +51,10 @@ $router->group(['prefix' => '/api', 'middleware' => [\App\Core\Middleware\AuthMi
     $router->post('/users', [\App\Controllers\UserController::class, 'store']);
     $router->post('/users/{id}/delete', [\App\Controllers\UserController::class, 'destroy']);
     
+    // Automations
+    $router->get('/automations', [\App\Controllers\AutomationController::class, 'index']);
+    $router->post('/automations', [\App\Controllers\AutomationController::class, 'store']);
+    $router->post('/automations/{id}/toggle', [\App\Controllers\AutomationController::class, 'toggle']);
+    $router->post('/automations/{id}/run', [\App\Controllers\AutomationController::class, 'run']);
+    
 });
