@@ -103,6 +103,19 @@ export function PayrollPage() {
     }, 1000);
   };
 
+  const handleApproveRun = (id: number) => {
+    setIsProcessing(true);
+    const toastId = toast.loading('جاري اعتماد مسير الرواتب...');
+    setTimeout(() => {
+      const updatedPayrolls = payrolls.map(p => p.id === id ? { ...p, status: 'paid' } : p);
+      setPayrolls(updatedPayrolls as PayrollRun[]);
+      localStorage.setItem(getCompanyKey('mock_payrolls'), JSON.stringify(updatedPayrolls));
+      toast.dismiss(toastId);
+      showToast('تم اعتماد مسير الرواتب وإصدار القيود المحاسبية بنجاح');
+      setIsProcessing(false);
+    }, 1000);
+  };
+
   // Calculate KPIs
   const currentMonthRun = payrolls.length > 0 ? payrolls[0] : null;
   const kpiBasic = currentMonthRun ? currentMonthRun.total_basic + currentMonthRun.total_allowances + currentMonthRun.total_bonuses : 0;
@@ -127,10 +140,10 @@ export function PayrollPage() {
         
         <div className="relative z-10 flex flex-wrap gap-3">
           <button onClick={() => setActiveModal('taxes_insurance')} className="bg-white border border-slate-200 text-slate-700 px-6 py-3 rounded-2xl text-sm font-bold hover:bg-slate-50 hover:-translate-y-0.5 transition-all shadow-sm flex items-center gap-2">
-            <Banknote className="w-5 h-5" /> دفعيات الضرائب والتأمينات
+            دفعيات الضرائب والتأمينات
           </button>
           <button onClick={() => setActiveModal('new_run')} className="bg-primary-600 shadow-lg shadow-primary-600/20 text-white px-6 py-3 rounded-2xl text-sm font-bold hover:bg-primary-700 hover:-translate-y-0.5 transition-all flex items-center gap-2">
-            <PlayCircle className="w-5 h-5" /> إنشاء مسير رواتب جديد
+            إنشاء مسير رواتب جديد
           </button>
         </div>
       </div>
@@ -220,18 +233,18 @@ export function PayrollPage() {
                   </td>
                   <td className="px-6 py-4 text-center">
                      <div className="flex items-center justify-center gap-2">
-                        <button title="تصدير مجمع PDF" className="p-2.5 text-slate-400 hover:bg-rose-50 hover:text-rose-600 rounded-xl transition-colors">
+                        <button onClick={() => showToast('جاري تصدير قسائم الرواتب (PDF)...')} title="تصدير مجمع PDF" className="p-2.5 text-slate-400 hover:bg-rose-50 hover:text-rose-600 rounded-xl transition-colors">
                            <Download className="w-4 h-4" />
                         </button>
-                        <button onClick={() => toast.success('تم إرسال قسائم الرواتب عبر البريد لكل الموظفين')} title="إرسال عبر الإيميل (Auto Email)" className="p-2.5 text-slate-400 hover:bg-blue-50 hover:text-blue-600 rounded-xl transition-colors">
+                        <button onClick={() => showToast('تم إرسال قسائم الرواتب عبر البريد الإلكتروني للموظفين')} title="إرسال عبر الإيميل (Auto Email)" className="p-2.5 text-slate-400 hover:bg-blue-50 hover:text-blue-600 rounded-xl transition-colors">
                            <Send className="w-4 h-4" />
                         </button>
                         {run.status !== 'paid' && (
-                          <button title="اعتماد كشوف الرواتب" className="p-2.5 text-slate-400 hover:bg-primary-50 hover:text-primary-600 rounded-xl transition-colors">
+                          <button onClick={() => handleApproveRun(run.id)} title="اعتماد كشوف الرواتب" className="p-2.5 text-slate-400 hover:bg-primary-50 hover:text-primary-600 rounded-xl transition-colors">
                              <CheckCircle2 className="w-4 h-4" />
                           </button>
                         )}
-                        <button title="التفاصيل" className="p-2.5 text-slate-400 hover:bg-slate-100 hover:text-slate-700 rounded-xl transition-colors">
+                        <button onClick={() => showToast('سيتم عرض تفاصيل قسائم الدفع للموظفين قريباً')} title="التفاصيل" className="p-2.5 text-slate-400 hover:bg-slate-100 hover:text-slate-700 rounded-xl transition-colors">
                            <FileText className="w-4 h-4" />
                         </button>
                      </div>
